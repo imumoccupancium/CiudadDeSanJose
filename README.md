@@ -1,152 +1,266 @@
-# Ciudad De San Jose - Subdivision Management System
+# Ciudad de San Jose - QR Code Entry & Exit Monitoring System
 
-![System Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-1.0-blue)
-![License](https://img.shields.io/badge/license-proprietary-red)
+## Admin Dashboard Features
 
-## 🏘️ Overview
+### 📊 Summary Statistics
+- **Total Homeowners**: Display total number of active homeowners
+- **Currently Inside**: Real-time count of homeowners inside the subdivision
+- **Currently Outside**: Real-time count of homeowners outside the subdivision
+- **Total Entries Today**: Count of all entry scans for the current day
+- **Total Exits Today**: Count of all exit scans for the current day
+- **Total Scans Today**: Combined entry and exit scans
+- **Active Scanners**: Number of online scanner devices
+- **Active Guards**: Number of guards currently on duty
 
-**Ciudad De San Jose** is a modern, QR code-based subdivision management system designed to streamline access control for homeowners and residents. The system provides secure, efficient, and contactless check-in/check-out processes using QR code technology.
+### 📋 Real-Time Activity Log
+- Live table showing all entry/exit activities
+- Color-coded status badges (Green for IN, Red for OUT)
+- Displays: Homeowner Name, ID, Action, Date, Time, Scanner Device
+- Auto-refreshes every 30 seconds
+- Manual refresh button available
+- Sortable and searchable using DataTables
 
-## ✨ Key Features
+### 👥 Homeowner Status List
+- Complete list of all homeowners with current status
+- Shows current location (INSIDE/OUTSIDE)
+- Displays last scan time
+- Filter buttons: All, Inside, Outside
+- Quick actions: View details, Edit homeowner
+- Real-time updates
 
-- 🔐 **QR Code Authentication** - Unique QR codes for each homeowner
-- ⚡ **Quick Access Control** - Fast check-in/check-out processing
-- 👥 **Visitor Management** - Pre-register guests with temporary QR codes
-- 📊 **Real-time Dashboard** - Monitor subdivision access in real-time
-- 📈 **Analytics & Reports** - Comprehensive reporting capabilities
-- 🚗 **Vehicle Registration** - Track homeowner vehicles
-- 👨‍👩‍👧‍👦 **Household Management** - Register family members
-- 🔒 **Security Features** - Encrypted QR codes with expiration dates
+### 📈 Analytics & Charts
+- **Entry/Exit Chart**: Line chart showing entry and exit trends
+- **Status Distribution**: Doughnut chart showing inside vs outside ratio
+- Period selector: Last 7, 30, or 90 days
+- Interactive and responsive charts using Chart.js
 
-## 📋 Quick Start
+### 🔍 Search & Filter Features
+- Global search across all homeowners
+- Filter by name, homeowner ID, date, and IN/OUT status
+- Advanced filtering on all data tables
+- Real-time search results
 
-### For Administrators
-1. Access the admin panel at `http://localhost/CiudadDeSanJose/admin`
-2. Login with your credentials
-3. Start adding homeowners and generating QR codes
+### 📄 Reports Module (Framework Ready)
+- Daily, weekly, and monthly reports
+- Custom date range selection
+- Export to PDF and Excel formats
+- Report generation tracking
 
-### For Security Personnel
-1. Access the scanner interface at `http://localhost/CiudadDeSanJose/scanner`
-2. Login with your credentials
-3. Scan homeowner QR codes for check-in/check-out
+### 🏠 Homeowner Management
+- Add new homeowners
+- Edit homeowner information
+- Deactivate/suspend accounts
+- Automatic QR code generation
+- View homeowner details and history
 
-### For Homeowners
-1. Access the homeowner portal at `http://localhost/CiudadDeSanJose/portal`
-2. Login with credentials provided by admin
-3. Download your QR code and manage your profile
+### 👮 Guard/User Management
+- User role management (Admin, Guard, Supervisor)
+- Track guard activities
+- Login history
+- User status management
 
-## 📚 Documentation
+### 📱 Scanner Device Monitoring
+- Real-time device status (Online/Offline)
+- Last activity tracking
+- Device location information
+- Visual status indicators
 
-For complete system documentation, please refer to:
-- **[SYSTEM_DOCUMENTATION.md](SYSTEM_DOCUMENTATION.md)** - Complete system documentation
-- **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Quick reference guide
+### 📝 Audit Log
+- Track all system actions
+- User activity monitoring
+- Change history tracking
+- Security and compliance
 
-## 🛠️ Technology Stack
+### 🎨 Design Features
+- Modern, premium dark theme
+- Responsive design (mobile, tablet, desktop)
+- Smooth animations and transitions
+- Color-coded status indicators
+- Interactive hover effects
+- Professional typography (Inter & Outfit fonts)
+- Glassmorphism effects
+- Real-time data updates
 
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Backend:** PHP 7.4+
-- **Database:** MySQL 5.7+
-- **Server:** Apache (XAMPP)
-- **QR Code:** phpqrcode, jsQR
-
-## 📦 Installation
+## 🚀 Setup Instructions
 
 ### Prerequisites
-- XAMPP (or similar LAMP/WAMP stack)
-- PHP 7.4 or higher
-- MySQL 5.7 or higher
-- Modern web browser with camera support
+- XAMPP (Apache + MySQL + PHP)
+- Web browser (Chrome, Firefox, Edge, etc.)
 
-### Setup Steps
-1. Clone/copy project to `C:\xampp\htdocs\CiudadDeSanJose`
-2. Import database schema from `database/schema.sql`
-3. Configure database connection in `config/database.php`
-4. Set up QR code directory permissions
-5. Access the system at `http://localhost/CiudadDeSanJose`
+### Installation Steps
 
-## 👥 User Roles
+1. **Start XAMPP**
+   - Open XAMPP Control Panel
+   - Start Apache and MySQL services
 
-| Role | Description | Key Permissions |
-|------|-------------|-----------------|
-| **Administrator** | Full system access | All CRUD operations, system configuration |
-| **Security Personnel** | Gate operations | QR scanning, access logging |
-| **Homeowner** | Self-service portal | Profile management, QR code access |
+2. **Create Database**
+   - Open phpMyAdmin (http://localhost/phpmyadmin)
+   - Click "Import" tab
+   - Select the file: `database/schema.sql`
+   - Click "Go" to execute
 
-## 🔐 Security Features
+   OR use MySQL command line:
+   ```bash
+   mysql -u root -p < database/schema.sql
+   ```
 
-- SHA-256 encrypted QR codes
-- Password hashing with bcrypt
-- SQL injection prevention
-- XSS protection
-- CSRF token validation
-- Session management
-- Role-based access control
+3. **Configure Database Connection**
+   - File is already created at: `config/database.php`
+   - Default settings:
+     - Host: localhost
+     - Database: ciudad_de_san_jose
+     - Username: root
+     - Password: (empty)
+   - Modify if your settings are different
 
-## 📊 System Architecture
+4. **Access the System**
+   - Login page: http://localhost/CiudadDeSanJose/auth/login.php
+   - Default admin credentials:
+     - Username: `admin`
+     - Password: `admin123`
+
+5. **Test the Dashboard**
+   - After login, you'll be redirected to the dashboard
+   - Sample data is pre-loaded for testing
+   - All features are functional with sample data
+
+## 📁 File Structure
 
 ```
-┌─────────────┐
-│   Browser   │ ← Homeowners, Security, Admin
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│  Apache     │ ← Web Server (XAMPP)
-│  + PHP      │
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│   MySQL     │ ← Database
-└─────────────┘
+CiudadDeSanJose/
+├── admin/
+│   ├── dashboard.php          # Main dashboard page
+│   ├── dashboard.css          # Dashboard styles
+│   ├── dashboard.js           # Dashboard JavaScript
+│   └── api/
+│       ├── get_activity_log.php      # Activity log API
+│       ├── get_homeowner_status.php  # Homeowner status API
+│       ├── get_stats.php             # Statistics API
+│       └── get_chart_data.php        # Chart data API
+├── auth/
+│   └── login.php              # Login page
+├── config/
+│   └── database.php           # Database configuration
+└── database/
+    └── schema.sql             # Database schema and sample data
 ```
 
-## 📱 QR Code System
+## 🔄 How the System Works
 
-### QR Code Contents
-Each QR code contains encrypted JSON data:
+### Automatic Status Toggling
+1. When a homeowner scans their QR code at entry/exit
+2. System logs the action in `entry_logs` table
+3. Database trigger automatically updates homeowner's `current_status`
+4. Status toggles between 'IN' and 'OUT'
+5. `last_scan_time` is updated with current timestamp
+6. Dashboard reflects changes in real-time
+
+### Data Flow
+```
+QR Scan → Entry Log Created → Trigger Fires → Status Updated → Dashboard Refreshes
+```
+
+## 🛠️ API Endpoints
+
+### GET /admin/api/get_activity_log.php
+Returns recent entry/exit activities
+```json
+[
+  {
+    "homeowner_name": "Juan Dela Cruz",
+    "homeowner_id": "HO-001",
+    "action": "IN",
+    "date": "2026-01-30",
+    "time": "10:30:00",
+    "device": "Main Gate Scanner"
+  }
+]
+```
+
+### GET /admin/api/get_homeowner_status.php
+Returns all homeowners with current status
+```json
+[
+  {
+    "id": "1",
+    "name": "Juan Dela Cruz",
+    "homeowner_id": "HO-001",
+    "current_status": "IN",
+    "last_scan_time": "2026-01-30 10:30:00"
+  }
+]
+```
+
+### GET /admin/api/get_stats.php
+Returns dashboard statistics
 ```json
 {
-  "homeowner_id": "unique_id",
-  "name": "Homeowner Name",
-  "lot_number": "Block X, Lot Y",
-  "generated_date": "2026-01-29",
-  "expiry_date": "2027-01-29",
-  "checksum": "encrypted_hash"
+  "total_homeowners": 150,
+  "currently_inside": 98,
+  "currently_outside": 52,
+  "total_entries_today": 87,
+  "total_exits_today": 76,
+  "total_scans_today": 163
 }
 ```
 
-### QR Code Security
-- Unique identifier per homeowner
-- SHA-256 encryption
-- Expiration dates
-- Server-side validation
-- Rate limiting
+### GET /admin/api/get_chart_data.php?period=30
+Returns chart data for specified period
+```json
+{
+  "labels": ["Jan 01", "Jan 02", "Jan 03"],
+  "entries": [45, 52, 48],
+  "exits": [42, 49, 51]
+}
+```
 
-## 🚀 Future Enhancements
+## 🔐 Security Features
+- Session-based authentication
+- Password hashing (bcrypt)
+- SQL injection prevention (PDO prepared statements)
+- XSS protection (htmlspecialchars)
+- Role-based access control
+- Audit logging
 
-- [ ] Mobile application (iOS/Android)
-- [ ] Biometric authentication
-- [ ] License plate recognition
-- [ ] Smart gate integration
-- [ ] Advanced analytics dashboard
-- [ ] Cloud deployment
-- [ ] Multi-language support
+## 📱 Responsive Design
+- Mobile-first approach
+- Breakpoints: 576px, 768px, 992px, 1200px
+- Touch-friendly interface
+- Optimized for all screen sizes
+
+## 🎯 Future Enhancements
+- Real-time WebSocket updates
+- Push notifications
+- Mobile app integration
+- Facial recognition
+- Visitor management
+- Vehicle tracking
+- SMS/Email alerts
+- Advanced analytics
+- Multi-language support
+
+## 🐛 Troubleshooting
+
+### Database Connection Error
+- Verify XAMPP MySQL is running
+- Check database credentials in `config/database.php`
+- Ensure database `ciudad_de_san_jose` exists
+
+### Tables Not Found
+- Import `database/schema.sql` via phpMyAdmin
+- Check if all tables are created
+
+### No Data Showing
+- Sample data is included in schema.sql
+- Check if data was imported successfully
+- API endpoints have fallback sample data
+
+### Permission Denied
+- Ensure proper file permissions
+- Check XAMPP installation directory permissions
 
 ## 📞 Support
-
-- **Technical Support:** support@ciudaddesanjose.com
-- **Emergency Hotline:** [Phone Number]
-- **Documentation:** See SYSTEM_DOCUMENTATION.md
+For issues or questions, please refer to the documentation or contact the system administrator.
 
 ## 📄 License
-
-Proprietary - Ciudad De San Jose Subdivision
-
-## 👨‍💻 Development Team
-
-**Ciudad De San Jose Development Team**  
-Version 1.0 - January 2026
-
----
-
-For detailed information about system features, database schema, workflows, and technical specifications, please refer to the [complete documentation](SYSTEM_DOCUMENTATION.md).
+Proprietary - Ciudad de San Jose Subdivision Management System
