@@ -56,89 +56,235 @@ try {
     <!-- DataTables Bootstrap 5 -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* Minimal custom styles - mostly Bootstrap utilities */
+        :root {
+            --primary: #4361ee;
+            --primary-light: rgba(67, 97, 238, 0.1);
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #ef233c;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.7);
+            --sidebar-width: 260px;
+            --top-navbar-height: 70px;
+            --border-radius: 12px;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-bs-theme="dark"] {
+            --glass: rgba(33, 37, 41, 0.7);
+            --light: #121417;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
             height: 100vh;
-            width: 250px;
-            background: linear-gradient(180deg, #212529 0%, #000 100%);
-            z-index: 1000;
-            overflow-y: auto;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1a1c1e 0%, #000 100%);
+            z-index: 1050;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .main-content {
-            margin-left: 250px;
+            margin-left: var(--sidebar-width);
             min-height: 100vh;
+            padding-top: var(--top-navbar-height);
+            transition: all 0.3s ease;
         }
-        
-        @media (max-width: 768px) {
+
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            height: var(--top-navbar-height);
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link {
+            padding: 12px 20px;
+            color: rgba(255, 255, 255, 0.7) !important;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            margin: 4px 15px;
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .nav-link:hover {
+            color: #fff !important;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            color: #fff !important;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%) !important;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .card {
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            background: #ffffff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .stat-icon {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .stat-icon {
+            transform: scale(1.1);
+        }
+
+        .display-4 {
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--dark) 0%, #444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .fab {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
+            border: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1100;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.6);
+        }
+
+        @media (max-width: 992px) {
             .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
+                left: calc(var(--sidebar-width) * -1);
             }
             .sidebar.show {
-                transform: translateX(0);
+                left: 0;
             }
             .main-content {
                 margin-left: 0;
             }
+            .top-navbar {
+                left: 0;
+            }
         }
-        
-        .nav-link.active {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
     </style>
 </head>
 <body class="bg-light">
     <!-- Sidebar -->
-    <div class="sidebar text-white" id="sidebar">
-        <div class="p-3 border-bottom border-secondary">
-            <h5 class="mb-0">
-                <i class="bi bi-qr-code-scan text-primary"></i>
-                Entry Monitor
-            </h5>
+    <div class="sidebar" id="sidebar">
+        <div class="p-4 mb-3">
+            <h4 class="text-white fw-bold mb-0">
+                <i class="bi bi-qr-code-scan text-primary me-2"></i>
+                San Jose
+            </h4>
         </div>
         
-        <nav class="nav flex-column p-2">
-            <a href="dashboard.php" class="nav-link text-white active rounded mb-1">
-                <i class="bi bi-grid-fill me-2"></i> Dashboard
+        <nav class="nav flex-column mt-2">
+            <a href="dashboard.php" class="nav-link active">
+                <i class="bi bi-grid-fill"></i> Dashboard
             </a>
-            <a href="homeowners.php" class="nav-link text-white-50 rounded mb-1">
-                <i class="bi bi-people-fill me-2"></i> Homeowners
+            <a href="homeowners.php" class="nav-link">
+                <i class="bi bi-people-fill"></i> Homeowners
             </a>
-            <a href="activity_logs.php" class="nav-link text-white-50 rounded mb-1">
-                <i class="bi bi-clock-history me-2"></i> Activity Log
+            <a href="activity_logs.php" class="nav-link">
+                <i class="bi bi-clock-history"></i> Activity Log
             </a>
-            <a href="#" class="nav-link text-white-50 rounded mb-1">
-                <i class="bi bi-file-earmark-bar-graph me-2"></i> Reports
+            <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">Management</div>
+            <a href="#" class="nav-link">
+                <i class="bi bi-file-earmark-bar-graph"></i> Reports
             </a>
-            <a href="#" class="nav-link text-white-50 rounded mb-1">
-                <i class="bi bi-shield-check me-2"></i> Guards
+            <a href="#" class="nav-link">
+                <i class="bi bi-shield-check"></i> Guards
             </a>
-            <a href="#" class="nav-link text-white-50 rounded mb-1">
-                <i class="bi bi-phone-fill me-2"></i> Scanners
+            <a href="#" class="nav-link">
+                <i class="bi bi-phone-fill"></i> Scanners
             </a>
-            <a href="#" class="nav-link text-white-50 rounded mb-1">
-                <i class="bi bi-journal-text me-2"></i> Audit Log
-            </a>
-            <a href="#" class="nav-link text-white-50 rounded mb-1">
-                <i class="bi bi-gear-fill me-2"></i> Settings
+            <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">System</div>
+            <a href="#" class="nav-link">
+                <i class="bi bi-gear-fill"></i> Settings
             </a>
         </nav>
         
-        <div class="mt-auto p-3 border-top border-secondary">
-            <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-person-circle fs-2 text-primary me-2"></i>
-                <div class="small">
-                    <div class="fw-bold"><?php echo htmlspecialchars($user['name']); ?></div>
-                    <div class="text-white-50"><?php echo htmlspecialchars($user['role']); ?></div>
+        <div class="mt-auto p-4">
+            <div class="d-flex align-items-center mb-4 p-3 rounded-3 bg-white bg-opacity-10">
+                <div class="flex-shrink-0 me-3">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 40px; height: 40px;">
+                        <?php echo substr($user['name'], 0, 1); ?>
+                    </div>
+                </div>
+                <div class="flex-grow-1 overflow-hidden">
+                    <div class="fw-bold text-white text-truncate"><?php echo htmlspecialchars($user['name']); ?></div>
+                    <div class="text-white-50 small text-truncate"><?php echo htmlspecialchars($user['role']); ?></div>
                 </div>
             </div>
-            <a href="../auth/login.php" class="btn btn-outline-danger btn-sm w-100">
-                <i class="bi bi-box-arrow-right me-1"></i> Logout
+            <a href="../auth/login.php" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-box-arrow-right"></i> Logout
             </a>
         </div>
     </div>
@@ -146,225 +292,187 @@ try {
     <!-- Main Content -->
     <div class="main-content">
         <!-- Top Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
-            <div class="container-fluid">
-                <button class="btn btn-link d-md-none" id="sidebarToggle">
-                    <i class="bi bi-list fs-4"></i>
+        <nav class="top-navbar d-flex align-items-center px-4">
+            <button class="btn btn-link d-lg-none me-3" id="sidebarToggle">
+                <i class="bi bi-list fs-3 text-dark"></i>
+            </button>
+            
+            <div class="d-none d-md-block">
+                <h5 class="mb-0 fw-bold">Dashboard Overview</h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 small">
+                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Core</a></li>
+                        <li class="breadcrumb-item active fw-medium">Analytics</li>
+                    </ol>
+                </nav>
+            </div>
+            
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="input-group d-none d-lg-flex" style="width: 300px;">
+                    <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control bg-transparent border-start-0 ps-0" placeholder="Search data...">
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-light rounded-pill position-relative px-3" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell text-primary"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3" style="width: 300px;">
+                        <li class="px-3 py-2 border-bottom fw-bold small">Notifications</li>
+                        <li><a class="dropdown-item py-3 border-bottom" href="#">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-exclamation-circle text-warning me-3"></i>
+                                <div>
+                                    <div class="small fw-bold">Guard House Scanner Offline</div>
+                                    <div class="text-muted smaller">1 hour ago</div>
+                                </div>
+                            </div>
+                        </a></li>
+                        <li><a class="dropdown-item text-center small text-primary py-2" href="#">View all alerts</a></li>
+                    </ul>
+                </div>
+                
+                <button class="btn btn-light rounded-pill px-3" id="themeToggle">
+                    <i class="bi bi-moon-stars"></i>
                 </button>
-                
-                <div>
-                    <h5 class="mb-0">Dashboard</h5>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb mb-0 small">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ol>
-                    </nav>
-                </div>
-                
-                <div class="d-flex align-items-center gap-2 ms-auto">
-                    <div class="input-group" style="width: 250px;">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </div>
-                    <button class="btn btn-light position-relative">
-                        <i class="bi bi-bell"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-                    </button>
-                    <button class="btn btn-light" id="themeToggle">
-                        <i class="bi bi-moon"></i>
-                    </button>
-                </div>
             </div>
         </nav>
 
-        <!-- Dashboard Content -->
-        <div class="container-fluid p-4">
-            <!-- Stats Cards Row 1 -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
-                                        <i class="bi bi-people fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold"><?php echo $totalHomeowners; ?></h3>
-                                    <p class="text-muted mb-0 small">Total Homeowners</p>
-                                    <small class="text-muted"><i class="bi bi-person-check"></i> Active accounts</small>
-                                </div>
+            <!-- Essential Summary - Today's Activity -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card border-0 hover-lift h-100 p-2">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-success bg-opacity-10">
+                                <i class="bi bi-arrow-down-square-fill text-success" style="font-size: 2rem;"></i>
+                            </div>
+                            <h1 class="display-4 mb-1"><?php echo $totalEntriesToday; ?></h1>
+                            <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Entries Today</h6>
+                            <div class="badge rounded-pill bg-success bg-opacity-10 text-success p-2 px-3">
+                                <i class="bi bi-graph-up me-1"></i> +5% from yesterday
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-success bg-opacity-10 text-success rounded p-3">
-                                        <i class="bi bi-house-check-fill fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold"><?php echo $currentlyInside; ?></h3>
-                                    <p class="text-muted mb-0 small">Currently Inside</p>
-                                    <small class="text-success"><i class="bi bi-arrow-down-circle"></i> In subdivision</small>
-                                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 hover-lift h-100 p-2">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-danger bg-opacity-10">
+                                <i class="bi bi-arrow-up-square-fill text-danger" style="font-size: 2rem;"></i>
+                            </div>
+                            <h1 class="display-4 mb-1"><?php echo $totalExitsToday; ?></h1>
+                            <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Exits Today</h6>
+                            <div class="badge rounded-pill bg-danger bg-opacity-10 text-danger p-2 px-3">
+                                <i class="bi bi-graph-down me-1"></i> -2% from yesterday
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-warning bg-opacity-10 text-warning rounded p-3">
-                                        <i class="bi bi-house-dash-fill fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold"><?php echo $currentlyOutside; ?></h3>
-                                    <p class="text-muted mb-0 small">Currently Outside</p>
-                                    <small class="text-muted"><i class="bi bi-arrow-up-circle"></i> Away from home</small>
-                                </div>
+
+                <div class="col-md-4">
+                    <div class="card border-0 hover-lift h-100 p-2">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-primary bg-opacity-10">
+                                <i class="bi bi-people-fill text-primary" style="font-size: 2rem;"></i>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-info bg-opacity-10 text-info rounded p-3">
-                                        <i class="bi bi-arrow-down-square-fill fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold"><?php echo $totalEntriesToday; ?></h3>
-                                    <p class="text-muted mb-0 small">Entries Today</p>
-                                    <small class="text-info"><i class="bi bi-calendar-check"></i> <?php echo date('M d, Y'); ?></small>
-                                </div>
+                            <h1 class="display-4 mb-1"><?php echo $totalHomeowners; ?></h1>
+                            <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Total Homeowners</h6>
+                            <div class="badge rounded-pill bg-primary bg-opacity-10 text-primary p-2 px-3">
+                                <i class="bi bi-check-circle-fill me-1"></i> All active
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Cards Row 2 -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-danger bg-opacity-10 text-danger rounded p-3">
-                                        <i class="bi bi-arrow-up-square-fill fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold"><?php echo $totalExitsToday; ?></h3>
-                                    <p class="text-muted mb-0 small">Exits Today</p>
-                                    <small class="text-muted"><i class="bi bi-calendar-check"></i> <?php echo date('M d, Y'); ?></small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-primary bg-opacity-10 text-primary rounded p-3">
-                                        <i class="bi bi-phone-fill fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold">2</h3>
-                                    <p class="text-muted mb-0 small">Active Scanners</p>
-                                    <small class="text-success"><i class="bi bi-check-circle"></i> All online</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-success bg-opacity-10 text-success rounded p-3">
-                                        <i class="bi bi-shield-check fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold">4</h3>
-                                    <p class="text-muted mb-0 small">Active Guards</p>
-                                    <small class="text-success"><i class="bi bi-person-badge"></i> On duty</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-6 col-xl-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="bg-info bg-opacity-10 text-info rounded p-3">
-                                        <i class="bi bi-activity fs-2"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h3 class="mb-0 fw-bold"><?php echo $totalEntriesToday + $totalExitsToday; ?></h3>
-                                    <p class="text-muted mb-0 small">Total Scans Today</p>
-                                    <small class="text-info"><i class="bi bi-graph-up"></i> All activities</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Real-time Activity Log -->
-            <div class="row mb-4">
+            <!-- Current Status Overview -->
+            <div class="row mb-5">
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="bi bi-clock-history text-primary"></i>
-                                Real-Time Activity Log
-                            </h5>
-                            <button class="btn btn-sm btn-outline-primary" id="refreshActivityLog">
-                                <i class="bi bi-arrow-clockwise"></i> Refresh
-                            </button>
+                    <div class="card border-0 p-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Live Occupancy Status</h5>
+                                <span class="badge bg-primary bg-opacity-10 text-primary p-2 px-3">Real-time update</span>
+                            </div>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-4 rounded-4 bg-light border border-white">
+                                        <div class="flex-shrink-0 me-4">
+                                            <div class="stat-icon bg-success shadow-sm mb-0">
+                                                <i class="bi bi-house-check text-white fs-3"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h2 class="mb-0 fw-bold"><?php echo $currentlyInside; ?></h2>
+                                            <p class="mb-0 text-muted fw-medium">Homeowners Inside</p>
+                                        </div>
+                                        <div class="ms-auto text-end">
+                                            <div class="text-success small fw-bold"><?php echo round(($currentlyInside/$totalHomeowners)*100); ?>%</div>
+                                            <div class="progress mt-1" style="width: 60px; height: 4px;">
+                                                <div class="progress-bar bg-success" style="width: <?php echo ($currentlyInside/$totalHomeowners)*100; ?>%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center p-4 rounded-4 bg-light border border-white">
+                                        <div class="flex-shrink-0 me-4">
+                                            <div class="stat-icon bg-warning shadow-sm mb-0">
+                                                <i class="bi bi-house-dash text-white fs-3"></i>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <h2 class="mb-0 fw-bold"><?php echo $currentlyOutside; ?></h2>
+                                            <p class="mb-0 text-muted fw-medium">Homeowners Outside</p>
+                                        </div>
+                                        <div class="ms-auto text-end">
+                                            <div class="text-warning small fw-bold"><?php echo round(($currentlyOutside/$totalHomeowners)*100); ?>%</div>
+                                            <div class="progress mt-1" style="width: 60px; height: 4px;">
+                                                <div class="progress-bar bg-warning" style="width: <?php echo ($currentlyOutside/$totalHomeowners)*100; ?>%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Table Refined -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card border-0">
+                        <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="fw-bold mb-1">Recent Access Logs</h5>
+                                <p class="text-muted small mb-0">Last entries and exits tracked by gate scanners</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-light rounded-pill btn-sm px-3" id="refreshActivityLog">
+                                    <i class="bi bi-arrow-clockwise me-1"></i> Reload
+                                </button>
+                                <a href="activity_logs.php" class="btn btn-primary rounded-pill btn-sm px-4">
+                                    Full Log
+                                </a>
+                            </div>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="activityLogTable">
-                                    <thead class="table-light">
+                                <table class="table table-hover align-middle mb-0" id="activityLogTable">
+                                    <thead class="bg-light">
                                         <tr>
-                                            <th>Homeowner Name</th>
-                                            <th>Homeowner ID</th>
-                                            <th>Action</th>
-                                            <th>Date</th>
-                                            <th>Time</th>
-                                            <th>Scanner Device</th>
+                                            <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">Homeowner</th>
+                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0">ID Number</th>
+                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0">Movement</th>
+                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0">Date</th>
+                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0">Time</th>
+                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-center">Scanner</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody class="border-0">
                                         <!-- Populated by DataTables -->
                                     </tbody>
                                 </table>
@@ -374,140 +482,71 @@ try {
                 </div>
             </div>
 
-            <!-- Homeowner Status List -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="bi bi-people text-primary"></i>
-                                Homeowner Status
-                            </h5>
-                            <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
-                                <button type="button" class="btn btn-outline-success" data-filter="in">Inside</button>
-                                <button type="button" class="btn btn-outline-danger" data-filter="out">Outside</button>
+            <!-- Quick Links with better icons -->
+            <div class="row mb-5">
+                <div class="col-12 mb-4">
+                    <h5 class="fw-bold">Shortcuts & Tools</h5>
+                </div>
+                <div class="col-6 col-lg-3 mb-4">
+                    <a href="homeowners.php" class="text-decoration-none">
+                        <div class="card border-0 text-center py-4 hover-lift">
+                            <div class="card-body">
+                                <div class="bg-primary bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
+                                    <i class="bi bi-person-gear text-primary fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1">User Management</h6>
+                                <p class="small text-muted mb-0">Add/Edit Homeowners</p>
                             </div>
                         </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0" id="homeownerStatusTable">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Homeowner ID</th>
-                                            <th>Current Status</th>
-                                            <th>Last Scan Time</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Populated by DataTables -->
-                                    </tbody>
-                                </table>
+                    </a>
+                </div>
+                <div class="col-6 col-lg-3 mb-4">
+                    <a href="activity_logs.php" class="text-decoration-none">
+                        <div class="card border-0 text-center py-4 hover-lift">
+                            <div class="card-body">
+                                <div class="bg-success bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
+                                    <i class="bi bi-journal-text text-success fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1">Historic Logs</h6>
+                                <p class="small text-muted mb-0">Browse all records</p>
                             </div>
                         </div>
-                    </div>
+                    </a>
+                </div>
+                <div class="col-6 col-lg-3 mb-4">
+                    <a href="#" class="text-decoration-none">
+                        <div class="card border-0 text-center py-4 hover-lift">
+                            <div class="card-body">
+                                <div class="bg-info bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
+                                    <i class="bi bi-bar-chart-steps text-info fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1">Data Reports</h6>
+                                <p class="small text-muted mb-0">Export PDF/Excel</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-6 col-lg-3 mb-4">
+                    <a href="#" class="text-decoration-none">
+                        <div class="card border-0 text-center py-4 hover-lift">
+                            <div class="card-body">
+                                <div class="bg-dark bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
+                                    <i class="bi bi-sliders text-dark fs-3"></i>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-1">Preferences</h6>
+                                <p class="small text-muted mb-0">System configuration</p>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Charts -->
-            <div class="row mb-4">
-                <div class="col-lg-8 mb-3 mb-lg-0">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">
-                                <i class="bi bi-graph-up text-primary"></i>
-                                Entry & Exit Analytics
-                            </h5>
-                            <select class="form-select form-select-sm w-auto" id="chartPeriod">
-                                <option value="7">Last 7 Days</option>
-                                <option value="30" selected>Last 30 Days</option>
-                                <option value="90">Last 90 Days</option>
-                            </select>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="entryExitChart" height="80"></canvas>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-pie-chart-fill text-primary"></i>
-                                Status Distribution
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="statusChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Scanner Devices -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-header bg-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-phone text-primary"></i>
-                                Scanner Device Status
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="alert alert-success mb-0">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-circle-fill text-success me-2"></i>
-                                            <div>
-                                                <strong>Main Gate Scanner</strong>
-                                                <p class="mb-0 small">Last scan: 2 minutes ago</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="alert alert-success mb-0">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-circle-fill text-success me-2"></i>
-                                            <div>
-                                                <strong>Back Gate Scanner</strong>
-                                                <p class="mb-0 small">Last scan: 5 minutes ago</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="alert alert-danger mb-0">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-circle-fill text-danger me-2"></i>
-                                            <div>
-                                                <strong>Guard House Scanner</strong>
-                                                <p class="mb-0 small">Offline since 1 hour ago</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-3">
-                                    <div class="alert alert-success mb-0">
-                                        <div class="d-flex align-items-center">
-                                            <i class="bi bi-circle-fill text-success me-2"></i>
-                                            <div>
-                                                <strong>Mobile Scanner 1</strong>
-                                                <p class="mb-0 small">Last scan: 10 minutes ago</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Floating Action Button -->
+    <button class="fab" data-bs-toggle="modal" data-bs-target="#addHomeownerModal" title="Quick Add Homeowner">
+        <i class="bi bi-plus-lg"></i>
+    </button>
         </div>
     </div>
 
@@ -519,48 +558,50 @@ try {
     <!-- Add Homeowner Modal -->
     <div class="modal fade" id="addHomeownerModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-person-plus"></i>
-                        Add New Homeowner
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-person-plus text-primary me-2"></i>
+                        Register Homeowner
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body p-4">
                     <form id="addHomeownerForm">
                         <div class="mb-3">
-                            <label class="form-label">Full Name</label>
-                            <input type="text" class="form-control" required>
+                            <label class="form-label small fw-bold text-muted">Full Name</label>
+                            <input type="text" class="form-control rounded-3 p-2 px-3" placeholder="John Doe" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold text-muted">Homeowner ID</label>
+                                <input type="text" class="form-control rounded-3 p-2 px-3" placeholder="CSJ-2024-001" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold text-muted">Phone Number</label>
+                                <input type="tel" class="form-control rounded-3 p-2 px-3" placeholder="+63..." required>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Homeowner ID</label>
-                            <input type="text" class="form-control" required>
+                            <label class="form-label small fw-bold text-muted">Email Address</label>
+                            <input type="email" class="form-control rounded-3 p-2 px-3" placeholder="john@example.com" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" required>
+                            <label class="form-label small fw-bold text-muted">Home Address</label>
+                            <textarea class="form-control rounded-3 p-2 px-3" rows="2" placeholder="Block & Lot Details" required></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Address</label>
-                            <textarea class="form-control" rows="2" required></textarea>
-                        </div>
-                        <div class="form-check">
+                        <div class="form-check form-switch mt-4">
                             <input class="form-check-input" type="checkbox" id="generateQR" checked>
-                            <label class="form-check-label" for="generateQR">
-                                Generate QR Code automatically
+                            <label class="form-check-label small fw-bold" for="generateQR">
+                                Automatically generate secure QR access key
                             </label>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Save Homeowner
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4">
+                        Confirm & Save
                     </button>
                 </div>
             </div>
@@ -586,16 +627,24 @@ try {
             document.getElementById('sidebar').classList.toggle('show');
         });
         
-        // Theme toggle
+        // Theme toggle logic refined
         document.getElementById('themeToggle').addEventListener('click', function() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-bs-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             html.setAttribute('data-bs-theme', newTheme);
-            this.querySelector('i').className = newTheme === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
+            
+            const icon = this.querySelector('i');
+            if (newTheme === 'dark') {
+                icon.className = 'bi bi-sun-fill';
+                this.classList.replace('btn-light', 'btn-dark');
+            } else {
+                icon.className = 'bi bi-moon-stars';
+                this.classList.replace('btn-dark', 'btn-light');
+            }
         });
         
-        // Initialize DataTables
+        // Initialize DataTables with custom row styling
         $(document).ready(function() {
             const activityTable = $('#activityLogTable').DataTable({
                 ajax: {
@@ -603,143 +652,54 @@ try {
                     dataSrc: ''
                 },
                 columns: [
-                    { data: 'homeowner_name' },
+                    { 
+                        data: 'homeowner_name',
+                        render: function(data) {
+                            return `<div class="d-flex align-items-center ps-2">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px;">
+                                    <i class="bi bi-person"></i>
+                                </div>
+                                <span class="fw-bold text-dark">${data}</span>
+                            </div>`;
+                        }
+                    },
                     { data: 'homeowner_id' },
                     { 
                         data: 'action',
                         render: function(data) {
-                            return data === 'IN' 
-                                ? '<span class="badge bg-success"><i class="bi bi-arrow-down-circle"></i> IN</span>'
-                                : '<span class="badge bg-danger"><i class="bi bi-arrow-up-circle"></i> OUT</span>';
+                            const badgeClass = data === 'IN' ? 'bg-success' : 'bg-danger';
+                            const icon = data === 'IN' ? 'bi-box-arrow-in-right' : 'bi-box-arrow-right';
+                            return `<span class="badge ${badgeClass} bg-opacity-10 text-${data === 'IN' ? 'success' : 'danger'} rounded-pill p-2 px-3 fw-bold small">
+                                <i class="bi ${icon} me-1"></i> ${data}
+                            </span>`;
                         }
                     },
                     { data: 'date' },
                     { data: 'time' },
-                    { data: 'device' }
-                ],
-                order: [[3, 'desc'], [4, 'desc']],
-                pageLength: 10
-            });
-            
-            const statusTable = $('#homeownerStatusTable').DataTable({
-                ajax: {
-                    url: 'api/get_homeowner_status.php',
-                    dataSrc: ''
-                },
-                columns: [
-                    { data: 'name' },
-                    { data: 'homeowner_id' },
                     { 
-                        data: 'current_status',
+                        data: 'device',
                         render: function(data) {
-                            return data === 'IN'
-                                ? '<span class="badge bg-success"><i class="bi bi-house-check"></i> INSIDE</span>'
-                                : '<span class="badge bg-danger"><i class="bi bi-house-dash"></i> OUTSIDE</span>';
-                        }
-                    },
-                    { data: 'last_scan_time' },
-                    {
-                        data: null,
-                        render: function(data) {
-                            return `
-                                <button class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-warning">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                            `;
+                            return `<div class="text-center small text-muted"><i class="bi bi-phone me-1"></i> ${data}</div>`;
                         }
                     }
                 ],
-                pageLength: 10
+                order: [[3, 'desc'], [4, 'desc']],
+                pageLength: 8,
+                lengthChange: false,
+                info: false,
+                dom: 'tp' // Simplified DataTables UI
             });
             
             // Auto-refresh every 30 seconds
             setInterval(function() {
                 activityTable.ajax.reload(null, false);
-                statusTable.ajax.reload(null, false);
             }, 30000);
             
             // Manual refresh
             $('#refreshActivityLog').click(function() {
                 activityTable.ajax.reload();
             });
-            
-            // Filter buttons
-            $('[data-filter]').click(function() {
-                const filter = $(this).data('filter');
-                if (filter === 'all') {
-                    statusTable.search('').draw();
-                } else if (filter === 'in') {
-                    statusTable.search('INSIDE').draw();
-                } else {
-                    statusTable.search('OUTSIDE').draw();
-                }
-                $('[data-filter]').removeClass('active');
-                $(this).addClass('active');
-            });
         });
-        
-        // Charts
-        const ctx1 = document.getElementById('entryExitChart').getContext('2d');
-        const entryExitChart = new Chart(ctx1, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Entries',
-                    data: [],
-                    borderColor: '#198754',
-                    backgroundColor: 'rgba(25, 135, 84, 0.1)',
-                    tension: 0.4
-                }, {
-                    label: 'Exits',
-                    data: [],
-                    borderColor: '#dc3545',
-                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true
-            }
-        });
-        
-        const ctx2 = document.getElementById('statusChart').getContext('2d');
-        new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: ['Inside', 'Outside'],
-                datasets: [{
-                    data: [<?php echo $currentlyInside; ?>, <?php echo $currentlyOutside; ?>],
-                    backgroundColor: ['#198754', '#dc3545']
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true
-            }
-        });
-        
-        // Load chart data
-        function loadChartData(period) {
-            fetch(`api/get_chart_data.php?period=${period}`)
-                .then(r => r.json())
-                .then(data => {
-                    entryExitChart.data.labels = data.labels;
-                    entryExitChart.data.datasets[0].data = data.entries;
-                    entryExitChart.data.datasets[1].data = data.exits;
-                    entryExitChart.update();
-                });
-        }
-        
-        document.getElementById('chartPeriod').addEventListener('change', function() {
-            loadChartData(this.value);
-        });
-        
-        loadChartData(30);
-    </script>
+        </script>
 </body>
 </html>
