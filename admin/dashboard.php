@@ -233,6 +233,31 @@ try {
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+
+        .glass-effect {
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        }
+
+        [data-bs-theme="dark"] .glass-effect {
+            background: rgba(33, 37, 41, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+            display: inline-block;
+        }
+
+        .ls-1 { letter-spacing: 1px; }
     </style>
 </head>
 <body class="bg-light">
@@ -288,6 +313,19 @@ try {
                 </button>
             </div>
         </nav>
+        <div class="container-fluid p-4 pt-0">
+            <!-- Synced Minimal Real-time Clock Section -->
+            <div class="row g-0 mb-5 mt-3 py-4 border-bottom align-items-center">
+                <div class="col-md-4">
+                    <h5 class="mb-0 text-muted fw-bold" id="dateDisplay">Loading date...</h5>
+                </div>
+                <div class="col-md-4 text-md-center">
+                    <h3 class="mb-0 fw-black text-dark text-uppercase" style="letter-spacing: 4px; font-weight: 800;" id="dayDisplay">---</h3>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <h4 class="mb-0 fw-bold font-monospace text-primary ls-1" id="timeDisplay">00:00:00 --</h4>
+                </div>
+            </div>
 
             <!-- Essential Summary - Today's Activity -->
             <div class="row g-4 mb-5">
@@ -593,6 +631,74 @@ try {
                 this.classList.replace('btn-dark', 'btn-light');
             }
         });
+
+        // REAL-TIME SYNCED CLOCK SYSTEM
+        let timeOffset = 0;
+
+        async function syncWithNetworkTime() {
+            const syncStatus = document.getElementById('syncStatus');
+            const timeDisplay = document.getElementById('timeDisplay');
+            
+            try {
+                // Fetching from a reliable Time API
+                const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Manila');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                
+                const networkTime = new Date(data.datetime).getTime();
+                const localTime = Date.now();
+                
+                // Calculate offset between local system and network time
+                timeOffset = networkTime - localTime;
+                
+                if (syncStatus) {
+                    syncStatus.innerHTML = '<i class="bi bi-dot text-success fs-5"></i> Synced';
+                    syncStatus.classList.add('bg-success', 'bg-opacity-10', 'text-success');
+                }
+                updateRealTimeClock();
+            } catch (error) {
+                console.warn('Network time sync failed, using calibrated system time.', error);
+                if (syncStatus) {
+                    syncStatus.innerHTML = '<i class="bi bi-dot text-warning fs-5"></i> Local';
+                }
+            }
+        }
+
+        function updateRealTimeClock() {
+            const now = new Date(Date.now() + timeOffset);
+            
+            // 1. Date Section (e.g., January 31, 2026)
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = now.toLocaleDateString('en-US', dateOptions);
+            
+            // 2. Day Section (e.g., Saturday)
+            const dayOptions = { weekday: 'long' };
+            const dayStr = now.toLocaleDateString('en-US', dayOptions);
+            
+            // 3. Time Section (e.g., 11:45:00 AM)
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            const timeString = `${String(hours).padStart(2, '0')}:${minutes}:${seconds} ${ampm}`;
+            
+            // Update DOM elements
+            const dateEl = document.getElementById('dateDisplay');
+            const dayEl = document.getElementById('dayDisplay');
+            const timeEl = document.getElementById('timeDisplay');
+
+            if (dateEl) dateEl.textContent = dateStr;
+            if (dayEl) dayEl.textContent = dayStr;
+            if (timeEl) timeEl.textContent = timeString;
+        }
+
+        // Initial sync and start interval
+        syncWithNetworkTime();
+        setInterval(updateRealTimeClock, 1000);
+        // Periodic re-sync every 15 minutes
+        setInterval(syncWithNetworkTime, 900000);
         
         // Initialize DataTables with custom row styling
         $(document).ready(function() {
