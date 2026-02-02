@@ -532,16 +532,10 @@ try {
     </div>
 
     <!-- Floating Action Button -->
-    <button class="fab" data-bs-toggle="modal" data-bs-target="#addHomeownerModal" title="Quick Add Homeowner">
+    <button class="fab" id="quickActionBtn" data-bs-toggle="modal" data-bs-target="#addHomeownerModal" title="Quick Add Homeowner">
         <i class="bi bi-plus-lg"></i>
     </button>
-        </div>
-    </div>
-
-    <!-- Floating Action Button -->
-    <button class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-4 shadow-lg" style="width: 60px; height: 60px;" data-bs-toggle="modal" data-bs-target="#addHomeownerModal">
-        <i class="bi bi-plus-lg fs-4"></i>
-    </button>
+</div> <!-- closes main-content -->
 
     <!-- Add Homeowner Modal -->
     <div class="modal fade" id="addHomeownerModal" tabindex="-1">
