@@ -8,7 +8,10 @@ try {
     $stmt = $pdo->prepare("
         SELECT 
             h.*,
-            DATE_FORMAT(h.last_scan_time, '%Y-%m-%d %H:%i:%s') as last_scan_time
+            DATE_FORMAT(h.last_scan_time, '%Y-%m-%d %H:%i:%s') as last_scan_time,
+            DATE_FORMAT(h.qr_expiry, '%M %d, %Y') as qr_expiry_formatted,
+            DATE_FORMAT(h.qr_last_generated, '%M %d, %Y %H:%i') as qr_last_generated_formatted,
+            h.qr_expiry
         FROM homeowners h
         WHERE h.id = ?
     ");

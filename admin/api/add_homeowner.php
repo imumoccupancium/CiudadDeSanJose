@@ -15,14 +15,22 @@ try {
         exit;
     }
     
-    $qr_code = $generate_qr ? 'QR-' . $homeowner_id : null;
+    $qr_token = null;
+    $qr_expiry = null;
+    $qr_last_generated = null;
+
+    if ($generate_qr) {
+        $qr_token = bin2hex(random_bytes(16)); // Secure random token
+        $qr_expiry = date('Y-m-d H:i:s', strtotime('+1 year')); // 1 year validity
+        $qr_last_generated = date('Y-m-d H:i:s');
+    }
     
     $stmt = $pdo->prepare("
-        INSERT INTO homeowners (homeowner_id, name, email, phone, address, qr_code, status)
-        VALUES (?, ?, ?, ?, ?, ?, 'active')
+        INSERT INTO homeowners (homeowner_id, name, email, phone, address, qr_code, qr_token, qr_expiry, qr_last_generated, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
     ");
     
-    $stmt->execute([$homeowner_id, $name, $email, $phone, $address, $qr_code]);
+    $stmt->execute([$homeowner_id, $name, $email, $phone, $address, $qr_token, $qr_token, $qr_expiry, $qr_last_generated]);
     
     echo json_encode(['success' => true, 'message' => 'Homeowner added successfully']);
     

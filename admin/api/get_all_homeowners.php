@@ -12,6 +12,8 @@ try {
             h.phone,
             h.address,
             h.qr_code,
+            h.qr_token,
+            h.qr_expiry,
             h.current_status,
             h.status,
             DATE_FORMAT(h.last_scan_time, '%Y-%m-%d %H:%i:%s') as last_scan_time,

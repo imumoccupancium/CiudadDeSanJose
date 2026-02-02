@@ -4,6 +4,8 @@ define('DB_HOST', 'localhost');
 define('DB_NAME', 'ciudad_de_san_jose');
 define('DB_USER', 'root');
 define('DB_PASS', '');
+define('APP_SECRET', 'csj_secure_gate_2026_!@#'); // Change this in production
+
 
 try {
     $pdo = new PDO(

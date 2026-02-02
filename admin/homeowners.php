@@ -22,6 +22,8 @@ $user = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -464,6 +466,18 @@ $user = [
                                     
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Last Scan Event</div>
                                     <div class="col-sm-6 small fw-medium" id="view_last_scan"></div>
+
+                                    <div class="col-sm-12 mt-3">
+                                        <div class="alert alert-info border-0 shadow-sm rounded-4 d-flex align-items-center mb-0">
+                                            <i class="bi bi-shield-check fs-4 me-3"></i>
+                                            <div>
+                                                <div class="small fw-bold">QR Access Key Validity</div>
+                                                <div class="small opacity-75" id="view_qr_expiry">Valid until: Dec 31, 2026</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 </div>
                             </div>
                         </div>
@@ -473,9 +487,14 @@ $user = [
                                     <i class="bi bi-qr-code fs-1 text-muted"></i>
                                 </div>
                             </div>
-                            <button class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                            <button class="btn btn-outline-primary btn-sm rounded-pill px-4 mb-2 w-100" id="downloadQR">
                                 <i class="bi bi-download me-1"></i> Download Key
                             </button>
+                            <button class="btn btn-light btn-sm rounded-pill px-4 w-100 regenerate-qr-btn" id="regeneateQRView">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Regenerate
+                            </button>
+                        </div>
+
                         </div>
                     </div>
                 </div>
@@ -549,7 +568,10 @@ $user = [
                             return data ? 
                                 `<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">
                                     <i class="bi bi-check-circle-fill me-1"></i> ACTIVE
-                                </span>` : 
+                                </span>
+                                <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
+                                    Exp: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                </div>` : 
                                 `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
                                     <i class="bi bi-x-circle me-1"></i> MISSING
                                 </span>`;
@@ -586,10 +608,14 @@ $user = [
                                 <button class="btn btn-sm btn-light rounded-pill p-2 edit-btn" data-id="${data.id}" title="Edit Data">
                                     <i class="bi bi-pencil text-warning"></i>
                                 </button>
+                                <button class="btn btn-sm btn-light rounded-pill p-2 regen-btn" data-id="${data.id}" title="Regenerate QR">
+                                    <i class="bi bi-qr-code text-success"></i>
+                                </button>
                                 <button class="btn btn-sm btn-light rounded-pill p-2 delete-btn" data-id="${data.id}" title="Delete Resident">
                                     <i class="bi bi-trash text-danger"></i>
                                 </button>
                             </div>`;
+
                         }
                     }
                 ],
@@ -628,6 +654,7 @@ $user = [
             });
             
             // View homeowner
+            let qrScanner = null;
             $('#homeownersTable').on('click', '.view-btn', function() {
                 const id = $(this).data('id');
                 $.get(`api/get_homeowner.php?id=${id}`, function(data) {
@@ -636,6 +663,7 @@ $user = [
                     $('#view_email').text(data.email || 'N/A');
                     $('#view_phone').text(data.phone || 'N/A');
                     $('#view_address').text(data.address);
+                    $('#view_qr_expiry').text('Valid until: ' + (data.qr_expiry_formatted || 'N/A'));
                     
                     const badges = {'active': 'success', 'inactive': 'secondary', 'suspended': 'danger'};
                     $('#view_status').html(`<span class="badge bg-${badges[data.status]} px-3 rounded-pill">${data.status.toUpperCase()}</span>`);
@@ -645,9 +673,55 @@ $user = [
                         '<span class="badge bg-warning bg-opacity-10 text-warning px-3 rounded-pill">OUTSIDE</span>');
                     
                     $('#view_last_scan').text(data.last_scan_time || 'No records available');
+
+                    // Generate QR Code
+                    $('#view_qr').empty();
+                    if (data.qr_token) {
+                        new QRCode(document.getElementById("view_qr"), {
+                            text: data.qr_token,
+                            width: 128,
+                            height: 128,
+                            colorDark : "#000000",
+                            colorLight : "#ffffff",
+                            correctLevel : QRCode.CorrectLevel.H
+                        });
+                        $('#regeneateQRView').attr('data-id', data.id);
+                    } else {
+                        $('#view_qr').html('<i class="bi bi-qr-code fs-1 text-muted"></i>');
+                    }
+
                     new bootstrap.Modal(document.getElementById('viewHomeownerModal')).show();
                 });
             });
+
+            // Regenerate QR Code
+            $(document).on('click', '.regen-btn, .regenerate-qr-btn', function() {
+                const id = $(this).data('id');
+                if (confirm('Are you sure you want to regenerate the QR code? The old one will immediately stop working.')) {
+                    $.post('api/generate_qr.php', { id: id }, function(response) {
+                        if (response.success) {
+                            if ($('#viewHomeownerModal').is(':visible')) {
+                                // Refresh QR in modal
+                                $('#view_qr').empty();
+                                new QRCode(document.getElementById("view_qr"), {
+                                    text: response.token,
+                                    width: 128,
+                                    height: 128,
+                                    colorDark : "#000000",
+                                    colorLight : "#ffffff",
+                                    correctLevel : QRCode.CorrectLevel.H
+                                });
+                                $('#view_qr_expiry').text('Valid until: ' + response.expiry);
+                            }
+                            table.ajax.reload(null, false);
+                            alert('New QR Code generated successfully.');
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    }, 'json');
+                }
+            });
+
             
             // Edit homeowner
             $('#homeownersTable').on('click', '.edit-btn', function() {
@@ -706,6 +780,21 @@ $user = [
                         alert('Error: ' + response.message);
                     }
                 }, 'json');
+            });
+            // Download QR Code
+            $('#downloadQR').click(function() {
+                const qrImg = document.querySelector('#view_qr img');
+                if (qrImg) {
+                    const homeownerId = $('#view_homeowner_id').text();
+                    const link = document.createElement('a');
+                    link.href = qrImg.src;
+                    link.download = `QR_${homeownerId}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert('QR Code image not found. Please try again.');
+                }
             });
         });
     </script>
