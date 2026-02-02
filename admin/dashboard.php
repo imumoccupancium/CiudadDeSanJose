@@ -256,9 +256,7 @@ try {
                     </ul>
                 </div>
                 
-                <button class="btn btn-light rounded-pill px-3" id="themeToggle">
-                    <i class="bi bi-moon-stars"></i>
-                </button>
+
             </div>
         </nav>
         <div class="container-fluid p-4 pt-0">
@@ -557,22 +555,7 @@ try {
             document.getElementById('sidebar').classList.toggle('show');
         });
         
-        // Theme toggle logic refined
-        document.getElementById('themeToggle').addEventListener('click', function() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-bs-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-bs-theme', newTheme);
-            
-            const icon = this.querySelector('i');
-            if (newTheme === 'dark') {
-                icon.className = 'bi bi-sun-fill';
-                this.classList.replace('btn-light', 'btn-dark');
-            } else {
-                icon.className = 'bi bi-moon-stars';
-                this.classList.replace('btn-dark', 'btn-light');
-            }
-        });
+
 
         // REAL-TIME SYNCED CLOCK SYSTEM
         let timeOffset = 0;

@@ -159,7 +159,7 @@ const elements = {
     sidebar: document.getElementById('sidebar'),
     sidebarToggle: document.getElementById('sidebarToggle'),
     sidebarClose: document.getElementById('sidebarClose'),
-    themeToggle: document.getElementById('themeToggle'),
+
     searchInput: document.getElementById('searchInput'),
     quickActionBtn: document.getElementById('quickActionBtn'),
     createQRBtn: document.getElementById('createQRBtn'),
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
     setupEventListeners();
     loadDashboardData();
     initializeCharts();
-    checkThemePreference();
+
 });
 
 // ============================================
@@ -201,10 +201,7 @@ function setupEventListeners() {
         elements.sidebarClose.addEventListener('click', toggleSidebar);
     }
 
-    // Theme toggle
-    if (elements.themeToggle) {
-        elements.themeToggle.addEventListener('click', toggleTheme);
-    }
+
 
     // Search functionality
     if (elements.searchInput) {
@@ -246,37 +243,7 @@ function toggleSidebar() {
     elements.sidebar.classList.toggle('active');
 }
 
-// ============================================
-// Theme Functions
-// ============================================
 
-function toggleTheme() {
-    const body = document.body;
-    const icon = elements.themeToggle.querySelector('i');
-
-    body.classList.toggle('dark-mode');
-
-    if (body.classList.contains('dark-mode')) {
-        icon.classList.remove('bi-moon-stars-fill');
-        icon.classList.add('bi-sun-fill');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        icon.classList.remove('bi-sun-fill');
-        icon.classList.add('bi-moon-stars-fill');
-        localStorage.setItem('theme', 'light');
-    }
-}
-
-function checkThemePreference() {
-    const savedTheme = localStorage.getItem('theme');
-    const icon = elements.themeToggle.querySelector('i');
-
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-        icon.classList.remove('bi-moon-stars-fill');
-        icon.classList.add('bi-sun-fill');
-    }
-}
 
 // ============================================
 // Navigation Functions

@@ -92,9 +92,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
         transition: all 0.3s ease !important;
     }
-    [data-bs-theme="dark"] .top-navbar {
-        background: rgba(33, 37, 41, 0.7) !important;
-    }
+
     .sidebar .px-4.py-3 {
         padding: 0.75rem 1.25rem !important;
         font-size: 0.7rem !important;
