@@ -90,64 +90,12 @@ try {
             overflow-x: hidden;
         }
 
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: var(--sidebar-width);
-            background: linear-gradient(180deg, #1a1c1e 0%, #000 100%);
-            z-index: 1050;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            padding-top: var(--top-navbar-height);
-            transition: all 0.3s ease;
-        }
-
-        .top-navbar {
-            position: fixed;
-            top: 0;
-            right: 0;
-            left: var(--sidebar-width);
-            height: var(--top-navbar-height);
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .nav-link {
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.7) !important;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            margin: 4px 15px;
-        }
-
-        .nav-link i {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-
-        .nav-link:hover {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-link.active {
-            color: #fff !important;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%) !important;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        .card {
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            background: #ffffff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card {

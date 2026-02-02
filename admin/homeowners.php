@@ -27,6 +27,8 @@ $user = [
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     
     <style>
         :root {
@@ -59,64 +61,12 @@ $user = [
             overflow-x: hidden;
         }
 
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: var(--sidebar-width);
-            background: linear-gradient(180deg, #1a1c1e 0%, #000 100%);
-            z-index: 1050;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            min-height: 100vh;
-            padding-top: var(--top-navbar-height);
-            transition: all 0.3s ease;
-        }
-
-        .top-navbar {
-            position: fixed;
-            top: 0;
-            right: 0;
-            left: var(--sidebar-width);
-            height: var(--top-navbar-height);
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .nav-link {
-            padding: 12px 20px;
-            color: rgba(255, 255, 255, 0.7) !important;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            margin: 4px 15px;
-        }
-
-        .nav-link i {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-
-        .nav-link:hover {
-            color: #fff !important;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .nav-link.active {
-            color: #fff !important;
-            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%) !important;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        .card {
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            background: #ffffff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .card {
@@ -563,20 +513,25 @@ $user = [
                         }
                     },
                     { 
-                        data: 'qr_code',
+                        data: null,
                         render: function(data) {
-                            return data ? 
-                                `<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">
-                                    <i class="bi bi-check-circle-fill me-1"></i> ACTIVE
-                                </span>
-                                <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
-                                    Exp: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
-                                </div>` : 
-                                `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
-                                    <i class="bi bi-x-circle me-1"></i> MISSING
-                                </span>`;
+                            const hasQR = data.qr_token;
+                            return `<div class="qr-status-click" data-id="${data.id}" style="cursor: pointer;">
+                                ${hasQR ? 
+                                    `<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">
+                                        <i class="bi bi-check-circle-fill me-1"></i> ACTIVE
+                                    </span>
+                                    <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
+                                        Exp: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                    </div>` : 
+                                    `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
+                                        <i class="bi bi-x-circle me-1"></i> MISSING
+                                    </span><br><small class="text-primary" style="font-size: 0.6rem;">Click to generate</small>`
+                                }
+                            </div>`;
                         }
                     },
+
                     { 
                         data: 'status',
                         render: function(data) {
@@ -694,33 +649,128 @@ $user = [
                 });
             });
 
-            // Regenerate QR Code
-            $(document).on('click', '.regen-btn, .regenerate-qr-btn', function() {
+            // QR Status Click Handler (Big Popup / Generate Prompt)
+            $('#homeownersTable').on('click', '.qr-status-click', function() {
                 const id = $(this).data('id');
-                if (confirm('Are you sure you want to regenerate the QR code? The old one will immediately stop working.')) {
-                    $.post('api/generate_qr.php', { id: id }, function(response) {
-                        if (response.success) {
-                            if ($('#viewHomeownerModal').is(':visible')) {
-                                // Refresh QR in modal
-                                $('#view_qr').empty();
-                                new QRCode(document.getElementById("view_qr"), {
-                                    text: response.token,
-                                    width: 128,
-                                    height: 128,
-                                    colorDark : "#000000",
-                                    colorLight : "#ffffff",
-                                    correctLevel : QRCode.CorrectLevel.H
-                                });
-                                $('#view_qr_expiry').text('Valid until: ' + response.expiry);
-                            }
-                            table.ajax.reload(null, false);
-                            alert('New QR Code generated successfully.');
-                        } else {
-                            alert('Error: ' + response.message);
+                const rowData = table.row($(this).closest('tr')).data();
+                
+                if (rowData.qr_token) {
+                    // Show Large QR Code Popup with Download and Regenerate options
+                    Swal.fire({
+                        title: `${rowData.name}'s Access Key`,
+                        html: `
+                            <div id="big_qr" class="d-flex justify-content-center my-3"></div>
+                            <div class="small text-muted mb-3 text-uppercase fw-bold ls-1" style="letter-spacing: 0.05rem;">
+                                Valid until: ${new Date(rowData.qr_expiry).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'})}
+                            </div>
+                            <div class="d-flex justify-content-center gap-2">
+                                <button class="btn btn-primary rounded-pill px-4 btn-sm" id="downloadBigQR">
+                                    <i class="bi bi-download me-1"></i> Download
+                                </button>
+                                <button class="btn btn-outline-warning rounded-pill px-4 btn-sm" id="regenBigQR">
+                                    <i class="bi bi-arrow-clockwise me-1"></i> Regenerate
+                                </button>
+                            </div>
+                        `,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        didOpen: () => {
+                            new QRCode(document.getElementById("big_qr"), {
+                                text: rowData.qr_token,
+                                width: 220,
+                                height: 220,
+                                colorDark : "#000000",
+                                colorLight : "#ffffff",
+                                correctLevel : QRCode.CorrectLevel.H
+                            });
+                            
+                            // Download Logic
+                            $('#downloadBigQR').click(function() {
+                                const qrImg = document.querySelector('#big_qr img');
+                                const link = document.createElement('a');
+                                link.href = qrImg.src;
+                                link.download = `QR_${rowData.homeowner_id}.png`;
+                                link.click();
+                            });
+
+                            // Regenerate Logic from within Quick-View
+                            $('#regenBigQR').click(function() {
+                                Swal.close();
+                                // Trigger the existing regeneration logic
+                                $(`.regen-btn[data-id="${id}"]`).click();
+                            });
                         }
-                    }, 'json');
+                    });
+                } else {
+
+                    // Prompt to Generate
+                    Swal.fire({
+                        title: 'No Access Key found',
+                        text: `Would you like to generate a secure QR code for ${rowData.name}?`,
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Generate',
+                        cancelButtonText: 'Not now',
+                        confirmButtonColor: 'var(--primary)'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.post('api/generate_qr.php', { id: id }, function(response) {
+                                if (response.success) {
+                                    Swal.fire('Generated!', 'Resident now has an active access key.', 'success');
+                                    table.ajax.reload();
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            }, 'json');
+                        }
+                    });
                 }
             });
+
+            // Regenerate QR Code
+
+            $(document).on('click', '.regen-btn, .regenerate-qr-btn', function() {
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Regenerate QR Code?',
+                    text: "The old QR code will immediately stop working!",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: 'var(--primary)',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, generate new!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('api/generate_qr.php', { id: id }, function(response) {
+                            if (response.success) {
+                                if ($('#viewHomeownerModal').is(':visible')) {
+                                    $('#view_qr').empty();
+                                    new QRCode(document.getElementById("view_qr"), {
+                                        text: response.token,
+                                        width: 128,
+                                        height: 128,
+                                        colorDark : "#000000",
+                                        colorLight : "#ffffff",
+                                        correctLevel : QRCode.CorrectLevel.H
+                                    });
+                                    $('#view_qr_expiry').text('Valid until: ' + response.expiry);
+                                }
+                                Swal.fire({
+                                    title: 'Succeeded!',
+                                    text: 'New access key is ready.',
+                                    icon: 'success',
+                                    timer: 1500,
+                                    showConfirmButton: false
+                                });
+                                table.ajax.reload(null, false);
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        }, 'json');
+                    }
+                });
+            });
+
 
             
             // Edit homeowner
@@ -740,18 +790,37 @@ $user = [
             
             // Delete homeowner
             $('#homeownersTable').on('click', '.delete-btn', function() {
-                if (confirm('Are you sure you want to delete this resident? This action cannot be undone.')) {
-                    const id = $(this).data('id');
-                    $.post('api/delete_homeowner.php', { id: id }, function(response) {
-                        if (response.success) {
-                            table.ajax.reload();
-                            updateStats();
-                        } else {
-                            alert('Error: ' + response.message);
-                        }
-                    }, 'json');
-                }
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This resident's data will be permanently removed!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: 'var(--danger)',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!',
+                    borderRadius: '15px'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('api/delete_homeowner.php', { id: id }, function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Resident has been removed from registry.',
+                                    icon: 'success',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                table.ajax.reload();
+                                updateStats();
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        }, 'json');
+                    }
+                });
             });
+
             
             // Save new homeowner
             $('#saveHomeownerBtn').click(function() {
@@ -759,14 +828,22 @@ $user = [
                 $.post('api/add_homeowner.php', formData, function(response) {
                     if (response.success) {
                         bootstrap.Modal.getInstance(document.getElementById('addHomeownerModal')).hide();
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'New resident registered successfully.',
+                            icon: 'success',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
                         table.ajax.reload();
                         updateStats();
                         $('#addHomeownerForm')[0].reset();
                     } else {
-                        alert('Error: ' + response.message);
+                        Swal.fire('Error', response.message, 'error');
                     }
                 }, 'json');
             });
+
             
             // Update homeowner
             $('#updateHomeownerBtn').click(function() {
@@ -774,13 +851,21 @@ $user = [
                 $.post('api/update_homeowner.php', formData, function(response) {
                     if (response.success) {
                         bootstrap.Modal.getInstance(document.getElementById('editHomeownerModal')).hide();
+                        Swal.fire({
+                            title: 'Updated!',
+                            text: 'Resident profile has been updated.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
                         table.ajax.reload();
                         updateStats();
                     } else {
-                        alert('Error: ' + response.message);
+                        Swal.fire('Error', response.message, 'error');
                     }
                 }, 'json');
             });
+
             // Download QR Code
             $('#downloadQR').click(function() {
                 const qrImg = document.querySelector('#view_qr img');
