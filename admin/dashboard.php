@@ -98,27 +98,19 @@ try {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .card {
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            background: #ffffff;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
         .hover-lift:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08) !important;
         }
 
         .stat-icon {
-            width: 65px;
-            height: 65px;
+            width: 55px;
+            height: 55px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            margin: 0 auto 1.5rem;
+            margin: 0 auto 1rem;
             transition: transform 0.3s ease;
         }
 
@@ -128,6 +120,7 @@ try {
 
         .display-4 {
             font-weight: 800;
+            font-size: 2.5rem;
             letter-spacing: -1px;
             background: linear-gradient(135deg, var(--dark) 0%, #444 100%);
             -webkit-background-clip: text;
@@ -263,23 +256,23 @@ try {
             <!-- Synced Minimal Real-time Clock Section -->
             <div class="row g-0 mb-5 mt-3 py-4 border-bottom align-items-center">
                 <div class="col-md-4">
-                    <h5 class="mb-0 text-muted fw-bold" id="dateDisplay">Loading date...</h5>
+                    <h4 class="mb-0 text-muted fw-bold" id="dateDisplay">Loading date...</h4>
                 </div>
                 <div class="col-md-4 text-md-center">
-                    <h3 class="mb-0 fw-black text-dark text-uppercase" style="letter-spacing: 4px; font-weight: 800;" id="dayDisplay">---</h3>
+                    <h2 class="mb-0 fw-bold font-monospace text-primary ls-1" id="timeDisplay">00:00:00 --</h2>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <h4 class="mb-0 fw-bold font-monospace text-primary ls-1" id="timeDisplay">00:00:00 --</h4>
+                    <h2 class="mb-0 fw-black text-dark text-uppercase" style="letter-spacing: 4px; font-weight: 800;" id="dayDisplay">---</h2>
                 </div>
             </div>
 
             <!-- Essential Summary - Today's Activity -->
             <div class="row g-4 mb-5">
                 <div class="col-md-4">
-                    <div class="card border-0 hover-lift h-100 p-2">
-                        <div class="card-body text-center">
+                    <div class="card border-0 hover-lift h-100">
+                        <div class="card-body text-center py-3">
                             <div class="stat-icon bg-success bg-opacity-10">
-                                <i class="bi bi-arrow-down-square-fill text-success" style="font-size: 2rem;"></i>
+                                <i class="bi bi-arrow-down-square-fill text-success" style="font-size: 1.5rem;"></i>
                             </div>
                             <h1 class="display-4 mb-1"><?php echo $totalEntriesToday; ?></h1>
                             <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Entries Today</h6>
@@ -291,10 +284,10 @@ try {
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card border-0 hover-lift h-100 p-2">
-                        <div class="card-body text-center">
+                    <div class="card border-0 hover-lift h-100">
+                        <div class="card-body text-center py-3">
                             <div class="stat-icon bg-danger bg-opacity-10">
-                                <i class="bi bi-arrow-up-square-fill text-danger" style="font-size: 2rem;"></i>
+                                <i class="bi bi-arrow-up-square-fill text-danger" style="font-size: 1.5rem;"></i>
                             </div>
                             <h1 class="display-4 mb-1"><?php echo $totalExitsToday; ?></h1>
                             <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Exits Today</h6>
@@ -306,10 +299,10 @@ try {
                 </div>
 
                 <div class="col-md-4">
-                    <div class="card border-0 hover-lift h-100 p-2">
-                        <div class="card-body text-center">
+                    <div class="card border-0 hover-lift h-100">
+                        <div class="card-body text-center py-3">
                             <div class="stat-icon bg-primary bg-opacity-10">
-                                <i class="bi bi-people-fill text-primary" style="font-size: 2rem;"></i>
+                                <i class="bi bi-people-fill text-primary" style="font-size: 1.5rem;"></i>
                             </div>
                             <h1 class="display-4 mb-1"><?php echo $totalHomeowners; ?></h1>
                             <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Total Homeowners</h6>
@@ -332,10 +325,10 @@ try {
                             </div>
                             <div class="row g-4">
                                 <div class="col-md-6">
-                                    <div class="d-flex align-items-center p-4 rounded-4 bg-light border border-white">
+                                    <div class="d-flex align-items-center p-3 rounded-4 bg-light border border-white">
                                         <div class="flex-shrink-0 me-4">
-                                            <div class="stat-icon bg-success shadow-sm mb-0">
-                                                <i class="bi bi-house-check text-white fs-3"></i>
+                                            <div class="stat-icon bg-success shadow-sm mb-0" style="width: 45px; height: 45px;">
+                                                <i class="bi bi-house-check text-white fs-4"></i>
                                             </div>
                                         </div>
                                         <div>
@@ -351,10 +344,10 @@ try {
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="d-flex align-items-center p-4 rounded-4 bg-light border border-white">
+                                    <div class="d-flex align-items-center p-3 rounded-4 bg-light border border-white">
                                         <div class="flex-shrink-0 me-4">
-                                            <div class="stat-icon bg-warning shadow-sm mb-0">
-                                                <i class="bi bi-house-dash text-white fs-3"></i>
+                                            <div class="stat-icon bg-warning shadow-sm mb-0" style="width: 45px; height: 45px;">
+                                                <i class="bi bi-house-dash text-white fs-4"></i>
                                             </div>
                                         </div>
                                         <div>
@@ -379,7 +372,7 @@ try {
             <div class="row mb-5">
                 <div class="col-12">
                     <div class="card border-0">
-                        <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                        <div class="card-header bg-white border-0 py-3 px-4 d-flex justify-content-between align-items-center">
                             <div>
                                 <h5 class="fw-bold mb-1">Recent Access Logs</h5>
                                 <p class="text-muted small mb-0">Last entries and exits tracked by gate scanners</p>
@@ -423,10 +416,10 @@ try {
                 </div>
                 <div class="col-6 col-lg-3 mb-4">
                     <a href="homeowners.php" class="text-decoration-none">
-                        <div class="card border-0 text-center py-4 hover-lift">
+                        <div class="card border-0 text-center py-3 hover-lift">
                             <div class="card-body">
-                                <div class="bg-primary bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
-                                    <i class="bi bi-person-gear text-primary fs-3"></i>
+                                <div class="bg-primary bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
+                                    <i class="bi bi-person-gear text-primary fs-4"></i>
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">User Management</h6>
                                 <p class="small text-muted mb-0">Add/Edit Homeowners</p>
@@ -436,10 +429,10 @@ try {
                 </div>
                 <div class="col-6 col-lg-3 mb-4">
                     <a href="activity_logs.php" class="text-decoration-none">
-                        <div class="card border-0 text-center py-4 hover-lift">
+                        <div class="card border-0 text-center py-3 hover-lift">
                             <div class="card-body">
-                                <div class="bg-success bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
-                                    <i class="bi bi-journal-text text-success fs-3"></i>
+                                <div class="bg-success bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
+                                    <i class="bi bi-journal-text text-success fs-4"></i>
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">Historic Logs</h6>
                                 <p class="small text-muted mb-0">Browse all records</p>
@@ -449,10 +442,10 @@ try {
                 </div>
                 <div class="col-6 col-lg-3 mb-4">
                     <a href="#" class="text-decoration-none">
-                        <div class="card border-0 text-center py-4 hover-lift">
+                        <div class="card border-0 text-center py-3 hover-lift">
                             <div class="card-body">
-                                <div class="bg-info bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
-                                    <i class="bi bi-bar-chart-steps text-info fs-3"></i>
+                                <div class="bg-info bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
+                                    <i class="bi bi-bar-chart-steps text-info fs-4"></i>
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">Data Reports</h6>
                                 <p class="small text-muted mb-0">Export PDF/Excel</p>
@@ -462,10 +455,10 @@ try {
                 </div>
                 <div class="col-6 col-lg-3 mb-4">
                     <a href="#" class="text-decoration-none">
-                        <div class="card border-0 text-center py-4 hover-lift">
+                        <div class="card border-0 text-center py-3 hover-lift">
                             <div class="card-body">
-                                <div class="bg-dark bg-opacity-10 rounded-4 p-3 d-inline-block mb-3">
-                                    <i class="bi bi-sliders text-dark fs-3"></i>
+                                <div class="bg-dark bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
+                                    <i class="bi bi-sliders text-dark fs-4"></i>
                                 </div>
                                 <h6 class="fw-bold text-dark mb-1">Preferences</h6>
                                 <p class="small text-muted mb-0">System configuration</p>

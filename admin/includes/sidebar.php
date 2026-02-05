@@ -153,6 +153,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
         </div>
         <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">Management</div>
+        <a href="homeowner_accounts.php" class="nav-link <?php echo $current_page == 'homeowner_accounts.php' ? 'active' : ''; ?>">
+            <i class="bi bi-person-badge-fill"></i> Homeowners Account
+        </a>
         <a href="#" class="nav-link">
             <i class="bi bi-file-earmark-bar-graph"></i> Reports
         </a>
