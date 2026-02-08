@@ -22,6 +22,7 @@ $user = [
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -112,6 +113,29 @@ $user = [
             box-shadow: 0 15px 30px rgba(67, 97, 238, 0.6);
         }
 
+        #homeownerDropdown {
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .homeowner-item:last-child {
+            border-bottom: none !important;
+        }
+
+        #homeownerSearch:focus {
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 left: calc(var(--sidebar-width) * -1);
@@ -170,7 +194,7 @@ $user = [
                             <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto mb-3">
                                 <i class="bi bi-person-check-fill fs-4"></i>
                             </div>
-                            <h4 class="mb-0 fw-bold">12</h4>
+                            <h4 class="mb-0 fw-bold" id="statInside">0</h4>
                             <small class="text-muted fw-medium fs-7">Currently Inside</small>
                         </div>
                     </div>
@@ -181,7 +205,7 @@ $user = [
                             <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-3">
                                 <i class="bi bi-people-fill fs-4"></i>
                             </div>
-                            <h4 class="mb-0 fw-bold">45</h4>
+                            <h4 class="mb-0 fw-bold" id="statTotalToday">0</h4>
                             <small class="text-muted fw-medium fs-7">Total Today</small>
                         </div>
                     </div>
@@ -192,7 +216,7 @@ $user = [
                             <div class="stat-icon bg-info bg-opacity-10 text-info mx-auto mb-3">
                                 <i class="bi bi-briefcase-fill fs-4"></i>
                             </div>
-                            <h4 class="mb-0 fw-bold">18</h4>
+                            <h4 class="mb-0 fw-bold" id="statPro">0</h4>
                             <small class="text-muted fw-medium fs-7">Professional Visits</small>
                         </div>
                     </div>
@@ -203,7 +227,7 @@ $user = [
                             <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
                                 <i class="bi bi-truck-flatbed fs-4"></i>
                             </div>
-                            <h4 class="mb-0 fw-bold">15</h4>
+                            <h4 class="mb-0 fw-bold" id="statService">0</h4>
                             <small class="text-muted fw-medium fs-7">Service/Delivery</small>
                         </div>
                     </div>
@@ -242,43 +266,8 @@ $user = [
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="border-0">
-                                <!-- Row Example -->
-                                <tr>
-                                    <td class="ps-4">
-                                        <div class="d-flex align-items-center">
-                                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                                <i class="bi bi-person"></i>
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold text-dark">Maria Santos</div>
-                                                <div class="smaller text-muted">Personal Visit</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">Personal</span>
-                                    </td>
-                                    <td>
-                                        <div class="fw-medium">Ricardo Dalisay</div>
-                                        <div class="smaller text-muted">Blk 5 Lot 12</div>
-                                    </td>
-                                    <td class="text-center small fw-bold">Main Gate</td>
-                                    <td class="text-center font-monospace small">
-                                        <span class="text-success">10:30 AM</span><br>
-                                        <span class="text-muted">--:-- --</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
-                                            <i class="bi bi-house-check me-1"></i> INSIDE
-                                        </span>
-                                    </td>
-                                    <td class="pe-4 text-end">
-                                        <button class="btn btn-sm btn-light rounded-pill p-2" title="View Details"><i class="bi bi-eye text-primary"></i></button>
-                                        <button class="btn btn-sm btn-light rounded-pill p-2" title="Edit Record"><i class="bi bi-pencil text-warning"></i></button>
-                                        <button class="btn btn-sm btn-light rounded-pill p-2" title="Delete Log"><i class="bi bi-trash text-danger"></i></button>
-                                    </td>
-                                </tr>
+                            <tbody class="border-0" id="visitorsTableBody">
+                                <!-- Data will be loaded here via AJAX -->
                             </tbody>
                         </table>
                     </div>
@@ -320,12 +309,13 @@ $user = [
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Entry Gate</label>
-                                <select name="gate" class="form-select rounded-3 p-2 px-3 bg-light border-0">
-                                    <option value="Main Gate">Main Gate</option>
-                                    <option value="North Gate">North Gate</option>
-                                    <option value="Service Gate">Service Gate</option>
-                                </select>
+                                <label class="form-label small fw-bold text-muted text-uppercase">Assigned Gate</label>
+                                <div class="bg-light rounded-3 p-2 px-3 d-flex align-items-center" style="height: 41px;">
+                                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                                    <span class="fw-bold text-dark">Main Gate</span>
+                                    <input type="hidden" name="gate" value="Main Gate">
+                                </div>
+                                <small class="text-muted small mt-1 d-block italic">Primary Entrance & Exit</small>
                             </div>
                         </div>
 
@@ -336,7 +326,23 @@ $user = [
 
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted text-uppercase">Person to Visit</label>
-                            <input type="text" name="person_to_visit" class="form-control rounded-3 p-2 px-3 bg-light border-0" placeholder="Search homeowner name..." required>
+                            <div class="position-relative">
+                                <input type="text" 
+                                       id="homeownerSearch" 
+                                       class="form-control rounded-3 p-2 px-3 bg-light border-0" 
+                                       placeholder="Type to search homeowner name or address..." 
+                                       autocomplete="off"
+                                       required>
+                                <input type="hidden" name="person_to_visit" id="selectedHomeowner" required>
+                                <input type="hidden" name="homeowner_id" id="selectedHomeownerId">
+                                <div id="homeownerDropdown" class="position-absolute w-100 bg-white border rounded-3 shadow-lg mt-1 d-none" style="max-height: 250px; overflow-y: auto; z-index: 1050;">
+                                    <!-- Dropdown items will be populated here -->
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-1">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <span id="selectedHomeownerInfo">Start typing to search...</span>
+                            </small>
                         </div>
 
                         <div class="mb-3">
@@ -418,6 +424,294 @@ $user = [
                 const now = new Date();
                 $('#modalTimeNow').text(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
             }, 1000);
+
+            // Homeowner Search Autocomplete
+            let searchTimeout;
+            const $searchInput = $('#homeownerSearch');
+            const $dropdown = $('#homeownerDropdown');
+            const $selectedHomeowner = $('#selectedHomeowner');
+            const $selectedHomeownerId = $('#selectedHomeownerId');
+            const $selectedInfo = $('#selectedHomeownerInfo');
+
+            // Search homeowners with debounce
+            $searchInput.on('input', function() {
+                const query = $(this).val().trim();
+                
+                clearTimeout(searchTimeout);
+                
+                if (query.length === 0) {
+                    $dropdown.addClass('d-none').empty();
+                    $selectedHomeowner.val('');
+                    $selectedHomeownerId.val('');
+                    $selectedInfo.text('Start typing to search...');
+                    return;
+                }
+
+                // Show loading state
+                $dropdown.removeClass('d-none').html(`
+                    <div class="p-3 text-center text-muted">
+                        <i class="bi bi-hourglass-split me-2"></i>Searching...
+                    </div>
+                `);
+
+                // Debounce search
+                searchTimeout = setTimeout(() => {
+                    console.log('Searching for:', query); // Debug log
+                    $.ajax({
+                        url: 'api/search_homeowners.php',
+                        method: 'GET',
+                        data: { q: query },
+                        dataType: 'json',
+                        success: function(response) {
+                            console.log('Search response:', response); // Debug log
+                            if (response.success && response.data.length > 0) {
+                                let html = '';
+                                response.data.forEach(homeowner => {
+                                    html += `
+                                        <div class="homeowner-item p-3 border-bottom" 
+                                             data-id="${homeowner.id}"
+                                             data-name="${homeowner.name}"
+                                             data-address="${homeowner.address}"
+                                             data-homeowner-id="${homeowner.homeowner_id}"
+                                             style="cursor: pointer; transition: background-color 0.2s;">
+                                            <div class="d-flex align-items-center">
+                                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                                     style="width: 40px; height: 40px; min-width: 40px;">
+                                                    <i class="bi bi-person-fill"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold text-dark">${homeowner.name}</div>
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-house-door me-1"></i>${homeowner.address}
+                                                        <span class="ms-2 badge bg-light text-dark">${homeowner.homeowner_id}</span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                                $dropdown.html(html).css('z-index', '2000'); // Ensure it's on top
+                            } else {
+                                $dropdown.html(`
+                                    <div class="p-3 text-center text-muted">
+                                        <i class="bi bi-search me-2"></i>No homeowners found
+                                    </div>
+                                `);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Search error:', error); // Debug log
+                            $dropdown.html(`
+                                <div class="p-3 text-center text-danger">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Error loading results
+                                </div>
+                            `);
+                        }
+                    });
+                }, 300); // 300ms debounce
+            });
+
+            // Handle homeowner selection
+            $(document).on('click', '.homeowner-item', function() {
+                const name = $(this).data('name');
+                const address = $(this).data('address');
+                const homeownerId = $(this).data('homeowner-id');
+                const id = $(this).data('id');
+
+                // Set values
+                $searchInput.val(name);
+                $selectedHomeowner.val(name);
+                $selectedHomeownerId.val(id);
+                
+                // Update info text
+                $selectedInfo.html(`
+                    <i class="bi bi-check-circle-fill text-success me-1"></i>
+                    Selected: <strong>${name}</strong> - ${address}
+                `);
+
+                // Hide dropdown
+                $dropdown.addClass('d-none');
+            });
+
+            // Hover effect for dropdown items
+            $(document).on('mouseenter', '.homeowner-item', function() {
+                $(this).css('background-color', 'rgba(67, 97, 238, 0.05)');
+            }).on('mouseleave', '.homeowner-item', function() {
+                $(this).css('background-color', 'transparent');
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#homeownerSearch, #homeownerDropdown').length) {
+                    $dropdown.addClass('d-none');
+                }
+            });
+
+            // Clear selection when modal is closed
+            $('#addVisitorModal').on('hidden.bs.modal', function() {
+                $searchInput.val('');
+                $selectedHomeowner.val('');
+                $selectedHomeownerId.val('');
+                $selectedInfo.text('Start typing to search...');
+                $dropdown.addClass('d-none').empty();
+            });
+
+            // --- VISITOR MANAGEMENT LOGIC ---
+
+            // Load Visitor Logs
+            function loadVisitorLogs() {
+                $.ajax({
+                    url: 'api/get_visitor_logs.php',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            renderTable(response.data);
+                            updateStats(response.data);
+                        } else {
+                            console.error('Failed to load logs:', response.message);
+                        }
+                    },
+                    error: function() {
+                        console.error('Error fetching visitor logs');
+                    }
+                });
+            }
+
+            // Render Table Rows
+            function renderTable(logs) {
+                table.clear();
+                
+                logs.forEach(log => {
+                    const statusBadge = log.status === 'INSIDE' 
+                        ? `<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
+                             <i class="bi bi-house-check me-1"></i> INSIDE
+                           </span>`
+                        : `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
+                             <i class="bi bi-door-open me-1"></i> EXITED
+                           </span>`;
+
+                    const actionButtons = log.status === 'INSIDE'
+                        ? `<button class="btn btn-sm btn-outline-danger rounded-pill px-3 checkout-btn" data-id="${log.id}">
+                             <i class="bi bi-box-arrow-right me-1"></i> Checkout
+                           </button>`
+                        : `<button class="btn btn-sm btn-light rounded-pill p-2" title="View Details"><i class="bi bi-eye text-primary"></i></button>`;
+
+                    const timeOutDisplay = log.time_out_fmt 
+                        ? `<span class="text-secondary">${log.time_out_fmt}</span>` 
+                        : `<span class="text-muted">--:-- --</span>`;
+
+                    table.row.add([
+                        `<div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                <i class="bi bi-person"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">${log.visitor_name}</div>
+                                <div class="smaller text-muted">${log.visitor_type} Visit ${log.company ? '• ' + log.company : ''}</div>
+                            </div>
+                        </div>`,
+                        `<span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">${log.visitor_type}</span>`,
+                        `<div>
+                            <div class="fw-medium">${log.homeowner_name}</div>
+                            <div class="smaller text-muted">${log.homeowner_address}</div>
+                        </div>`,
+                        `<div class="text-center small fw-bold">${log.gate}</div>`,
+                        `<div class="text-center font-monospace small">
+                            <span class="text-success">${log.time_in_fmt}</span><br>
+                            ${timeOutDisplay}
+                        </div>`,
+                        `<div class="text-center">${statusBadge}</div>`,
+                        `<div class="pe-4 text-end">${actionButtons}</div>`
+                    ]);
+                });
+                
+                table.draw();
+            }
+
+            // Update Stats counters
+            function updateStats(logs) {
+                const today = new Date().toISOString().split('T')[0];
+                const stats = {
+                    inside: logs.filter(l => l.status === 'INSIDE').length,
+                    totalToday: logs.filter(l => l.created_at.includes(today)).length,
+                    pro: logs.filter(l => l.visitor_type === 'Professional').length,
+                    service: logs.filter(l => l.visitor_type === 'Service').length
+                };
+
+                $('#statInside').text(stats.inside);
+                $('#statTotalToday').text(stats.totalToday);
+                $('#statPro').text(stats.pro);
+                $('#statService').text(stats.service);
+            }
+
+            // Handle Checkout
+            $(document).on('click', '.checkout-btn', function() {
+                const id = $(this).data('id');
+                
+                Swal.fire({
+                    title: 'Confirm Checkout',
+                    text: "Mark this visitor as having exited?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#4361ee',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, checkout'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'api/checkout_visitor.php',
+                            method: 'POST',
+                            data: { id: id },
+                            success: function(response) {
+                                if (response.success) {
+                                    Swal.fire('Success', response.message, 'success');
+                                    loadVisitorLogs();
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Handle Form Submission
+            $('#addVisitorForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = $(this).serialize();
+                
+                // Validate homeowner selection
+                if (!$('#selectedHomeownerId').val()) {
+                    Swal.fire('Missing Selection', 'Please select a homeowner from the search results.', 'warning');
+                    return;
+                }
+
+                $.ajax({
+                    url: 'api/add_visitor.php',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if (response.success) {
+                            $('#addVisitorModal').modal('hide');
+                            Swal.fire('Success', response.message, 'success');
+                            loadVisitorLogs();
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'An unexpected error occurred.', 'error');
+                    }
+                });
+            });
+
+            // Initial load
+            loadVisitorLogs();
+
+            // Auto-refresh every 30 seconds
+            setInterval(loadVisitorLogs, 30000);
         });
     </script>
 </body>
