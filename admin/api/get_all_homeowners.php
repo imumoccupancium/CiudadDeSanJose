@@ -17,7 +17,8 @@ try {
             h.current_status,
             h.status,
             DATE_FORMAT(h.last_scan_time, '%Y-%m-%d %H:%i:%s') as last_scan_time,
-            DATE_FORMAT(h.created_at, '%Y-%m-%d') as created_at
+            DATE_FORMAT(h.created_at, '%Y-%m-%d') as created_at,
+            (SELECT COUNT(*) FROM family_members WHERE homeowner_id = h.id) as family_count
         FROM homeowners h
         ORDER BY h.homeowner_id ASC
     ");

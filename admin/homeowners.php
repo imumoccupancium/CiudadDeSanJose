@@ -461,6 +461,134 @@ $user = [
         </div>
     </div>
 
+    <!-- Manage Family Modal -->
+    <div class="modal fade" id="manageFamilyModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-people text-primary me-2"></i>
+                        Manage Family: <span id="family_owner_name" class="text-primary"></span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <!-- Add Family Member Form -->
+                        <div class="col-md-5">
+                            <div class="card border-0 bg-light p-4 rounded-4">
+                                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Add Family Member</h6>
+                                <form id="addFamilyForm">
+                                    <input type="hidden" name="homeowner_id" id="family_homeowner_id">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Full Name *</label>
+                                        <input type="text" class="form-control rounded-3 p-2 px-3 bg-white" name="full_name" placeholder="Name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Email Address</label>
+                                        <input type="email" class="form-control rounded-3 p-2 px-3 bg-white" name="email" placeholder="Email">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Phone Number</label>
+                                        <input type="tel" class="form-control rounded-3 p-2 px-3 bg-white" name="phone" placeholder="Phone">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">QR Expiry *</label>
+                                        <input type="datetime-local" class="form-control rounded-3 p-2 px-3 bg-white" name="qr_expiry" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Home Address (Inherited)</label>
+                                        <textarea class="form-control rounded-3 p-2 px-3 bg-white" id="family_owner_address" rows="2" readonly></textarea>
+                                    </div>
+                                    <button type="button" class="btn btn-primary rounded-pill w-100 py-2 mt-2" id="saveFamilyMemberBtn">
+                                        <i class="bi bi-plus-lg me-1"></i> Add Member
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <!-- Family Members List -->
+                        <div class="col-md-7">
+                            <h6 class="fw-bold mb-3 small text-uppercase text-muted">Registered Family Members</h6>
+                            <div id="familyMembersList" class="overflow-auto" style="max-height: 450px;">
+                                <!-- Populated by AJAX -->
+                                <div class="text-center py-5 text-muted">
+                                    <i class="bi bi-people fs-1 opacity-25 d-block mb-3"></i>
+                                    <p>No family members registered yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Family QR Modal -->
+    <div class="modal fade" id="viewFamilyQRModal" tabindex="-1" style="z-index: 1060;">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-body p-4 text-center">
+                    <h6 class="fw-bold mb-3" id="view_family_member_name"></h6>
+                    <div id="family_member_qr_container" class="bg-white p-3 rounded shadow-sm mx-auto mb-3" style="width: 200px; height: 200px;"></div>
+                    <div class="small text-muted mb-3" id="family_member_qr_expiry"></div>
+                    <button class="btn btn-outline-primary btn-sm rounded-pill w-100 mb-2" id="downloadFamilyQR">
+                        <i class="bi bi-download me-1"></i> Download QR
+                    </button>
+                    <button type="button" class="btn btn-light btn-sm rounded-pill w-100" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Family Member Modal -->
+    <div class="modal fade" id="editFamilyMemberModal" tabindex="-1" style="z-index: 1060;">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-pencil text-warning me-2"></i>
+                        Edit Family Member
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="editFamilyForm">
+                        <input type="hidden" name="id" id="edit_family_id">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Full Name *</label>
+                            <input type="text" class="form-control rounded-3" name="full_name" id="edit_family_full_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Email Address</label>
+                            <input type="email" class="form-control rounded-3" name="email" id="edit_family_email">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Phone Number</label>
+                            <input type="tel" class="form-control rounded-3" name="phone" id="edit_family_phone">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">QR Expiry *</label>
+                            <input type="datetime-local" class="form-control rounded-3" name="qr_expiry" id="edit_family_qr_expiry" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Account Status</label>
+                            <select class="form-select rounded-3" name="access_status" id="edit_family_status">
+                                <option value="active">Active</option>
+                                <option value="disabled">Disabled</option>
+                                <option value="suspended">Suspended</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" id="updateFamilyMemberBtn">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
@@ -489,9 +617,14 @@ $user = [
                         }
                     },
                     { 
-                        data: 'name',
+                        data: null,
                         render: function(data) {
-                            return `<div class="fw-bold text-dark">${data}</div>`;
+                            return `<div class="d-flex align-items-center justify-content-between">
+                                <span class="fw-bold text-dark">${data.name}</span>
+                                <button class="btn btn-xs btn-outline-primary rounded-pill manage-family-btn ms-2" data-id="${data.id}" data-name="${data.name}" data-address="${data.address}" style="font-size: 0.65rem; padding: 2px 8px;">
+                                    <i class="bi bi-people-fill me-1"></i> Family (${data.family_count || 0})
+                                </button>
+                            </div>`;
                         }
                     },
                     { 
@@ -879,6 +1012,209 @@ $user = [
                         Swal.fire('Error', response.message, 'error');
                     }
                 }, 'json');
+            });
+
+            // Manage Family
+            $('#homeownersTable').on('click', '.manage-family-btn', function() {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                const address = $(this).data('address');
+                
+                $('#family_owner_name').text(name);
+                $('#family_homeowner_id').val(id);
+                $('#family_owner_address').val(address);
+                
+                // Set default expiry to 1 year from now
+                const now = new Date();
+                const nextYear = new Date();
+                nextYear.setFullYear(now.getFullYear() + 1);
+                // format for datetime-local: YYYY-MM-DDThh:mm
+                const formatted = nextYear.toISOString().slice(0, 16);
+                $('#addFamilyForm input[name="qr_expiry"]').val(formatted);
+                
+                loadFamilyMembers(id);
+                new bootstrap.Modal(document.getElementById('manageFamilyModal')).show();
+            });
+
+            function loadFamilyMembers(homeownerId) {
+                $.get(`api/get_family_members.php?homeowner_id=${homeownerId}`, function(data) {
+                    const listContainer = $('#familyMembersList');
+                    listContainer.empty();
+                    
+                    if (data.length === 0) {
+                        listContainer.html(`
+                            <div class="text-center py-5 text-muted">
+                                <i class="bi bi-people fs-1 opacity-25 d-block mb-3"></i>
+                                <p>No family members registered yet.</p>
+                            </div>
+                        `);
+                        return;
+                    }
+                    
+                    data.forEach(member => {
+                        listContainer.append(`
+                            <div class="card border-0 mb-3 hover-lift shadow-sm">
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 fw-bold">${member.full_name}</h6>
+                                                <div class="small text-muted">
+                                                    <span class="me-2"><i class="bi bi-envelope me-1"></i> ${member.email || 'N/A'}</span>
+                                                    <span><i class="bi bi-phone me-1"></i> ${member.phone || 'N/A'}</span>
+                                                </div>
+                                                <div class="x-small text-muted mt-1" style="font-size: 0.7rem;">
+                                                    <i class="bi bi-calendar-event me-1"></i> Exp: ${member.qr_expiry_formatted}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-sm btn-light rounded-pill view-family-qr" data-token="${member.qr_token}" data-name="${member.full_name}" data-expiry="${member.qr_expiry_formatted}">
+                                                <i class="bi bi-qr-code text-primary"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-light rounded-pill edit-family-member" data-id="${member.id}">
+                                                <i class="bi bi-pencil text-warning"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-light rounded-pill delete-family-member" data-id="${member.id}">
+                                                <i class="bi bi-trash text-danger"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                });
+            }
+
+            // Save Family Member
+            $('#saveFamilyMemberBtn').click(function() {
+                const formData = $('#addFamilyForm').serialize();
+                const homeownerId = $('#family_homeowner_id').val();
+                
+                $.post('api/add_family_member.php', formData, function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Member Added',
+                            text: 'Family member registered successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                        $('#addFamilyForm')[0].reset();
+                        // Reset persistent fields
+                        $('#family_homeowner_id').val(homeownerId);
+                        $('#family_owner_address').val($('#family_owner_address').val()); // keep it
+                        
+                        // Re-set default expiry
+                        const nextYear = new Date();
+                        nextYear.setFullYear(nextYear.getFullYear() + 1);
+                        $('#addFamilyForm input[name="qr_expiry"]').val(nextYear.toISOString().slice(0, 16));
+                        
+                        loadFamilyMembers(homeownerId);
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                }, 'json');
+            });
+
+            // Delete Family Member
+            $('#familyMembersList').on('click', '.delete-family-member', function() {
+                const id = $(this).data('id');
+                const homeownerId = $('#family_homeowner_id').val();
+                
+                Swal.fire({
+                    title: 'Remove Family Member?',
+                    text: "Their access key will be deactivated immediately!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: 'var(--danger)',
+                    confirmButtonText: 'Yes, remove'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('api/delete_family_member.php', { id: id }, function(response) {
+                            if (response.success) {
+                                loadFamilyMembers(homeownerId);
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        }, 'json');
+                    }
+                });
+            });
+
+            // Edit Family Member
+            $('#familyMembersList').on('click', '.edit-family-member', function() {
+                const id = $(this).data('id');
+                $.get(`api/get_family_member.php?id=${id}`, function(data) {
+                    if (data.error) {
+                        Swal.fire('Error', data.error, 'error');
+                        return;
+                    }
+                    $('#edit_family_id').val(data.id);
+                    $('#edit_family_full_name').val(data.full_name);
+                    $('#edit_family_email').val(data.email);
+                    $('#edit_family_phone').val(data.phone);
+                    $('#edit_family_qr_expiry').val(data.qr_expiry_input);
+                    $('#edit_family_status').val(data.access_status);
+                    
+                    new bootstrap.Modal(document.getElementById('editFamilyMemberModal')).show();
+                });
+            });
+
+            // Update Family Member
+            $('#updateFamilyMemberBtn').click(function() {
+                const formData = $('#editFamilyForm').serialize();
+                const homeownerId = $('#family_homeowner_id').val();
+                
+                $.post('api/update_family_member.php', formData, function(response) {
+                    if (response.success) {
+                        bootstrap.Modal.getInstance(document.getElementById('editFamilyMemberModal')).hide();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated',
+                            text: 'Member details updated successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                        loadFamilyMembers(homeownerId);
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                }, 'json');
+            });
+
+            // View Family QR
+            $('#familyMembersList').on('click', '.view-family-qr', function() {
+                const token = $(this).data('token');
+                const name = $(this).data('name');
+                const expiry = $(this).data('expiry');
+                
+                $('#view_family_member_name').text(name);
+                $('#family_member_qr_expiry').text('Valid until: ' + expiry);
+                
+                $('#family_member_qr_container').empty();
+                new QRCode(document.getElementById("family_member_qr_container"), {
+                    text: token,
+                    width: 200,
+                    height: 200,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+                
+                $('#downloadFamilyQR').off('click').on('click', function() {
+                    const qrImg = document.querySelector('#family_member_qr_container img');
+                    const link = document.createElement('a');
+                    link.href = qrImg.src;
+                    link.download = `QR_Family_${name}.png`;
+                    link.click();
+                });
+                
+                new bootstrap.Modal(document.getElementById('viewFamilyQRModal')).show();
             });
 
             // Download QR Code
