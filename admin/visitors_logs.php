@@ -213,22 +213,22 @@ $user = [
                 <div class="col-md-3">
                     <div class="card border-0 p-2 text-center">
                         <div class="card-body">
-                            <div class="stat-icon bg-info bg-opacity-10 text-info mx-auto mb-3">
-                                <i class="bi bi-briefcase-fill fs-4"></i>
+                            <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
+                                <i class="bi bi-truck-flatbed fs-4"></i>
                             </div>
-                            <h4 class="mb-0 fw-bold" id="statPro">0</h4>
-                            <small class="text-muted fw-medium fs-7">Professional Visits</small>
+                            <h4 class="mb-0 fw-bold" id="statService">0</h4>
+                            <small class="text-muted fw-medium fs-7">Service/Delivery</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card border-0 p-2 text-center">
                         <div class="card-body">
-                            <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
-                                <i class="bi bi-truck-flatbed fs-4"></i>
+                            <div class="stat-icon bg-info bg-opacity-10 text-info mx-auto mb-3">
+                                <i class="bi bi-clock-fill fs-4"></i>
                             </div>
-                            <h4 class="mb-0 fw-bold" id="statService">0</h4>
-                            <small class="text-muted fw-medium fs-7">Service/Delivery</small>
+                            <h4 class="mb-0 fw-bold" id="statTotalExited">0</h4>
+                            <small class="text-muted fw-medium fs-7">Exited Today</small>
                         </div>
                     </div>
                 </div>
@@ -245,7 +245,7 @@ $user = [
                         <div class="btn-group rounded-pill overflow-hidden border">
                             <button type="button" class="btn btn-light btn-sm px-3 active" data-filter="all">All</button>
                             <button type="button" class="btn btn-light btn-sm px-3" data-filter="Personal">Personal</button>
-                            <button type="button" class="btn btn-light btn-sm px-3" data-filter="Professional">Professional</button>
+                            <button type="button" class="btn btn-light btn-sm px-3" data-filter="Service">Service</button>
                         </div>
                         <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal" data-bs-target="#addVisitorModal">
                             <i class="bi bi-plus-lg me-1"></i> Log Visitor
@@ -304,7 +304,6 @@ $user = [
                                 <label class="form-label small fw-bold text-muted text-uppercase">Visitor Type</label>
                                 <select name="visitor_type" id="modalVisitorType" class="form-select rounded-3 p-2 px-3 bg-light border-0" required>
                                     <option value="Personal">Personal Visit</option>
-                                    <option value="Professional">Professional / Tech</option>
                                     <option value="Service">Delivery / Service</option>
                                 </select>
                             </div>
@@ -635,14 +634,14 @@ $user = [
                 const stats = {
                     inside: logs.filter(l => l.status === 'INSIDE').length,
                     totalToday: logs.filter(l => l.created_at.includes(today)).length,
-                    pro: logs.filter(l => l.visitor_type === 'Professional').length,
-                    service: logs.filter(l => l.visitor_type === 'Service').length
+                    service: logs.filter(l => l.visitor_type === 'Service').length,
+                    exitedToday: logs.filter(l => l.status === 'OUT' && l.created_at.includes(today)).length
                 };
 
                 $('#statInside').text(stats.inside);
                 $('#statTotalToday').text(stats.totalToday);
-                $('#statPro').text(stats.pro);
                 $('#statService').text(stats.service);
+                $('#statTotalExited').text(stats.exitedToday);
             }
 
             // Handle Checkout
