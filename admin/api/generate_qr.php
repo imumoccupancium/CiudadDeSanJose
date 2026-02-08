@@ -11,7 +11,13 @@ try {
     }
     
     $token = bin2hex(random_bytes(16));
-    $expiry = date('Y-m-d H:i:s', strtotime('+1 year'));
+    
+    if (!empty($_POST['expiry_date'])) {
+        $expiry = $_POST['expiry_date'] . ' 23:59:59';
+    } else {
+        $expiry = date('Y-m-d H:i:s', strtotime('+1 year'));
+    }
+    
     $now = date('Y-m-d H:i:s');
     
     $stmt = $pdo->prepare("

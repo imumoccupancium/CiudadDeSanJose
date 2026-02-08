@@ -295,6 +295,10 @@ $user = [
                                 <label class="form-label small fw-bold text-muted">Home Address *</label>
                                 <textarea class="form-control rounded-3 p-2 px-3" name="address" rows="2" placeholder="Block, Lot & Street Details" required></textarea>
                             </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">QR Code Expiry (Optional)</label>
+                                <input type="date" class="form-control rounded-3 p-2 px-3" name="qr_expiry">
+                            </div>
                             <div class="col-12 mt-4">
                                 <div class="form-check form-switch bg-light p-3 rounded-3 border">
                                     <div class="ps-4">
@@ -361,6 +365,10 @@ $user = [
                                     <option value="inactive">Inactive</option>
                                     <option value="suspended">Suspended</option>
                                 </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold text-muted">QR Code Expiry</label>
+                                <input type="date" class="form-control rounded-3" name="qr_expiry" id="edit_qr_expiry">
                             </div>
                         </div>
                     </form>
@@ -714,17 +722,33 @@ $user = [
 
             $(document).on('click', '.regen-btn, .regenerate-qr-btn', function() {
                 const id = $(this).data('id');
+                const today = new Date().toISOString().split('T')[0];
+                const nextYear = new Date();
+                nextYear.setFullYear(nextYear.getFullYear() + 1);
+                const defaultExpiry = nextYear.toISOString().split('T')[0];
+
                 Swal.fire({
                     title: 'Regenerate QR Code?',
-                    text: "The old QR code will immediately stop working!",
+                    html: `
+                        <p class="text-muted small">The old QR code will immediately stop working!</p>
+                        <div class="mt-3 text-start">
+                            <label class="form-label small fw-bold text-muted">Set New Expiry Date (Optional)</label>
+                            <input type="date" id="swal_expiry_date" class="form-control" value="${defaultExpiry}" min="${today}">
+                            <small class="text-muted">Defaults to 1 year from now if not changed.</small>
+                        </div>
+                    `,
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: 'var(--primary)',
                     cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, generate new!'
+                    confirmButtonText: 'Yes, generate new!',
+                    preConfirm: () => {
+                        return document.getElementById('swal_expiry_date').value;
+                    }
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.post('api/generate_qr.php', { id: id }, function(response) {
+                        const expiryDate = result.value;
+                        $.post('api/generate_qr.php', { id: id, expiry_date: expiryDate }, function(response) {
                             if (response.success) {
                                 if ($('#viewHomeownerModal').is(':visible')) {
                                     $('#view_qr').empty();
@@ -767,6 +791,14 @@ $user = [
                     $('#edit_phone').val(data.phone);
                     $('#edit_address').val(data.address);
                     $('#edit_status').val(data.status);
+                    
+                    if (data.qr_expiry) {
+                        const expiryDate = data.qr_expiry.split(' ')[0];
+                        $('#edit_qr_expiry').val(expiryDate);
+                    } else {
+                        $('#edit_qr_expiry').val('');
+                    }
+                    
                     new bootstrap.Modal(document.getElementById('editHomeownerModal')).show();
                 });
             });

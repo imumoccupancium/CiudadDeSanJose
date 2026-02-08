@@ -10,6 +10,7 @@ try {
     $phone = $_POST['phone'] ?? null;
     $address = $_POST['address'] ?? '';
     $status = $_POST['status'] ?? 'active';
+    $qr_expiry = !empty($_POST['qr_expiry']) ? $_POST['qr_expiry'] : null;
     
     if (empty($id) || empty($name) || empty($homeowner_id) || empty($address)) {
         echo json_encode(['success' => false, 'message' => 'Required fields are missing']);
@@ -18,11 +19,11 @@ try {
     
     $stmt = $pdo->prepare("
         UPDATE homeowners 
-        SET name = ?, homeowner_id = ?, email = ?, phone = ?, address = ?, status = ?
+        SET name = ?, homeowner_id = ?, email = ?, phone = ?, address = ?, status = ?, qr_expiry = ?
         WHERE id = ?
     ");
     
-    $stmt->execute([$name, $homeowner_id, $email, $phone, $address, $status, $id]);
+    $stmt->execute([$name, $homeowner_id, $email, $phone, $address, $status, $qr_expiry, $id]);
     
     echo json_encode(['success' => true, 'message' => 'Homeowner updated successfully']);
     

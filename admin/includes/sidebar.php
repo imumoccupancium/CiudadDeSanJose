@@ -120,11 +120,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
 </style>
 <!-- Sidebar -->
 <div class="sidebar d-flex flex-column" id="sidebar">
-    <div class="p-4 mb-3">
-        <h4 class="text-white fw-bold mb-0">
-            <i class="bi bi-qr-code-scan text-primary me-2"></i>
-            San Jose
-        </h4>
+    <div class="p-4 mb-3 text-center">
+        <img src="../assets/logo.png" alt="Logo" class="img-fluid" style="max-height: 80px;">
     </div>
     
     <nav class="nav flex-column mt-2">
@@ -162,29 +159,25 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <a href="#" class="nav-link">
             <i class="bi bi-shield-check"></i> Guards
         </a>
-        <a href="#" class="nav-link">
-            <i class="bi bi-phone-fill"></i> Scanners
-        </a>
-        <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">System</div>
-        <a href="#" class="nav-link">
-            <i class="bi bi-gear-fill"></i> Settings
-        </a>
     </nav>
     
-    <div class="mt-auto p-4">
-        <div class="d-flex align-items-center mb-4 p-3 rounded-3 bg-white bg-opacity-10">
-            <div class="flex-shrink-0 me-3">
-                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.8rem;">
-                    <?php echo substr($user['name'], 0, 1); ?>
+    <div class="mt-auto">
+
+        <div class="p-4 border-top border-white border-opacity-10">
+            <div class="d-flex align-items-center mb-4 p-3 rounded-3 bg-white bg-opacity-10">
+                <div class="flex-shrink-0 me-3">
+                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.8rem;">
+                        <?php echo substr($user['name'], 0, 1); ?>
+                    </div>
+                </div>
+                <div class="flex-grow-1 overflow-hidden">
+                    <div class="fw-bold text-white text-truncate"><?php echo htmlspecialchars($user['name']); ?></div>
+                    <div class="text-white-50 small text-truncate"><?php echo htmlspecialchars($user['role']); ?></div>
                 </div>
             </div>
-            <div class="flex-grow-1 overflow-hidden">
-                <div class="fw-bold text-white text-truncate"><?php echo htmlspecialchars($user['name']); ?></div>
-                <div class="text-white-50 small text-truncate"><?php echo htmlspecialchars($user['role']); ?></div>
-            </div>
+            <a href="../auth/login.php" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
         </div>
-        <a href="../auth/login.php" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
     </div>
 </div>

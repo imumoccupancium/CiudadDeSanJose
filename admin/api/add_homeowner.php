@@ -21,7 +21,14 @@ try {
 
     if ($generate_qr) {
         $qr_token = bin2hex(random_bytes(16)); // Secure random token
-        $qr_expiry = date('Y-m-d H:i:s', strtotime('+1 year')); // 1 year validity
+        
+        // Use provided expiry or default to 1 year
+        if (!empty($_POST['qr_expiry'])) {
+            $qr_expiry = $_POST['qr_expiry'] . ' 23:59:59';
+        } else {
+            $qr_expiry = date('Y-m-d H:i:s', strtotime('+1 year'));
+        }
+        
         $qr_last_generated = date('Y-m-d H:i:s');
     }
     
