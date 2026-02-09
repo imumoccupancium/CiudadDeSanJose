@@ -724,7 +724,7 @@ $user = [
             setInterval(function() {
                 table.ajax.reload(null, false); // Reload table without resetting pagination
                 updateStats(); // Update statistics
-            }, 30000);
+            }, 5000);
             
             // Status filter
             $('[data-status]').click(function() {
