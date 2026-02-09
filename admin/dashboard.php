@@ -664,10 +664,10 @@ try {
                 dom: 'tp' // Simplified DataTables UI
             });
             
-            // Auto-refresh every 30 seconds
+            // Auto-refresh every 5 seconds
             setInterval(function() {
                 activityTable.ajax.reload(null, false);
-            }, 30000);
+            }, 5000);
             
             // Manual refresh
             $('#refreshActivityLog').click(function() {

@@ -720,10 +720,18 @@ $user = [
             }
             updateStats();
             
-            // AJAX Auto-refresh - reload table and stats every 30 seconds
+            // AJAX Auto-refresh - reload table and stats every 5 seconds
             setInterval(function() {
                 table.ajax.reload(null, false); // Reload table without resetting pagination
                 updateStats(); // Update statistics
+                
+                // If Manage Family modal is open, refresh that list too
+                if ($('#manageFamilyModal').is(':visible')) {
+                    const homeownerId = $('#family_homeowner_id').val();
+                    if (homeownerId) {
+                        loadFamilyMembers(homeownerId);
+                    }
+                }
             }, 5000);
             
             // Status filter
@@ -1058,6 +1066,10 @@ $user = [
                     }
                     
                     data.forEach(member => {
+                        const statusColor = member.current_status === 'IN' ? 'primary' : 'warning';
+                        const statusIcon = member.current_status === 'IN' ? 'bi-house-check' : 'bi-house-dash';
+                        const statusLabel = member.current_status === 'IN' ? 'INSIDE' : 'OUTSIDE';
+                        
                         listContainer.append(`
                             <div class="card border-0 mb-3 hover-lift shadow-sm">
                                 <div class="card-body p-3">
@@ -1067,18 +1079,23 @@ $user = [
                                                 <i class="bi bi-person"></i>
                                             </div>
                                             <div>
-                                                <h6 class="mb-0 fw-bold">${member.full_name}</h6>
+                                                <div class="d-flex align-items-center gap-2 mb-1">
+                                                    <h6 class="mb-0 fw-bold">${member.full_name}</h6>
+                                                    <span class="badge bg-${statusColor} bg-opacity-10 text-${statusColor} rounded-pill px-2 py-1 fw-bold" style="font-size: 0.6rem;">
+                                                        <i class="bi ${statusIcon} me-1"></i> ${statusLabel}
+                                                    </span>
+                                                </div>
                                                 <div class="small text-muted">
                                                     <span class="me-2"><i class="bi bi-envelope me-1"></i> ${member.email || 'N/A'}</span>
                                                     <span><i class="bi bi-phone me-1"></i> ${member.phone || 'N/A'}</span>
                                                 </div>
                                                 <div class="x-small text-muted mt-1" style="font-size: 0.7rem;">
-                                                    <i class="bi bi-calendar-event me-1"></i> Exp: ${member.qr_expiry_formatted}
+                                                    <i class="bi bi-calendar-event me-1"></i> Exp: ${member.qr_expiry_formatted || 'N/A'}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex gap-2">
-                                            <button class="btn btn-sm btn-light rounded-pill view-family-qr" data-token="${member.qr_token}" data-name="${member.full_name}" data-expiry="${member.qr_expiry_formatted}">
+                                        <div class="d-flex gap-1">
+                                            <button class="btn btn-sm btn-light rounded-pill view-family-qr" data-token="${member.qr_token}" data-name="${member.full_name}" data-expiry="${member.qr_expiry_formatted || 'N/A'}">
                                                 <i class="bi bi-qr-code text-primary"></i>
                                             </button>
                                             <button class="btn btn-sm btn-light rounded-pill edit-family-member" data-id="${member.id}">

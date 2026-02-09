@@ -4,16 +4,31 @@ require_once '../../config/database.php';
 
 try {
     $stmt = $pdo->query("
-        SELECT 
+        (SELECT 
             h.name as homeowner_name,
             h.homeowner_id,
             el.action,
             DATE_FORMAT(el.timestamp, '%Y-%m-%d') as date,
             DATE_FORMAT(el.timestamp, '%H:%i:%s') as time,
-            COALESCE(el.device_name, 'Main Gate Scanner') as device
+            COALESCE(el.device_name, 'Main Gate Scanner') as device,
+            el.timestamp
         FROM entry_logs el
-        JOIN homeowners h ON el.homeowner_id = h.id
-        ORDER BY el.timestamp DESC
+        JOIN homeowners h ON el.homeowner_id = h.id)
+        
+        UNION ALL
+        
+        (SELECT 
+            fm.full_name as homeowner_name,
+            fm.homeowner_id, -- Using the primary homeowner ID ref
+            fml.action,
+            DATE_FORMAT(fml.timestamp, '%Y-%m-%d') as date,
+            DATE_FORMAT(fml.timestamp, '%H:%i:%s') as time,
+            COALESCE(fml.device_name, 'Main Gate Scanner') as device,
+            fml.timestamp
+        FROM family_member_logs fml
+        JOIN family_members fm ON fml.family_member_id = fm.id)
+        
+        ORDER BY timestamp DESC
         LIMIT 100
     ");
     
