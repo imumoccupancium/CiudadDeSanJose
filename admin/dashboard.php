@@ -274,7 +274,7 @@ try {
                             <div class="stat-icon bg-success bg-opacity-10">
                                 <i class="bi bi-arrow-down-square-fill text-success" style="font-size: 1.5rem;"></i>
                             </div>
-                            <h1 class="display-4 mb-1"><?php echo $totalEntriesToday; ?></h1>
+                            <h1 class="display-4 mb-1" id="statEntriesToday"><?php echo $totalEntriesToday; ?></h1>
                             <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Entries Today</h6>
                             <div class="badge rounded-pill bg-success bg-opacity-10 text-success p-2 px-3">
                                 <i class="bi bi-graph-up me-1"></i> +5% from yesterday
@@ -289,7 +289,7 @@ try {
                             <div class="stat-icon bg-danger bg-opacity-10">
                                 <i class="bi bi-arrow-up-square-fill text-danger" style="font-size: 1.5rem;"></i>
                             </div>
-                            <h1 class="display-4 mb-1"><?php echo $totalExitsToday; ?></h1>
+                            <h1 class="display-4 mb-1" id="statExitsToday"><?php echo $totalExitsToday; ?></h1>
                             <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Exits Today</h6>
                             <div class="badge rounded-pill bg-danger bg-opacity-10 text-danger p-2 px-3">
                                 <i class="bi bi-graph-down me-1"></i> -2% from yesterday
@@ -304,7 +304,7 @@ try {
                             <div class="stat-icon bg-primary bg-opacity-10">
                                 <i class="bi bi-people-fill text-primary" style="font-size: 1.5rem;"></i>
                             </div>
-                            <h1 class="display-4 mb-1"><?php echo $totalHomeowners; ?></h1>
+                            <h1 class="display-4 mb-1" id="statTotalHomeowners"><?php echo $totalHomeowners; ?></h1>
                             <h6 class="text-muted text-uppercase small fw-bold mb-3" style="letter-spacing: 1px;">Total Homeowners</h6>
                             <div class="badge rounded-pill bg-primary bg-opacity-10 text-primary p-2 px-3">
                                 <i class="bi bi-check-circle-fill me-1"></i> All active
@@ -332,13 +332,13 @@ try {
                                             </div>
                                         </div>
                                         <div>
-                                            <h2 class="mb-0 fw-bold"><?php echo $currentlyInside; ?></h2>
+                                            <h2 class="mb-0 fw-bold" id="statCurrentlyInside"><?php echo $currentlyInside; ?></h2>
                                             <p class="mb-0 text-muted fw-medium">Homeowners Inside</p>
                                         </div>
                                         <div class="ms-auto text-end">
-                                            <div class="text-success small fw-bold"><?php echo round(($currentlyInside/$totalHomeowners)*100); ?>%</div>
+                                            <div class="text-success small fw-bold" id="insidePercentageText"><?php echo round(($currentlyInside/$totalHomeowners)*100); ?>%</div>
                                             <div class="progress mt-1" style="width: 60px; height: 4px;">
-                                                <div class="progress-bar bg-success" style="width: <?php echo ($currentlyInside/$totalHomeowners)*100; ?>%"></div>
+                                                <div class="progress-bar bg-success" id="insideProgressBar" style="width: <?php echo ($currentlyInside/$totalHomeowners)*100; ?>%"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -351,13 +351,13 @@ try {
                                             </div>
                                         </div>
                                         <div>
-                                            <h2 class="mb-0 fw-bold"><?php echo $currentlyOutside; ?></h2>
+                                            <h2 class="mb-0 fw-bold" id="statCurrentlyOutside"><?php echo $currentlyOutside; ?></h2>
                                             <p class="mb-0 text-muted fw-medium">Homeowners Outside</p>
                                         </div>
                                         <div class="ms-auto text-end">
-                                            <div class="text-warning small fw-bold"><?php echo round(($currentlyOutside/$totalHomeowners)*100); ?>%</div>
+                                            <div class="text-warning small fw-bold" id="outsidePercentageText"><?php echo round(($currentlyOutside/$totalHomeowners)*100); ?>%</div>
                                             <div class="progress mt-1" style="width: 60px; height: 4px;">
-                                                <div class="progress-bar bg-warning" style="width: <?php echo ($currentlyOutside/$totalHomeowners)*100; ?>%"></div>
+                                                <div class="progress-bar bg-warning" id="outsideProgressBar" style="width: <?php echo ($currentlyOutside/$totalHomeowners)*100; ?>%"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -664,14 +664,40 @@ try {
                 dom: 'tp' // Simplified DataTables UI
             });
             
+            // Dashboard Stats Refresh
+            function updateDashboardStats() {
+                $.get('api/get_stats.php', function(data) {
+                    $('#statEntriesToday').text(data.total_entries_today);
+                    $('#statExitsToday').text(data.total_exits_today);
+                    $('#statTotalHomeowners').text(data.total_homeowners);
+                    $('#statCurrentlyInside').text(data.currently_inside);
+                    $('#statCurrentlyOutside').text(data.currently_outside);
+                    
+                    // Update progress bars
+                    const insidePercent = data.total_homeowners > 0 ? Math.round((data.currently_inside / data.total_homeowners) * 100) : 0;
+                    const outsidePercent = data.total_homeowners > 0 ? Math.round((data.currently_outside / data.total_homeowners) * 100) : 0;
+                    
+                    $('#insidePercentageText').text(insidePercent + '%');
+                    $('#insideProgressBar').css('width', insidePercent + '%');
+                    
+                    $('#outsidePercentageText').text(outsidePercent + '%');
+                    $('#outsideProgressBar').css('width', outsidePercent + '%');
+                });
+            }
+
+            // Initial stats load
+            updateDashboardStats();
+            
             // Auto-refresh every 5 seconds
             setInterval(function() {
                 activityTable.ajax.reload(null, false);
+                updateDashboardStats();
             }, 5000);
             
             // Manual refresh
             $('#refreshActivityLog').click(function() {
                 activityTable.ajax.reload();
+                updateDashboardStats();
             });
         });
         </script>
