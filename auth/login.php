@@ -111,11 +111,7 @@ $rememberedUser = $_COOKIE['remembered_user'] ?? '';
         <div class="branding-section" style="background-image: url('../assets/1.jpg'); background-size: cover; background-position: center; position: relative;">
             <div class="branding-content" style="position: relative; z-index: 1;">
                 <div class="logo-container">
-                    <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M50 10L20 30V70L50 90L80 70V30L50 10Z" stroke="currentColor" stroke-width="3" fill="none"/>
-                        <path d="M50 30L35 40V60L50 70L65 60V40L50 30Z" fill="currentColor"/>
-                        <circle cx="50" cy="50" r="8" fill="white"/>
-                    </svg>
+                    <img src="../assets/logo.png" alt="Ciudad De San Jose Logo" class="brand-logo">
                     <h1 class="brand-name">Ciudad De San Jose</h1>
                 </div>
                 <p class="brand-tagline">Secure Access Management System</p>
@@ -146,6 +142,7 @@ $rememberedUser = $_COOKIE['remembered_user'] ?? '';
         <div class="form-section">
             <div class="form-container">
                 <div class="form-header">
+                    <img src="../assets/logo.png" alt="Ciudad De San Jose Logo" class="login-page-logo">
                     <h2>Welcome to Ciudad De San Jose</h2>
                     <p>Please login to your account</p>
                 </div>

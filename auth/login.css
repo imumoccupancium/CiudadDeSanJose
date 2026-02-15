@@ -109,6 +109,18 @@ body {
     color: var(--gray-500);
 }
 
+.login-page-logo {
+    width: 200px;
+    height: auto;
+    margin-bottom: 30px;
+}
+
+.brand-logo {
+    width: 60px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
 /* Form */
 .login-form {
     display: flex;
