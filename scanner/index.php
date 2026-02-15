@@ -10,9 +10,10 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSJ Virtual Gate - Turnstile Simulator</title>
     
-    <!-- Premium Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Local Fonts (Inter/Orbitron) -->
+    <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
+    <link rel="stylesheet" href="../assets/vendor/fonts/orbitron/orbitron.css">
+    <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     
     <style>
         :root {
@@ -356,9 +357,9 @@ session_start();
     </div>
 
     <!-- Scanner Library -->
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="../assets/vendor/html5-qrcode/html5-qrcode.min.js"></script>
     <!-- SweetAlert For Errors -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
 
     <script>
         let currentMode = 'IN';

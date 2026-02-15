@@ -98,9 +98,7 @@ $rememberedUser = $_COOKIE['remembered_user'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ciudad De San Jose</title>
     <link rel="stylesheet" href="login.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
 </head>
 <body>
     <!-- Background with animated gradient -->
