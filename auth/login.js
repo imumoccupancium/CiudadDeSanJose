@@ -3,7 +3,7 @@
 // Form Validation & Interactivity
 // ============================================
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Get form elements
     const loginForm = document.getElementById('loginForm');
     const usernameInput = document.getElementById('username');
@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Password Toggle Functionality
     // ============================================
-    togglePasswordBtn.addEventListener('click', function() {
+    togglePasswordBtn.addEventListener('click', function () {
         const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
-        
+
         // Update icon
         const eyeIcon = this.querySelector('.eye-icon');
         if (type === 'text') {
@@ -42,20 +42,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Input Validation Functions
     // ============================================
-    
+
     function validateUsername() {
         const username = usernameInput.value.trim();
-        
+
         if (username === '') {
             showError(usernameInput, usernameError, 'Username or email is required');
             return false;
         }
-        
+
         if (username.length < 3) {
             showError(usernameInput, usernameError, 'Username must be at least 3 characters');
             return false;
         }
-        
+
         // If it looks like an email, validate email format
         if (username.includes('@')) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,24 +64,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
         }
-        
+
         clearError(usernameInput, usernameError);
         return true;
     }
 
     function validatePassword() {
         const password = passwordInput.value;
-        
+
         if (password === '') {
             showError(passwordInput, passwordError, 'Password is required');
             return false;
         }
-        
+
         if (password.length < 6) {
             showError(passwordInput, passwordError, 'Password must be at least 6 characters');
             return false;
         }
-        
+
         clearError(passwordInput, passwordError);
         return true;
     }
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         alertMessage.textContent = message;
         alertMessage.className = `alert ${type}`;
         alertMessage.style.display = 'block';
-        
+
         // Auto-hide after 5 seconds
         setTimeout(() => {
             alertMessage.style.display = 'none';
@@ -116,19 +116,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Real-time Validation
     // ============================================
-    
+
     usernameInput.addEventListener('blur', validateUsername);
     passwordInput.addEventListener('blur', validatePassword);
-    
+
     // Clear errors on input
-    usernameInput.addEventListener('input', function() {
+    usernameInput.addEventListener('input', function () {
         if (this.classList.contains('error')) {
             clearError(this, usernameError);
         }
         hideAlert();
     });
-    
-    passwordInput.addEventListener('input', function() {
+
+    passwordInput.addEventListener('input', function () {
         if (this.classList.contains('error')) {
             clearError(this, passwordError);
         }
@@ -138,46 +138,46 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Form Submission
     // ============================================
-    
-    loginForm.addEventListener('submit', async function(e) {
+
+    loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
-        
+
         // Hide any existing alerts
         hideAlert();
-        
+
         // Validate all fields
         const isUsernameValid = validateUsername();
         const isPasswordValid = validatePassword();
-        
+
         if (!isUsernameValid || !isPasswordValid) {
             showAlert('Please fix the errors before submitting', 'error');
             return;
         }
-        
+
         // Show loading state
         setLoadingState(true);
-        
+
         // Get form data
         const formData = {
             username: usernameInput.value.trim(),
             password: passwordInput.value,
             rememberMe: rememberMeCheckbox.checked
         };
-        
+
         try {
             // Simulate API call (replace with actual API endpoint)
             await simulateLogin(formData);
-            
+
             // Success
             showAlert('Login successful! Redirecting...', 'success');
-            
+
             // Redirect after 1.5 seconds
             setTimeout(() => {
                 // Replace with actual redirect logic based on user role
                 // window.location.href = '/dashboard';
                 console.log('Redirecting to dashboard...');
             }, 1500);
-            
+
         } catch (error) {
             // Error handling
             setLoadingState(false);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Loading State Management
     // ============================================
-    
+
     function setLoadingState(isLoading) {
         if (isLoading) {
             loginButton.classList.add('loading');
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Simulated Login Function
     // Replace this with actual API call
     // ============================================
-    
+
     function simulateLogin(formData) {
         return new Promise((resolve, reject) => {
             // Simulate network delay
@@ -221,12 +221,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     { username: 'homeowner', password: 'homeowner123', role: 'homeowner' },
                     { username: 'demo@ciudaddesanjose.com', password: 'demo123', role: 'homeowner' }
                 ];
-                
+
                 const user = validCredentials.find(
-                    cred => (cred.username === formData.username || cred.username === formData.username) 
-                    && cred.password === formData.password
+                    cred => (cred.username === formData.username || cred.username === formData.username)
+                        && cred.password === formData.password
                 );
-                
+
                 if (user) {
                     // Store user info (in production, use secure session/token)
                     if (formData.rememberMe) {
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Remember Me Functionality
     // ============================================
-    
+
     // Check if there's a remembered user
     const rememberedUser = localStorage.getItem('rememberedUser');
     if (rememberedUser) {
@@ -255,14 +255,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Keyboard Shortcuts
     // ============================================
-    
-    document.addEventListener('keydown', function(e) {
+
+    document.addEventListener('keydown', function (e) {
         // Alt + L to focus on login button
         if (e.altKey && e.key === 'l') {
             e.preventDefault();
             loginButton.focus();
         }
-        
+
         // Escape to clear form
         if (e.key === 'Escape') {
             if (document.activeElement === usernameInput || document.activeElement === passwordInput) {
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Input Auto-focus Enhancement
     // ============================================
-    
+
     // Auto-focus on username field when page loads
     setTimeout(() => {
         usernameInput.focus();
@@ -283,10 +283,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Prevent Multiple Submissions
     // ============================================
-    
+
     let isSubmitting = false;
-    
-    loginForm.addEventListener('submit', function(e) {
+
+    loginForm.addEventListener('submit', function (e) {
         if (isSubmitting) {
             e.preventDefault();
             return false;
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Browser Autofill Detection
     // ============================================
-    
+
     // Detect browser autofill and clear errors
     setTimeout(() => {
         if (usernameInput.value !== '') {
@@ -310,7 +310,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     // Console Welcome Message
     // ============================================
-    
+
+    // ============================================
+    // URL Cleanup (Remove logout parameter)
+    // ============================================
+    if (window.history.replaceState && window.location.search.includes('logout=success')) {
+        const url = new URL(window.location);
+        url.searchParams.delete('logout');
+        window.history.replaceState({}, document.title, url.pathname);
+    }
+
     console.log('%c🏘️ Ciudad De San Jose', 'font-size: 20px; font-weight: bold; color: #2563eb;');
     console.log('%cSubdivision Management System', 'font-size: 14px; color: #6b7280;');
     console.log('%c\nDemo Credentials:', 'font-size: 12px; font-weight: bold; color: #10b981;');
@@ -334,14 +343,14 @@ function sanitizeInput(input) {
 // Check password strength (optional enhancement)
 function checkPasswordStrength(password) {
     let strength = 0;
-    
+
     if (password.length >= 8) strength++;
     if (password.length >= 12) strength++;
     if (/[a-z]/.test(password)) strength++;
     if (/[A-Z]/.test(password)) strength++;
     if (/[0-9]/.test(password)) strength++;
     if (/[^a-zA-Z0-9]/.test(password)) strength++;
-    
+
     if (strength <= 2) return 'weak';
     if (strength <= 4) return 'medium';
     return 'strong';
@@ -356,7 +365,7 @@ function formatErrorMessage(error) {
         'account_locked': 'Your account has been locked. Please contact support.',
         'account_inactive': 'Your account is inactive. Please contact your administrator.'
     };
-    
+
     return errorMessages[error] || 'An unexpected error occurred.';
 }
 

@@ -5,15 +5,14 @@ session_start();
 // Check if user is already logged in
 if (isset($_SESSION['user_id'])) {
     // Redirect based on role
-    switch ($_SESSION['role']) {
+    switch ($_SESSION['user_role']) {
         case 'admin':
+        case 'hoa':
+        case 'supervisor':
             header('Location: ../admin/dashboard.php');
             break;
-        case 'security':
+        case 'guard':
             header('Location: ../scanner/index.php');
-            break;
-        case 'homeowner':
-            header('Location: ../portal/dashboard.php');
             break;
         default:
             header('Location: ../index.php');
@@ -43,69 +42,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (empty($password)) {
         $error = 'Password is required';
     } else {
-        // TODO: Replace with actual database authentication
-        // This is a placeholder for demonstration
-        
-        // Example: Connect to database and verify credentials
-        /*
         require_once '../config/database.php';
-        $db = new Database();
-        $conn = $db->getConnection();
         
-        $stmt = $conn->prepare("SELECT * FROM users WHERE (username = ? OR email = ?) AND status = 'active'");
-        $stmt->execute([$username, $username]);
-        $user = $stmt->fetch();
-        
-        if ($user && password_verify($password, $user['password_hash'])) {
-            // Set session variables
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['full_name'] = $user['full_name'];
-            $_SESSION['role'] = $user['role'];
-            $_SESSION['homeowner_id'] = $user['homeowner_id'];
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM users WHERE (username = ? OR email = ?) AND status = 'active'");
+            $stmt->execute([$username, $username]);
+            $user = $stmt->fetch();
             
-            // Update last login
-            $stmt = $conn->prepare("UPDATE users SET last_login = NOW() WHERE user_id = ?");
-            $stmt->execute([$user['user_id']]);
-            
-            // Set remember me cookie
-            if ($rememberMe) {
-                setcookie('remembered_user', $username, time() + (86400 * 30), '/');
-            }
-            
-            // Redirect based on role
-            switch ($user['role']) {
-                case 'admin':
-                    header('Location: ../admin/dashboard.php');
-                    break;
-                case 'security':
-                    header('Location: ../scanner/index.php');
-                    break;
-                case 'homeowner':
-                    header('Location: ../portal/dashboard.php');
-                    break;
-            }
-            exit();
-        } else {
-            $error = 'Invalid username or password';
-        }
-        */
-        
-        // Temporary demo authentication (remove in production)
-        $demoUsers = [
-            ['username' => 'admin', 'password' => 'admin123', 'role' => 'admin'],
-            ['username' => 'security', 'password' => 'security123', 'role' => 'security'],
-            ['username' => 'homeowner', 'password' => 'homeowner123', 'role' => 'homeowner'],
-        ];
-        
-        $authenticated = false;
-        foreach ($demoUsers as $user) {
-            if ($user['username'] === $username && $user['password'] === $password) {
-                $_SESSION['user_id'] = rand(1, 1000);
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['role'] = $user['role'];
-                $authenticated = true;
+            if ($user && password_verify($password, $user['password'])) {
+                // Set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_role'] = $user['role'];
+                $_SESSION['user_email'] = $user['email'];
                 
+                // Update last login
+                $stmt = $pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
+                $stmt->execute([$user['id']]);
+                
+                // Set remember me cookie
                 if ($rememberMe) {
                     setcookie('remembered_user', $username, time() + (86400 * 30), '/');
                 }
@@ -113,21 +68,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Redirect based on role
                 switch ($user['role']) {
                     case 'admin':
+                    case 'hoa':
+                    case 'supervisor':
                         header('Location: ../admin/dashboard.php');
                         break;
-                    case 'security':
+                    case 'guard':
                         header('Location: ../scanner/index.php');
                         break;
-                    case 'homeowner':
-                        header('Location: ../portal/dashboard.php');
-                        break;
+                    default:
+                        header('Location: ../index.php');
                 }
                 exit();
+            } else {
+                $error = 'Invalid username or password';
             }
-        }
-        
-        if (!$authenticated) {
-            $error = 'Invalid username or password';
+        } catch (PDOException $e) {
+            $error = 'Database error: ' . $e->getMessage();
         }
     }
 }
