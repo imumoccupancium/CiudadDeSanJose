@@ -748,18 +748,19 @@ $user = [
             
             // View homeowner
             let qrScanner = null;
-            $('#homeownersTable').on('click', '.view-btn', function() {
-                const id = $(this).data('id');
-                $.get(`api/get_homeowner.php?id=${id}`, function(data) {
-                    $('#view_name').text(data.name);
+            function viewPersonProfile(id, type = 'homeowner') {
+                const endpoint = type === 'homeowner' ? `api/get_homeowner.php?id=${id}` : `api/get_family_member.php?id=${id}`;
+                $.get(endpoint, function(data) {
+                    $('#view_name').text(data.name || data.full_name);
                     $('#view_homeowner_id').text(data.homeowner_id);
                     $('#view_email').text(data.email || 'N/A');
                     $('#view_phone').text(data.phone || 'N/A');
-                    $('#view_address').text(data.address);
+                    $('#view_address').text(data.address || 'N/A');
                     $('#view_qr_expiry').text('Valid until: ' + (data.qr_expiry_formatted || 'N/A'));
                     
-                    const badges = {'active': 'success', 'inactive': 'secondary', 'suspended': 'danger'};
-                    $('#view_status').html(`<span class="badge bg-${badges[data.status]} px-3 rounded-pill">${data.status.toUpperCase()}</span>`);
+                    const status = data.status || data.access_status;
+                    const badges = {'active': 'success', 'inactive': 'secondary', 'suspended': 'danger', 'disabled': 'secondary'};
+                    $('#view_status').html(`<span class="badge bg-${badges[status] || 'secondary'} px-3 rounded-pill">${status.toUpperCase()}</span>`);
                     
                     $('#view_location').html(data.current_status === 'IN' ? 
                         '<span class="badge bg-primary bg-opacity-10 text-primary px-3 rounded-pill">INSIDE</span>' : 
@@ -783,8 +784,19 @@ $user = [
                         $('#view_qr').html('<i class="bi bi-qr-code fs-1 text-muted"></i>');
                     }
 
-                    new bootstrap.Modal(document.getElementById('viewHomeownerModal')).show();
+                    const viewModal = new bootstrap.Modal(document.getElementById('viewHomeownerModal'));
+                    viewModal.show();
                 });
+            }
+
+            // Expose externally for scanner.js
+            window.showProfileModal = (person, type) => {
+                viewPersonProfile(person.id, type);
+            };
+
+            $('#homeownersTable').on('click', '.view-btn', function() {
+                const id = $(this).data('id');
+                viewPersonProfile(id);
             });
 
             // QR Status Click Handler (Big Popup / Generate Prompt)
@@ -1257,5 +1269,6 @@ $user = [
             });
         });
     </script>
+    <script src="../assets/js/scanner.js"></script>
 </body>
 </html>
