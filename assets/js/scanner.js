@@ -25,7 +25,7 @@ class QRScannerDetector {
         window.addEventListener('keydown', (e) => {
             const currentTime = new Date().getTime();
             const timeDiff = currentTime - this.lastTime;
-            
+
             // If it's a "printable" character or the terminator
             if (e.key.length === 1 || e.key === this.config.terminator) {
                 // If it's the first character or fast enough, it's a scanner
@@ -37,10 +37,10 @@ class QRScannerDetector {
                         this.buffer = '';
                     } else {
                         this.buffer += e.key;
-                        
+
                         // Clear any existing timeout
                         if (this.timeout) clearTimeout(this.timeout);
-                        
+
                         // Set timeout to clear buffer if input stops (meaning it wasn't a full scan)
                         this.timeout = setTimeout(() => {
                             if (this.buffer.length >= this.config.minChars) {
@@ -59,10 +59,12 @@ class QRScannerDetector {
     }
 
     triggerScan() {
-        const value = this.buffer.trim();
-        if (value) {
-            console.log("Scanner Detected Code:", value);
-            this.onScan(value);
+        const value = this.buffer.trim().toUpperCase();
+        if (value.startsWith('IN:') || value.startsWith('OUT:')) {
+            console.log("Scanner Detected Prefixed Code:", value);
+            this.onScan(this.buffer.trim());
+        } else {
+            console.log("Scanner Ignored raw input (to be handled by Python background script):", value);
         }
         this.buffer = '';
     }
@@ -70,49 +72,54 @@ class QRScannerDetector {
 
 // Global detection
 const scanner = new QRScannerDetector((code) => {
-    // Show a small feedback to the user
-    Swal.fire({
-        title: 'QR Code Detected',
-        text: 'Processing: ' + code,
-        timer: 1000,
-        timerProgressBar: true,
+    // Determine action/device from prefix if present
+    let action = null;
+    let deviceName = 'Web Scanner';
+    let token = code;
+
+    if (code.toUpperCase().startsWith('IN:')) {
+        action = 'IN';
+        token = code.substring(3);
+        deviceName = 'Entry Gate Scanner';
+    } else if (code.toUpperCase().startsWith('OUT:')) {
+        action = 'OUT';
+        token = code.substring(4);
+        deviceName = 'Exit Gate Scanner';
+    }
+
+    // Define a Toast configuration
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
         showConfirmButton: false,
-        allowOutsideClick: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
+        timer: 4000,
+        timerProgressBar: true
+    });
+
+    Toast.fire({
+        icon: 'info',
+        title: 'QR Code Detected',
+        text: 'Processing: ' + token
     });
 
     // Process scan update
     $.ajax({
         url: 'api/auto_scan.php',
         method: 'POST',
-        data: { token: code },
+        data: { 
+            token: token,
+            action: action,
+            device_name: deviceName
+        },
         dataType: 'json',
-        success: function(response) {
-            Swal.close();
-            
+        success: function (response) {
             if (response.success) {
                 const user = response.user;
-                const isInside = (user.status === 'INSIDE');
                 
-                // Show Success Modal with status update
-                Swal.fire({
-                    title: `Welcome, ${user.name}!`,
-                    html: `
-                        <div class="text-center">
-                            <h2 class="display-6 fw-bold mb-3 ${isInside ? 'text-primary' : 'text-warning'}">
-                                <i class="bi ${isInside ? 'bi-box-arrow-in-right' : 'bi-box-arrow-right'} me-2"></i>
-                                ${user.status}
-                            </h2>
-                            <p class="text-muted">Resident ID: <strong>${user.id}</strong></p>
-                            <p class="small text-muted mb-0">Record updated at ${new Date().toLocaleTimeString()}</p>
-                        </div>
-                    `,
+                Toast.fire({
                     icon: 'success',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
+                    title: `Welcome, ${user.name}!`,
+                    text: `${user.status} - ID: ${user.id}`
                 });
 
                 // Auto-refresh the homeowner table if it's visible
@@ -120,16 +127,19 @@ const scanner = new QRScannerDetector((code) => {
                     $('#homeownersTable').DataTable().ajax.reload(null, false);
                 }
             } else {
-                Swal.fire({
+                Toast.fire({
                     icon: 'error',
                     title: 'Access Denied',
-                    text: response.message,
-                    timer: 3000
+                    text: response.message
                 });
             }
         },
-        error: function() {
-            Swal.fire('Error', 'Failed to communicate with the verification server.', 'error');
+        error: function () {
+            Toast.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to communicate with the verification server.'
+            });
         }
     });
 });

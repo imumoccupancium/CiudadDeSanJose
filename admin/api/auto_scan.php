@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once '../../config/database.php';
 
 $token = $_POST['token'] ?? '';
-$deviceName = 'Admin Panel Auto-Scanner';
+$deviceName = $_POST['device_name'] ?? 'Hardware Scanner';
 
 if (empty($token)) {
     echo json_encode(['success' => false, 'message' => 'No QR code detected']);
@@ -39,9 +39,32 @@ try {
         exit;
     }
 
-    // 4. Determine New Status (Toggle)
-    $currentStatus = $user['current_status'] ?: 'OUT'; // Default to OUT if null
-    $newStatus = ($currentStatus === 'OUT') ? 'IN' : 'OUT';
+    // 4. Determine New Status & Validate
+    $action = $_POST['action'] ?? ''; // Can be 'IN' or 'OUT'
+    $currentStatus = $user['current_status'] ?: 'OUT';
+
+    if ($action === 'IN' || $action === 'OUT') {
+        // Validation: Prevent duplicate status
+        if ($action === $currentStatus) {
+            $msg = ($action === 'IN') 
+                ? "You cannot go Inside while your status is INSIDE." 
+                : "You cannot go Outside while your status is OUTSIDE.";
+            
+            // Log alert for the UI
+            $alertStmt = $pdo->prepare("INSERT INTO scan_alerts (message, status) VALUES (?, 'error')");
+            $alertStmt->execute([$msg]);
+
+            echo json_encode([
+                'success' => false, 
+                'message' => $msg
+            ]);
+            exit;
+        }
+        $newStatus = $action;
+    } else {
+        // Default to toggle if no explicit action
+        $newStatus = ($currentStatus === 'OUT') ? 'IN' : 'OUT';
+    }
 
     // 5. Update Database & Log
     if ($user['type'] === 'homeowner') {
@@ -62,9 +85,15 @@ try {
         $updateStmt->execute([$newStatus, $user['id']]);
     }
 
+    $successMsg = ($newStatus === 'IN') ? 'Access Granted. Welcome, ' . $user['name'] . '!' : 'Departure Logged. Goodbye, ' . $user['name'] . '!';
+
+    // Log success alert for UI
+    $alertStmt = $pdo->prepare("INSERT INTO scan_alerts (message, status) VALUES (?, 'success')");
+    $alertStmt->execute([$successMsg]);
+
     echo json_encode([
         'success' => true,
-        'message' => ($newStatus === 'IN') ? 'Access Granted. Welcome, ' . $user['name'] . '!' : 'Departure Logged. Goodbye, ' . $user['name'] . '!',
+        'message' => $successMsg,
         'user' => [
             'name' => $user['name'],
             'id' => $user['homeowner_id'],

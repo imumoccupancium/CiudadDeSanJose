@@ -720,6 +720,29 @@ $user = [
             }
             updateStats();
             
+            // Interval to check for hardware scan alerts (faster polling)
+            setInterval(function() {
+                $.get('api/get_latest_alerts.php', function(alerts) {
+                    if (Array.isArray(alerts)) {
+                        alerts.forEach(function(alert) {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 4500,
+                                timerProgressBar: true
+                            });
+
+                            Toast.fire({
+                                icon: alert.status === 'success' ? 'success' : 'error',
+                                title: alert.status === 'success' ? 'Access Registry Updated' : 'Access Denied',
+                                text: alert.message
+                            });
+                        });
+                    }
+                });
+            }, 1500);
+
             // AJAX Auto-refresh - reload table and stats every 5 seconds
             setInterval(function() {
                 table.ajax.reload(null, false); // Reload table without resetting pagination
