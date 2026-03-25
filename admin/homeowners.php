@@ -643,18 +643,30 @@ $user = [
                         data: null,
                         render: function(data) {
                             const hasQR = data.qr_token;
+                            const isExpired = data.qr_status === 'Expired';
+                            
+                            if (!hasQR) {
+                                return `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
+                                            <i class="bi bi-x-circle me-1"></i> MISSING
+                                        </span><br><small class="text-primary" style="font-size: 0.6rem;">Click to generate</small>`;
+                            }
+
+                            if (isExpired) {
+                                return `<span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 small">
+                                            <i class="bi bi-clock-history me-1"></i> EXPIRED
+                                        </span>
+                                        <div class="x-small text-danger mt-1" style="font-size: 0.65rem; font-weight: bold;">
+                                            Since: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                        </div>`;
+                            }
+
                             return `<div class="qr-status-click" data-id="${data.id}" style="cursor: pointer;">
-                                ${hasQR ? 
-                                    `<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">
-                                        <i class="bi bi-check-circle-fill me-1"></i> ACTIVE
-                                    </span>
-                                    <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
-                                        Exp: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
-                                    </div>` : 
-                                    `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
-                                        <i class="bi bi-x-circle me-1"></i> MISSING
-                                    </span><br><small class="text-primary" style="font-size: 0.6rem;">Click to generate</small>`
-                                }
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">
+                                    <i class="bi bi-check-circle-fill me-1"></i> VALID
+                                </span>
+                                <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
+                                    Exp: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                </div>
                             </div>`;
                         }
                     },

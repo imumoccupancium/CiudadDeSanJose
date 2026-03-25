@@ -16,6 +16,10 @@ try {
             h.qr_expiry,
             h.current_status,
             h.status,
+            CASE 
+                WHEN h.qr_expiry IS NOT NULL AND h.qr_expiry < NOW() THEN 'Expired'
+                ELSE 'Valid'
+            END as qr_status,
             DATE_FORMAT(h.last_scan_time, '%Y-%m-%d %H:%i:%s') as last_scan_time,
             DATE_FORMAT(h.created_at, '%Y-%m-%d') as created_at,
             (SELECT COUNT(*) FROM family_members WHERE homeowner_id = h.id) as family_count
