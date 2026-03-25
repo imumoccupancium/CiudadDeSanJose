@@ -123,19 +123,8 @@ $user = [
                 left: 0;
             }
         }
-        @media print {
-            .sidebar, .top-navbar, .fab, #sidebarToggle, .card-header .btn-group, #refreshLogs, .btn, .col-lg-4, .card.mb-4, .breadcrumb {
-                display: none !important;
-            }
-            .main-content {
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            .stat-icon { border: 1px solid #ddd; }
-            .card { box-shadow: none !important; border: 1px solid #eee; }
-            .col-lg-8 { width: 100% !important; }
-        }
     </style>
+
 
 </head>
 <body class="bg-light">
@@ -263,9 +252,7 @@ $user = [
                                 <button class="btn btn-light rounded-pill btn-sm px-3" id="exportExcel">
                                     <i class="bi bi-file-earmark-spreadsheet me-1"></i> Excel
                                 </button>
-                                <button class="btn btn-light rounded-pill btn-sm px-3" id="exportPDF">
-                                    <i class="bi bi-file-earmark-pdf me-1"></i> PDF
-                                </button>
+
                                 <button class="btn btn-primary rounded-pill btn-sm p-2 px-2" id="refreshLogs">
                                     <i class="bi bi-arrow-clockwise"></i>
                                 </button>
@@ -448,11 +435,7 @@ $user = [
                 window.location.href = `api/export_activity_excel.php?date_from=${dateFrom}&date_to=${dateTo}&action=${action}`;
             });
 
-            $('#exportPDF').click(function() {
-                // Simplest way for high quality PDF is window.print()
-                // The print view will be handled by CSS @media print
-                window.print();
-            });
+
 
         });
     </script>
