@@ -371,7 +371,60 @@ $user = [
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- View Visitor Details Modal -->
+    <div class="modal fade" id="viewVisitorModal" tabindex="-1">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <h6 class="modal-title fw-bold text-muted text-uppercase small">Trip Summary</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0" id="viewVisitorName">---</h4>
+                        <div id="viewStatusBadge">---</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Host Information</label>
+                        <div class="fw-bold" id="viewHostName">---</div>
+                        <div class="small text-muted" id="viewHostAddress">---</div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Time In</label>
+                            <span class="fw-medium" id="viewTimeIn">--:-- --</span>
+                        </div>
+                        <div class="col-6">
+                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Time Out</label>
+                            <span class="fw-medium text-muted" id="viewTimeOut">--:-- --</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 bg-light border-0">
+                        <div class="mb-2">
+                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Purpose</label>
+                            <span class="small" id="viewPurpose">---</span>
+                        </div>
+                        <div id="viewCompanyRow" class="d-none">
+                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Company</label>
+                            <span class="small" id="viewCompany">---</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <small class="text-muted">Recorded at <span class="fw-bold" id="viewGate">---</span></small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-primary w-100 rounded-pill py-2" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/jquery/jquery.min.js"></script>
     <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
@@ -482,7 +535,7 @@ $user = [
                                                     <i class="bi bi-person-fill"></i>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <div class="fw-bold text-dark">${homeowner.name}</div>
+                                                    <div class="fw-bold text-dark mb-1">${homeowner.name}</div>
                                                     <small class="text-muted">
                                                         <i class="bi bi-house-door me-1"></i>${homeowner.address}
                                                         <span class="ms-2 badge bg-light text-dark">${homeowner.homeowner_id}</span>
@@ -559,6 +612,7 @@ $user = [
             });
 
             // --- VISITOR MANAGEMENT LOGIC ---
+            let cachedLogs = [];
 
             // Load Visitor Logs
             function loadVisitorLogs() {
@@ -568,6 +622,7 @@ $user = [
                     dataType: 'json',
                     success: function(response) {
                         if (response.success) {
+                            cachedLogs = response.data;
                             renderTable(response.data);
                             updateStats(response.data);
                         } else {
@@ -579,6 +634,7 @@ $user = [
                     }
                 });
             }
+
 
             // Render Table Rows
             function renderTable(logs) {
@@ -594,10 +650,16 @@ $user = [
                            </span>`;
 
                     const actionButtons = log.status === 'INSIDE'
-                        ? `<button class="btn btn-sm btn-outline-danger rounded-pill px-3 checkout-btn" data-id="${log.id}">
+                        ? `<button class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 checkout-btn" data-id="${log.id}" style="font-size: 0.8rem;">
                              <i class="bi bi-box-arrow-right me-1"></i> Checkout
                            </button>`
-                        : `<button class="btn btn-sm btn-light rounded-pill p-2" title="View Details"><i class="bi bi-eye text-primary"></i></button>`;
+                        : `<button class="btn btn-sm btn-light rounded-pill px-3 py-1 view-log-btn" data-id="${log.id}" title="View Details" style="font-size: 0.8rem;">
+                             <i class="bi bi-eye text-primary me-1"></i> View
+                           </button>`;
+
+
+
+
 
                     const timeOutDisplay = log.time_out_fmt 
                         ? `<span class="text-secondary">${log.time_out_fmt}</span>` 
@@ -647,7 +709,40 @@ $user = [
                 $('#statTotalExited').text(stats.exitedToday);
             }
 
+            // Handle View Details
+            $(document).on('click', '.view-log-btn', function() {
+                const id = $(this).data('id');
+                const log = cachedLogs.find(l => l.id == id);
+                
+                if (log) {
+                    $('#viewVisitorName').text(log.visitor_name);
+                    $('#viewTimeIn').text(log.time_in_fmt);
+                    $('#viewTimeOut').text(log.time_out_fmt || '--:-- --');
+                    $('#viewHostName').text(log.homeowner_name);
+                    $('#viewHostAddress').text(log.homeowner_address);
+                    $('#viewPurpose').text(log.purpose || 'Not specified');
+                    $('#viewGate').text(log.gate);
+                    
+                    // Status Badge
+                    const statusHtml = log.status === 'INSIDE' 
+                        ? '<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold small">INSIDE</span>'
+                        : '<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-1 fw-bold small">EXITED</span>';
+                    $('#viewStatusBadge').html(statusHtml);
+
+                    if (log.company) {
+                        $('#viewCompany').text(log.company);
+                        $('#viewCompanyRow').removeClass('d-none');
+                    } else {
+                        $('#viewCompanyRow').addClass('d-none');
+                    }
+                    
+                    $('#viewVisitorModal').modal('show');
+                }
+            });
+
+
             // Handle Checkout
+
             $(document).on('click', '.checkout-btn', function() {
                 const id = $(this).data('id');
                 

@@ -228,10 +228,7 @@ try {
             </div>
             
             <div class="ms-auto d-flex align-items-center gap-3">
-                <div class="input-group d-none d-lg-flex" style="width: 300px;">
-                    <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" class="form-control bg-transparent border-start-0 ps-0" placeholder="Search data...">
-                </div>
+
                 
                 <div class="dropdown">
                     <button class="btn btn-light rounded-pill position-relative px-3" data-bs-toggle="dropdown">
@@ -413,64 +410,7 @@ try {
                 </div>
             </div>
 
-            <!-- Quick Links with better icons -->
-            <div class="row mb-5">
-                <div class="col-12 mb-4">
-                    <h5 class="fw-bold">Shortcuts & Tools</h5>
-                </div>
-                <div class="col-6 col-lg-3 mb-4">
-                    <a href="homeowners.php" class="text-decoration-none">
-                        <div class="card border-0 text-center py-3 hover-lift">
-                            <div class="card-body">
-                                <div class="bg-primary bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
-                                    <i class="bi bi-person-gear text-primary fs-4"></i>
-                                </div>
-                                <h6 class="fw-bold text-dark mb-1">User Management</h6>
-                                <p class="small text-muted mb-0">Add/Edit Homeowners</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-6 col-lg-3 mb-4">
-                    <a href="activity_logs.php" class="text-decoration-none">
-                        <div class="card border-0 text-center py-3 hover-lift">
-                            <div class="card-body">
-                                <div class="bg-success bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
-                                    <i class="bi bi-journal-text text-success fs-4"></i>
-                                </div>
-                                <h6 class="fw-bold text-dark mb-1">Historic Logs</h6>
-                                <p class="small text-muted mb-0">Browse all records</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-6 col-lg-3 mb-4">
-                    <a href="#" class="text-decoration-none">
-                        <div class="card border-0 text-center py-3 hover-lift">
-                            <div class="card-body">
-                                <div class="bg-info bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
-                                    <i class="bi bi-bar-chart-steps text-info fs-4"></i>
-                                </div>
-                                <h6 class="fw-bold text-dark mb-1">Data Reports</h6>
-                                <p class="small text-muted mb-0">Export PDF/Excel</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-6 col-lg-3 mb-4">
-                    <a href="#" class="text-decoration-none">
-                        <div class="card border-0 text-center py-3 hover-lift">
-                            <div class="card-body">
-                                <div class="bg-dark bg-opacity-10 rounded-4 p-3 d-inline-block mb-2">
-                                    <i class="bi bi-sliders text-dark fs-4"></i>
-                                </div>
-                                <h6 class="fw-bold text-dark mb-1">Preferences</h6>
-                                <p class="small text-muted mb-0">System configuration</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
+
         </div>
     </div>
 

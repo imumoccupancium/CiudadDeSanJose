@@ -21,34 +21,51 @@ try {
                 h.id,
                 h.homeowner_id,
                 h.name,
-                h.address
+                h.address,
+                'Primary' as member_type
             FROM homeowners h
             WHERE h.status = 'active'
             ORDER BY h.name ASC
             LIMIT 20
         ");
     } else {
-        // Search by name or address using unique parameter names
+        $searchParam = "%{$searchTerm}%";
+        
+        // Search in both homeowners and family_members
         $stmt = $pdo->prepare("
             SELECT 
                 h.id,
                 h.homeowner_id,
                 h.name,
-                h.address
+                h.address,
+                'Primary' as member_type
             FROM homeowners h
             WHERE h.status = 'active'
-            AND (
-                h.name LIKE :s1 
-                OR h.address LIKE :s2
-                OR h.homeowner_id LIKE :s3
-            )
-            ORDER BY h.name ASC
+            AND (h.name LIKE :s1 OR h.address LIKE :s2 OR h.homeowner_id LIKE :s3)
+            
+            UNION ALL
+            
+            SELECT 
+                f.homeowner_id as id,
+                h.homeowner_id,
+                f.full_name as name,
+                h.address,
+                f.role as member_type
+            FROM family_members f
+            JOIN homeowners h ON f.homeowner_id = h.id
+            WHERE h.status = 'active'
+            AND f.access_status = 'active'
+            AND (f.full_name LIKE :s4 OR h.address LIKE :s5)
+            
+            ORDER BY name ASC
             LIMIT 20
         ");
-        $searchParam = "%{$searchTerm}%";
+        
         $stmt->bindValue(':s1', $searchParam);
         $stmt->bindValue(':s2', $searchParam);
         $stmt->bindValue(':s3', $searchParam);
+        $stmt->bindValue(':s4', $searchParam);
+        $stmt->bindValue(':s5', $searchParam);
         $stmt->execute();
     }
     
