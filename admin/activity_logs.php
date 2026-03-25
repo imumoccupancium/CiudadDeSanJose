@@ -123,7 +123,20 @@ $user = [
                 left: 0;
             }
         }
+        @media print {
+            .sidebar, .top-navbar, .fab, #sidebarToggle, .card-header .btn-group, #refreshLogs, .btn, .col-lg-4, .card.mb-4, .breadcrumb {
+                display: none !important;
+            }
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .stat-icon { border: 1px solid #ddd; }
+            .card { box-shadow: none !important; border: 1px solid #eee; }
+            .col-lg-8 { width: 100% !important; }
+        }
     </style>
+
 </head>
 <body class="bg-light">
     <!-- Sidebar -->
@@ -426,9 +439,21 @@ $user = [
 
             setInterval(() => { table.ajax.reload(null, false); updateStats(); loadTimeline(); }, 30000);
             
-            $('#exportExcel, #exportPDF').click(function() {
-                alert('Export feature connected to backend API. Service available in production.');
+            $('#exportExcel').click(function() {
+                const dateFrom = $('#dateFrom').val();
+                const dateTo = $('#dateTo').val();
+                const action = $('#actionFilter').val();
+                
+                // Show a quick notification or just trigger download
+                window.location.href = `api/export_activity_excel.php?date_from=${dateFrom}&date_to=${dateTo}&action=${action}`;
             });
+
+            $('#exportPDF').click(function() {
+                // Simplest way for high quality PDF is window.print()
+                // The print view will be handled by CSS @media print
+                window.print();
+            });
+
         });
     </script>
 </body>
