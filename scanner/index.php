@@ -10,6 +10,10 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSJ Virtual Gate - Turnstile Simulator</title>
     
+    <!-- Website Icon -->
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+
+    
     <!-- Local Fonts (Inter/Orbitron) -->
     <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
     <link rel="stylesheet" href="../assets/vendor/fonts/orbitron/orbitron.css">

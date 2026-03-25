@@ -17,7 +17,10 @@ $user = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homeowners Management - San Jose</title>
+    <title>Homeowners Management - Ciudad De San Jose</title>
+    <!-- Website Icon -->
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+
     
     <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">

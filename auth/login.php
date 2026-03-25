@@ -97,6 +97,9 @@ $rememberedUser = $_COOKIE['remembered_user'] ?? '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Ciudad De San Jose</title>
+    <!-- Website Icon -->
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+
     <link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
 </head>

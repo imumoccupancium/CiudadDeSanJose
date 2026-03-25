@@ -14,7 +14,7 @@ class QRScannerDetector {
         this.timeout = null;
         this.config = {
             minChars: 5,        // Minimum characters for a valid QR code
-            maxTimeBetween: 50, // Max ms between characters (scanner speed)
+            maxTimeBetween: 30, // Max ms between characters (faster detection)
             terminator: 'Enter' // Common suffix for scanners
         };
 
@@ -47,7 +47,7 @@ class QRScannerDetector {
                                 this.triggerScan();
                             }
                             this.buffer = '';
-                        }, 50); // Shorter timeout for faster response
+                        }, 20); // Faster reaction (20ms)
                     }
                 } else {
                     // Too slow, probably manual typing
@@ -106,7 +106,7 @@ const scanner = new QRScannerDetector((code) => {
     $.ajax({
         url: 'api/auto_scan.php',
         method: 'POST',
-        data: { 
+        data: {
             token: token,
             action: action,
             device_name: deviceName
@@ -115,7 +115,7 @@ const scanner = new QRScannerDetector((code) => {
         success: function (response) {
             if (response.success) {
                 const user = response.user;
-                
+
                 Toast.fire({
                     icon: 'success',
                     title: `Welcome, ${user.name}!`,
