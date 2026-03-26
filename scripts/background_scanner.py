@@ -9,7 +9,7 @@ import ctypes
 from ctypes import wintypes
 
 # --- CONFIGURATION ---
-API_URL = "http://localhost/CiudadDeSanJose/admin/api/auto_scan.php"
+API_URL = "https://ciudaddesanjose.site/admin/api/auto_scan.php"
 
 # Map your Hardware IDs here
 # You can swap these if the Entry/Exit is reversed
