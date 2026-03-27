@@ -46,14 +46,35 @@ try {
 
     $all_tokens = array_merge($homeowners, $family_members);
 
+    // --- Visitors (currently inside, not expired) ---
+    $stmt3 = $pdo->prepare("
+        SELECT 
+            id            AS user_internal_id,
+            homeowner_id  AS homeowner_id,
+            visitor_name  AS name,
+            qr_token      AS qr_token,
+            current_status,
+            'visitor'     AS user_type
+        FROM visitor_logs
+        WHERE current_status = 'IN'
+          AND qr_token IS NOT NULL
+          AND qr_token != ''
+          AND (qr_expiry IS NULL OR qr_expiry > NOW())
+    ");
+    $stmt3->execute();
+    $visitors = $stmt3->fetchAll();
+
+    $all_tokens = array_merge($all_tokens, $visitors);
+
     echo json_encode([
-        'success'    => true,
-        'count'      => count($all_tokens),
-        'tokens'     => $all_tokens,
-        'synced_at'  => date('Y-m-d H:i:s')
+        'success' => true,
+        'count' => count($all_tokens),
+        'tokens' => $all_tokens,
+        'synced_at' => date('Y-m-d H:i:s')
     ]);
 
-} catch (PDOException $e) {
+}
+catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Database Error: ' . $e->getMessage()]);
 }

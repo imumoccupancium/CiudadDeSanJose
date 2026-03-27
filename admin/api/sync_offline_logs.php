@@ -18,8 +18,8 @@ if (!is_array($data) || empty($data)) {
 }
 
 $processed = 0;
-$skipped   = 0;
-$errors    = [];
+$skipped = 0;
+$errors = [];
 
 try {
     $pdo->beginTransaction();
@@ -27,11 +27,11 @@ try {
     foreach ($data as $log) {
         // --- Validate required fields ---
         $user_internal_id = $log['user_internal_id'] ?? null;
-        $homeowner_id     = $log['homeowner_id']     ?? null;
-        $action           = $log['action']            ?? null;
-        $timestamp        = $log['timestamp']         ?? date('Y-m-d H:i:s');
-        $device_name      = $log['device_name']       ?? 'Offline Scanner';
-        $user_type        = $log['user_type']         ?? null;
+        $homeowner_id = $log['homeowner_id'] ?? null;
+        $action = $log['action'] ?? null;
+        $timestamp = $log['timestamp'] ?? date('Y-m-d H:i:s');
+        $device_name = $log['device_name'] ?? 'Offline Scanner';
+        $user_type = $log['user_type'] ?? null;
 
         if (!$user_internal_id || !$action || !$user_type) {
             $skipped++;
@@ -56,7 +56,8 @@ try {
             ");
             $uStmt->execute([$action, $timestamp, $user_internal_id, $timestamp]);
 
-        } elseif ($user_type === 'family') {
+        }
+        elseif ($user_type === 'family') {
             // Insert into family_member_logs
             $lStmt = $pdo->prepare("
                 INSERT INTO family_member_logs (family_member_id, homeowner_id, action, timestamp, device_name)
@@ -72,7 +73,21 @@ try {
                   AND (last_scan_time IS NULL OR last_scan_time <= ?)
             ");
             $uStmt->execute([$action, $timestamp, $user_internal_id, $timestamp]);
-        } else {
+        }
+        elseif ($user_type === 'visitor') {
+            // General history entry
+            $lStmt = $pdo->prepare("INSERT INTO entry_logs (homeowner_id, action, timestamp, device_name) VALUES (?, ?, ?, ?)");
+            $lStmt->execute([$homeowner_id, $action, $timestamp, $device_name]);
+
+            // Update Visitor specific record
+            if ($action === 'IN') {
+                $uStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'IN', time_in = ?, last_scan_time = ? WHERE id = ? AND (last_scan_time IS NULL OR last_scan_time <= ?)");
+            } else {
+                $uStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'OUT', time_out = ?, last_scan_time = ? WHERE id = ? AND (last_scan_time IS NULL OR last_scan_time <= ?)");
+            }
+            $uStmt->execute([$timestamp, $timestamp, $user_internal_id, $timestamp]);
+        }
+        else {
             $skipped++;
             $errors[] = "Unknown user_type: {$user_type}";
             continue;
@@ -84,13 +99,14 @@ try {
     $pdo->commit();
 
     echo json_encode([
-        'success'   => true,
+        'success' => true,
         'processed' => $processed,
-        'skipped'   => $skipped,
-        'errors'    => $errors
+        'skipped' => $skipped,
+        'errors' => $errors
     ]);
 
-} catch (Exception $e) {
+}
+catch (Exception $e) {
     $pdo->rollBack();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);

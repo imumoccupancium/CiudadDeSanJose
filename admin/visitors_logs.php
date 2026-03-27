@@ -17,15 +17,13 @@ $user = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visitors Log - Ciudad De San Jose</title>
+    <title>Visitor Logs - Ciudad De San Jose</title>
     <!-- Website Icon -->
     <link rel="icon" type="image/png" href="../assets/logo.png">
 
-    
     <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/vendor/datatables/css/dataTables.bootstrap5.min.css">
-    <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
     
     <!-- Local Fonts (Inter) -->
     <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
@@ -48,12 +46,6 @@ $user = [
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
         }
 
-        [data-bs-theme="dark"] {
-            --glass: rgba(33, 37, 41, 0.7);
-            --light: #121417;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--light);
@@ -61,12 +53,10 @@ $user = [
             overflow-x: hidden;
         }
 
-        .card {
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            background: #ffffff;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding-top: var(--top-navbar-height);
         }
 
         .card {
@@ -75,11 +65,6 @@ $user = [
             box-shadow: var(--card-shadow);
             background: #ffffff;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08) !important;
         }
 
         .stat-icon {
@@ -92,102 +77,61 @@ $user = [
             transition: transform 0.3s ease;
         }
 
-        .fab {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 10px 25px rgba(67, 97, 238, 0.4);
-            border: none;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .top-navbar {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 1100;
+            top: 0;
+            right: 0;
+            left: var(--sidebar-width);
+            height: var(--top-navbar-height);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .fab:hover {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.6);
+        .btn-primary {
+            background: linear-gradient(90deg, #4361ee 0%, #3f37c9 100%);
+            border: none;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
         }
 
-        #homeownerDropdown {
-            animation: slideDown 0.2s ease-out;
+        .badge-qr-status {
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .badge-qr-status:hover {
+            transform: scale(1.05);
         }
-
-        .homeowner-item:last-child {
-            border-bottom: none !important;
+        
+        .smaller {
+            font-size: 0.75rem;
         }
-
-        #homeownerSearch:focus {
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-        }
-
-        @media (max-width: 992px) {
-            .sidebar {
-                left: calc(var(--sidebar-width) * -1);
-            }
-            .sidebar.show {
-                left: 0;
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .top-navbar {
-                left: 0;
-            }
-        }
+        .fs-7 { font-size: 0.85rem !important; }
     </style>
 </head>
-<body class="bg-light">
-    <!-- Sidebar -->
+<body>
     <?php include 'includes/sidebar.php'; ?>
 
-    <!-- Main Content -->
     <div class="main-content">
         <!-- Top Navbar -->
         <nav class="top-navbar d-flex align-items-center px-4">
             <button class="btn btn-link d-lg-none me-3" id="sidebarToggle">
                 <i class="bi bi-list fs-3 text-dark"></i>
             </button>
-            
-            <div class="d-none d-md-block">
-                <h5 class="mb-0 fw-bold">Visitor Management</h5>
+            <div>
+                <h5 class="mb-0 fw-bold">Visitor Registry</h5>
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0 small">
-                        <li class="breadcrumb-item"><a href="dashboard.php" class="text-decoration-none text-muted">Core</a></li>
-                        <li class="breadcrumb-item active fw-medium">Visitor Logs</li>
+                    <ol class="breadcrumb mb-0 small text-muted">
+                        <li class="breadcrumb-item">Residents</li>
+                        <li class="breadcrumb-item active">Visitor Management</li>
                     </ol>
                 </nav>
             </div>
-            
-            <div class="ms-auto d-flex align-items-center gap-3">
-                <div class="input-group d-none d-lg-flex" style="width: 300px;">
-                    <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" class="form-control bg-transparent border-start-0 ps-0" id="topSearch" placeholder="Search visitors...">
-                </div>
-                
-
+            <div class="ms-auto">
             </div>
         </nav>
 
-        <!-- Page Content -->
         <div class="container-fluid p-4">
             <!-- Stats Row -->
             <div class="row g-4 mb-4">
@@ -195,7 +139,7 @@ $user = [
                     <div class="card border-0 p-2 text-center">
                         <div class="card-body">
                             <div class="stat-icon bg-primary bg-opacity-10 text-primary mx-auto mb-3">
-                                <i class="bi bi-person-check-fill fs-4"></i>
+                                <i class="bi bi-people-fill fs-4"></i>
                             </div>
                             <h4 class="mb-0 fw-bold" id="statInside">0</h4>
                             <small class="text-muted fw-medium fs-7">Currently Inside</small>
@@ -205,11 +149,11 @@ $user = [
                 <div class="col-md-3">
                     <div class="card border-0 p-2 text-center">
                         <div class="card-body">
-                            <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-3">
-                                <i class="bi bi-people-fill fs-4"></i>
+                            <div class="stat-icon bg-info bg-opacity-10 text-info mx-auto mb-3">
+                                <i class="bi bi-person-plus-fill fs-4"></i>
                             </div>
                             <h4 class="mb-0 fw-bold" id="statTotalToday">0</h4>
-                            <small class="text-muted fw-medium fs-7">Total Today</small>
+                            <small class="text-muted fw-medium fs-7">Visits Today</small>
                         </div>
                     </div>
                 </div>
@@ -217,18 +161,18 @@ $user = [
                     <div class="card border-0 p-2 text-center">
                         <div class="card-body">
                             <div class="stat-icon bg-warning bg-opacity-10 text-warning mx-auto mb-3">
-                                <i class="bi bi-truck-flatbed fs-4"></i>
+                                <i class="bi bi-tools fs-4"></i>
                             </div>
                             <h4 class="mb-0 fw-bold" id="statService">0</h4>
-                            <small class="text-muted fw-medium fs-7">Service/Delivery</small>
+                            <small class="text-muted fw-medium fs-7">Service Personnel</small>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="card border-0 p-2 text-center">
                         <div class="card-body">
-                            <div class="stat-icon bg-info bg-opacity-10 text-info mx-auto mb-3">
-                                <i class="bi bi-clock-fill fs-4"></i>
+                            <div class="stat-icon bg-success bg-opacity-10 text-success mx-auto mb-3">
+                                <i class="bi bi-check-circle-fill fs-4"></i>
                             </div>
                             <h4 class="mb-0 fw-bold" id="statTotalExited">0</h4>
                             <small class="text-muted fw-medium fs-7">Exited Today</small>
@@ -237,41 +181,64 @@ $user = [
                 </div>
             </div>
 
-            <!-- Main Log Table Card -->
-            <div class="card border-0 mb-5">
-                <div class="card-header bg-white border-0 py-4 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                    <div>
-                        <h5 class="fw-bold mb-1">Visitor Activity Log</h5>
-                        <p class="text-muted small mb-0">Monitor and manage all external visitors in the subdivision</p>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <div class="btn-group rounded-pill overflow-hidden border">
-                            <button type="button" class="btn btn-light btn-sm px-3 active" data-filter="all">All</button>
-                            <button type="button" class="btn btn-light btn-sm px-3" data-filter="Personal">Personal</button>
-                            <button type="button" class="btn btn-light btn-sm px-3" data-filter="Service">Service</button>
+            <!-- Filters & List -->
+            <div class="card border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="row g-3 align-items-end mb-4">
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-muted">Type</label>
+                            <select class="form-select rounded-pill border-light bg-light" id="filterType">
+                                <option value="">All Types</option>
+                                <option value="Personal">Personal</option>
+                                <option value="Service">Service</option>
+                                <option value="Professional">Professional</option>
+                            </select>
                         </div>
-                        <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal" data-bs-target="#addVisitorModal">
-                            <i class="bi bi-plus-lg me-1"></i> Log Visitor
-                        </button>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-muted">Status</label>
+                            <select class="form-select rounded-pill border-light bg-light" id="filterStatus">
+                                <option value="">All Status</option>
+                                <option value="INSIDE">Inside</option>
+                                <option value="OUT">Exited</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">Time Period</label>
+                            <div class="input-group">
+                                <input type="date" class="form-control rounded-start-pill border-light bg-light" id="filterFrom">
+                                <input type="date" class="form-control rounded-end-pill border-light bg-light" id="filterTo">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-primary rounded-pill w-100" id="applyFilters">
+                                <i class="bi bi-filter"></i> Run Filter
+                            </button>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-primary rounded-pill w-100" data-bs-toggle="modal" data-bs-target="#addVisitorModal">
+                                <i class="bi bi-plus-lg me-1"></i> Add a Visitor
+                            </button>
+                        </div>
+                        <div class="col-md-1 text-end">
+                            <button class="btn btn-light rounded-pill p-2 px-3 w-100" id="refreshLogs">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-0">
+
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0" id="visitorsTable">
+                        <table class="table table-hover align-middle mb-0" id="visitorLogsTable">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">Visitor Name</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0">Type</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0">Person to Visit</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 text-center">Entry/Gate</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 text-center">Time In / Out</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 text-center">Status</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">Actions</th>
+                                    <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">Visitor</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0">Visiting</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 text-center">QR Status</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0">Time In/Out</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0">Status</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="border-0" id="visitorsTableBody">
-                                <!-- Data will be loaded here via AJAX -->
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -279,442 +246,152 @@ $user = [
         </div>
     </div>
 
-    <!-- Floating Action Button -->
-    <button class="fab" data-bs-toggle="modal" data-bs-target="#addVisitorModal" title="Log New Visitor">
-        <i class="bi bi-plus-lg"></i>
-    </button>
-
-    <!-- Add Visitor Modal -->
-    <div class="modal fade" id="addVisitorModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="modal-title fw-bold">
-                        <i class="bi bi-person-plus text-primary me-2"></i>
-                        Register New Visitor
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="addVisitorForm">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Visitor Full Name</label>
-                            <input type="text" name="visitor_name" class="form-control rounded-3 p-2 px-3 bg-light border-0" placeholder="e.g. Juan De La Cruz" required>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Visitor Type</label>
-                                <select name="visitor_type" id="modalVisitorType" class="form-select rounded-3 p-2 px-3 bg-light border-0" required>
-                                    <option value="Personal">Personal Visit</option>
-                                    <option value="Service">Delivery / Service</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label small fw-bold text-muted text-uppercase">Assigned Gate</label>
-                                <div class="bg-light rounded-3 p-2 px-3 d-flex align-items-center" style="height: 41px;">
-                                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>
-                                    <span class="fw-bold text-dark">Main Gate</span>
-                                    <input type="hidden" name="gate" value="Main Gate">
-                                </div>
-                                <small class="text-muted small mt-1 d-block italic">Primary Entrance & Exit</small>
-                            </div>
-                        </div>
-
-                        <div class="mb-3 d-none" id="companyField">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Company Name</label>
-                            <input type="text" name="company" class="form-control rounded-3 p-2 px-3 bg-light border-0" placeholder="e.g. Grab, PLDT, Meralco">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Person to Visit</label>
-                            <div class="position-relative">
-                                <input type="text" 
-                                       id="homeownerSearch" 
-                                       class="form-control rounded-3 p-2 px-3 bg-light border-0" 
-                                       placeholder="Type to search homeowner name or address..." 
-                                       autocomplete="off"
-                                       required>
-                                <input type="hidden" name="person_to_visit" id="selectedHomeowner" required>
-                                <input type="hidden" name="homeowner_id" id="selectedHomeownerId">
-                                <div id="homeownerDropdown" class="position-absolute w-100 bg-white border rounded-3 shadow-lg mt-1 d-none" style="max-height: 250px; overflow-y: auto; z-index: 1050;">
-                                    <!-- Dropdown items will be populated here -->
-                                </div>
-                            </div>
-                            <small class="text-muted d-block mt-1">
-                                <i class="bi bi-info-circle me-1"></i>
-                                <span id="selectedHomeownerInfo">Start typing to search...</span>
-                            </small>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Purpose of Visit</label>
-                            <textarea name="purpose" class="form-control rounded-3 p-2 px-3 bg-light border-0" rows="2" placeholder="e.g. Social Visit, Maintenance, Delivery"></textarea>
-                        </div>
-
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-4 mt-4 d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="fw-bold text-primary text-uppercase mb-0 d-block">System Timestamp</small>
-                                <span class="h6 mb-0 fw-bold text-primary font-monospace" id="modalTimeNow">12:00:00 PM</span>
-                            </div>
-                            <i class="bi bi-clock-history text-primary fs-3"></i>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Discard</button>
-                    <button type="submit" form="addVisitorForm" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                        Confirm Entry
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Visitor Details Modal -->
-    <div class="modal fade" id="viewVisitorModal" tabindex="-1">
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: 15px;">
-                <div class="modal-header border-0 pb-0 pt-4 px-4">
-                    <h6 class="modal-title fw-bold text-muted text-uppercase small">Trip Summary</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold mb-0" id="viewVisitorName">---</h4>
-                        <div id="viewStatusBadge">---</div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Host Information</label>
-                        <div class="fw-bold" id="viewHostName">---</div>
-                        <div class="small text-muted" id="viewHostAddress">---</div>
-                    </div>
-
-                    <div class="row g-2 mb-4">
-                        <div class="col-6">
-                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Time In</label>
-                            <span class="fw-medium" id="viewTimeIn">--:-- --</span>
-                        </div>
-                        <div class="col-6">
-                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Time Out</label>
-                            <span class="fw-medium text-muted" id="viewTimeOut">--:-- --</span>
-                        </div>
-                    </div>
-
-                    <div class="p-3 rounded-3 bg-light border-0">
-                        <div class="mb-2">
-                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Purpose</label>
-                            <span class="small" id="viewPurpose">---</span>
-                        </div>
-                        <div id="viewCompanyRow" class="d-none">
-                            <label class="small text-muted d-block fw-bold text-uppercase" style="font-size: 0.6rem;">Company</label>
-                            <span class="small" id="viewCompany">---</span>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 text-center">
-                        <small class="text-muted">Recorded at <span class="fw-bold" id="viewGate">---</span></small>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-primary w-100 rounded-pill py-2" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    <!-- Modals -->
+    <?php include 'modals/visitor_modals.php'; ?>
 
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/vendor/jquery/jquery.min.js"></script>
     <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="../assets/vendor/datatables/js/dataTables.bootstrap5.min.js"></script>
-
+    <script src="../assets/vendor/qrcodejs/qrcode.min.js"></script>
+    <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
+    
     <script>
-        // Mobile sidebar toggle (Same as homeowners.php)
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
-        });
-
-
-
+        let cachedLogs = [];
         $(document).ready(function() {
-            // Initialize DataTable
-            const table = $('#visitorsTable').DataTable({
-                pageLength: 10,
-                dom: 'trtp',
-                language: {
-                    paginate: {
-                        next: '<i class="bi bi-chevron-right"></i>',
-                        previous: '<i class="bi bi-chevron-left"></i>'
-                    }
-                }
-            });
-
-            // Top Search Bar
-            $('#topSearch').on('keyup', function() {
-                table.search(this.value).draw();
-            });
-
-            // Filter Buttons
-            $('[data-filter]').click(function() {
-                const filter = $(this).data('filter');
-                if (filter === 'all') {
-                    table.column(1).search('').draw();
-                } else {
-                    table.column(1).search(filter).draw();
-                }
-                $('[data-filter]').removeClass('active btn-primary text-white').addClass('btn-light');
-                $(this).addClass('active btn-primary text-white').removeClass('btn-light');
-            });
-
-            // Modal: Dynamic "Company" field
-            $('#modalVisitorType').on('change', function() {
-                const isPro = (this.value === 'Professional' || this.value === 'Service');
-                $('#companyField').toggleClass('d-none', !isPro);
-            });
-
-            // Modal: Live Clock Sync
-            setInterval(() => {
-                const now = new Date();
-                $('#modalTimeNow').text(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-            }, 1000);
-
-            // Homeowner Search Autocomplete
-            let searchTimeout;
-            const $searchInput = $('#homeownerSearch');
-            const $dropdown = $('#homeownerDropdown');
-            const $selectedHomeowner = $('#selectedHomeowner');
-            const $selectedHomeownerId = $('#selectedHomeownerId');
-            const $selectedInfo = $('#selectedHomeownerInfo');
-
-            // Search homeowners with debounce
-            $searchInput.on('input', function() {
-                const query = $(this).val().trim();
-                
-                clearTimeout(searchTimeout);
-                
-                if (query.length === 0) {
-                    $dropdown.addClass('d-none').empty();
-                    $selectedHomeowner.val('');
-                    $selectedHomeownerId.val('');
-                    $selectedInfo.text('Start typing to search...');
-                    return;
-                }
-
-                // Show loading state
-                $dropdown.removeClass('d-none').html(`
-                    <div class="p-3 text-center text-muted">
-                        <i class="bi bi-hourglass-split me-2"></i>Searching...
-                    </div>
-                `);
-
-                // Debounce search
-                searchTimeout = setTimeout(() => {
-                    console.log('Searching for:', query); // Debug log
-                    $.ajax({
-                        url: 'api/search_homeowners.php',
-                        method: 'GET',
-                        data: { q: query },
-                        dataType: 'json',
-                        success: function(response) {
-                            console.log('Search response:', response); // Debug log
-                            if (response.success && response.data.length > 0) {
-                                let html = '';
-                                response.data.forEach(homeowner => {
-                                    html += `
-                                        <div class="homeowner-item p-3 border-bottom" 
-                                             data-id="${homeowner.id}"
-                                             data-name="${homeowner.name}"
-                                             data-address="${homeowner.address}"
-                                             data-homeowner-id="${homeowner.homeowner_id}"
-                                             style="cursor: pointer; transition: background-color 0.2s;">
-                                            <div class="d-flex align-items-center">
-                                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                                     style="width: 40px; height: 40px; min-width: 40px;">
-                                                    <i class="bi bi-person-fill"></i>
-                                                </div>
-                                                <div class="flex-grow-1">
-                                                    <div class="fw-bold text-dark mb-1">${homeowner.name}</div>
-                                                    <small class="text-muted">
-                                                        <i class="bi bi-house-door me-1"></i>${homeowner.address}
-                                                        <span class="ms-2 badge bg-light text-dark">${homeowner.homeowner_id}</span>
-                                                    </small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
-                                });
-                                $dropdown.html(html).css('z-index', '2000'); // Ensure it's on top
-                            } else {
-                                $dropdown.html(`
-                                    <div class="p-3 text-center text-muted">
-                                        <i class="bi bi-search me-2"></i>No homeowners found
-                                    </div>
-                                `);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error('Search error:', error); // Debug log
-                            $dropdown.html(`
-                                <div class="p-3 text-center text-danger">
-                                    <i class="bi bi-exclamation-triangle me-2"></i>Error loading results
-                                </div>
-                            `);
-                        }
-                    });
-                }, 300); // 300ms debounce
-            });
-
-            // Handle homeowner selection
-            $(document).on('click', '.homeowner-item', function() {
-                const name = $(this).data('name');
-                const address = $(this).data('address');
-                const homeownerId = $(this).data('homeowner-id');
-                const id = $(this).data('id');
-
-                // Set values
-                $searchInput.val(name);
-                $selectedHomeowner.val(name);
-                $selectedHomeownerId.val(id);
-                
-                // Update info text
-                $selectedInfo.html(`
-                    <i class="bi bi-check-circle-fill text-success me-1"></i>
-                    Selected: <strong>${name}</strong> - ${address}
-                `);
-
-                // Hide dropdown
-                $dropdown.addClass('d-none');
-            });
-
-            // Hover effect for dropdown items
-            $(document).on('mouseenter', '.homeowner-item', function() {
-                $(this).css('background-color', 'rgba(67, 97, 238, 0.05)');
-            }).on('mouseleave', '.homeowner-item', function() {
-                $(this).css('background-color', 'transparent');
-            });
-
-            // Close dropdown when clicking outside
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('#homeownerSearch, #homeownerDropdown').length) {
-                    $dropdown.addClass('d-none');
-                }
-            });
-
-            // Clear selection when modal is closed
-            $('#addVisitorModal').on('hidden.bs.modal', function() {
-                $searchInput.val('');
-                $selectedHomeowner.val('');
-                $selectedHomeownerId.val('');
-                $selectedInfo.text('Start typing to search...');
-                $dropdown.addClass('d-none').empty();
-            });
-
-            // --- VISITOR MANAGEMENT LOGIC ---
-            let cachedLogs = [];
-
-            // Load Visitor Logs
-            function loadVisitorLogs() {
-                $.ajax({
+            const table = $('#visitorLogsTable').DataTable({
+                ajax: {
                     url: 'api/get_visitor_logs.php',
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.success) {
-                            cachedLogs = response.data;
-                            renderTable(response.data);
-                            updateStats(response.data);
-                        } else {
-                            console.error('Failed to load logs:', response.message);
+                    dataSrc: 'data'
+                },
+                columns: [
+                    { 
+                        data: 'visitor_name',
+                        render: (d, t, r) => `
+                            <div>
+                                <div class="fw-bold text-dark">${d}</div>
+                                <div class="smaller text-muted">${r.visitor_type} • ${r.company || 'Private'}</div>
+                            </div>`
+                    },
+                    {
+                        data: 'homeowner_name',
+                        render: (d, t, r) => `<div class="small fw-medium">${d}</div><div class="smaller text-muted">${r.homeowner_address}</div>`
+                    },
+                    {
+                        data: 'qr_expiry',
+                        className: 'text-center',
+                        render: function(d, t, r) {
+                            if (!r.qr_token) return '<span class="badge bg-light text-muted rounded-pill px-3">NONE</span>';
+                            const isExpired = new Date(d) < new Date();
+                            const type = isExpired ? 'danger' : 'success';
+                            const status = isExpired ? 'INVALID' : 'VALID';
+                            const datePreview = new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric'});
+                            return `
+                                <div class="badge-qr-status view-qr-quick" data-id="${r.id}">
+                                    <span class="badge bg-${type} bg-opacity-10 text-${type} rounded-pill px-3 py-2 fw-bold" style="font-size: 0.65rem;">
+                                        ${status}
+                                    </span>
+                                    <div class="text-muted" style="font-size: 0.6rem; margin-top: 2px;">Exp: ${datePreview}</div>
+                                </div>`;
                         }
                     },
-                    error: function() {
-                        console.error('Error fetching visitor logs');
+                    {
+                        data: 'time_in_fmt',
+                        render: (d, t, r) => `<div class="small text-success fw-bold"><i class="bi bi-box-arrow-in-right me-1"></i> ${d}</div>
+                                             <div class="small text-muted fw-bold"><i class="bi bi-box-arrow-right me-1"></i> ${r.time_out_fmt || '--:--'}</div>`
+                    },
+                    {
+                        data: 'current_status',
+                        render: s => {
+                            const status = (s === 'IN' || s === 'INSIDE') ? 'INSIDE' : 'OUT';
+                            const badgeClass = status === 'INSIDE' ? 'bg-success text-success' : 'bg-secondary text-dark';
+                            return `<span class="badge ${badgeClass} bg-opacity-10 rounded-pill px-3 py-1 fw-bold smaller">${status}</span>`;
+                        }
+                    },
+                    {
+                        data: 'id',
+                        className: 'text-end pe-4',
+                        render: id => `<button class="btn btn-light btn-sm rounded-circle view-log-btn" data-id="${id}"><i class="bi bi-eye"></i></button>`
                     }
-                });
-            }
+                ],
+                order: [[3, 'desc']],
+                dom: 'trtp'
+            });
 
+            table.on('xhr.dt', function(e, settings, json) {
+                if (json && json.data) {
+                    cachedLogs = json.data;
+                    updateStats(cachedLogs);
+                }
+            });
 
-            // Render Table Rows
-            function renderTable(logs) {
-                table.clear();
-                
-                logs.forEach(log => {
-                    const statusBadge = log.status === 'INSIDE' 
-                        ? `<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
-                             <i class="bi bi-house-check me-1"></i> INSIDE
-                           </span>`
-                        : `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
-                             <i class="bi bi-door-open me-1"></i> EXITED
-                           </span>`;
-
-                    const actionButtons = log.status === 'INSIDE'
-                        ? `<button class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1 checkout-btn" data-id="${log.id}" style="font-size: 0.8rem;">
-                             <i class="bi bi-box-arrow-right me-1"></i> Checkout
-                           </button>`
-                        : `<button class="btn btn-sm btn-light rounded-pill px-3 py-1 view-log-btn" data-id="${log.id}" title="View Details" style="font-size: 0.8rem;">
-                             <i class="bi bi-eye text-primary me-1"></i> View
-                           </button>`;
-
-
-
-
-
-                    const timeOutDisplay = log.time_out_fmt 
-                        ? `<span class="text-secondary">${log.time_out_fmt}</span>` 
-                        : `<span class="text-muted">--:-- --</span>`;
-
-                    table.row.add([
-                        `<div class="d-flex align-items-center">
-                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div>
-                                <div class="fw-bold text-dark">${log.visitor_name}</div>
-                                <div class="smaller text-muted">${log.visitor_type} Visit ${log.company ? '• ' + log.company : ''}</div>
-                            </div>
-                        </div>`,
-                        `<span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">${log.visitor_type}</span>`,
-                        `<div>
-                            <div class="fw-medium">${log.homeowner_name}</div>
-                            <div class="smaller text-muted">${log.homeowner_address}</div>
-                        </div>`,
-                        `<div class="text-center small fw-bold">${log.gate}</div>`,
-                        `<div class="text-center font-monospace small">
-                            <span class="text-success">${log.time_in_fmt}</span><br>
-                            ${timeOutDisplay}
-                        </div>`,
-                        `<div class="text-center">${statusBadge}</div>`,
-                        `<div class="pe-4 text-end">${actionButtons}</div>`
-                    ]);
-                });
-                
-                table.draw();
-            }
-
-            // Update Stats counters
             function updateStats(logs) {
+                if (!Array.isArray(logs)) return;
                 const today = new Date().toISOString().split('T')[0];
                 const stats = {
-                    inside: logs.filter(l => l.status === 'INSIDE').length,
+                    inside: logs.filter(l => l.current_status === 'IN' || l.current_status === 'INSIDE').length,
                     totalToday: logs.filter(l => l.created_at.includes(today)).length,
                     service: logs.filter(l => l.visitor_type === 'Service').length,
-                    exitedToday: logs.filter(l => l.status === 'OUT' && l.created_at.includes(today)).length
+                    exitedToday: logs.filter(l => l.current_status === 'OUT').length
                 };
-
                 $('#statInside').text(stats.inside);
                 $('#statTotalToday').text(stats.totalToday);
                 $('#statService').text(stats.service);
                 $('#statTotalExited').text(stats.exitedToday);
             }
 
-            // Handle View Details
+            // Quick View QR
+            $(document).on('click', '.view-qr-quick', function() {
+                const id = $(this).data('id');
+                const log = cachedLogs.find(l => l.id == id);
+                if (log && log.qr_token) {
+                    Swal.fire({
+                        title: `<span class="fw-bold">${log.visitor_name}</span>`,
+                        html: `
+                            <div class="d-flex flex-column align-items-center mb-1">
+                                <div id="big_visitor_qr" class="mb-3 p-3 bg-white rounded shadow-sm"></div>
+                                <div class="small text-muted mb-2">Host: <strong>${log.homeowner_name}</strong></div>
+                                <div class="small text-muted mb-3" style="font-size: 0.75rem;">
+                                    Valid until: ${new Date(log.qr_expiry).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'})}
+                                </div>
+                                <div class="d-flex justify-content-center gap-2 w-100 px-3">
+                                    <button class="btn btn-primary rounded-pill px-4 flex-grow-1" id="downloadBigVisitorQR">
+                                        <i class="bi bi-download me-1"></i> Download
+                                    </button>
+                                    <button class="btn btn-outline-warning rounded-pill px-4 flex-grow-1" id="regenBigVisitorQR">
+                                        <i class="bi bi-arrow-clockwise me-1"></i> Regenerate
+                                    </button>
+                                </div>
+                            </div>`,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                        didOpen: () => {
+                            new QRCode(document.getElementById("big_visitor_qr"), {
+                                text: log.qr_token, width: 200, height: 200,
+                                colorDark : "#000000", colorLight : "#ffffff",
+                                correctLevel : QRCode.CorrectLevel.H
+                            });
+                            $('#downloadBigVisitorQR').click(() => {
+                                const qrImg = document.querySelector('#big_visitor_qr img');
+                                if (qrImg) {
+                                    const link = document.createElement('a');
+                                    link.href = qrImg.src;
+                                    link.download = `QR_Visitor_${log.visitor_name.replace(/\s+/g,'_')}.png`;
+                                    link.click();
+                                }
+                            });
+                            $('#regenBigVisitorQR').click(() => { Swal.close(); triggerRegenerate(log.id); });
+                        }
+                    });
+                }
+            });
+
+            // View Details Modal
             $(document).on('click', '.view-log-btn', function() {
                 const id = $(this).data('id');
                 const log = cachedLogs.find(l => l.id == id);
-                
                 if (log) {
+                    $('#viewVisitorModal').data('current-id', id);
                     $('#viewVisitorName').text(log.visitor_name);
                     $('#viewTimeIn').text(log.time_in_fmt);
                     $('#viewTimeOut').text(log.time_out_fmt || '--:-- --');
@@ -723,92 +400,138 @@ $user = [
                     $('#viewPurpose').text(log.purpose || 'Not specified');
                     $('#viewGate').text(log.gate);
                     
-                    // Status Badge
-                    const statusHtml = log.status === 'INSIDE' 
-                        ? '<span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold small">INSIDE</span>'
-                        : '<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-1 fw-bold small">EXITED</span>';
-                    $('#viewStatusBadge').html(statusHtml);
-
-                    if (log.company) {
-                        $('#viewCompany').text(log.company);
-                        $('#viewCompanyRow').removeClass('d-none');
+                    if (log.qr_token && log.status === 'INSIDE') {
+                        $('#view_qr_expiry').text('Valid until: ' + (log.qr_expiry || 'N/A'));
+                        $('#downloadVisitorQR').show();
+                        $('#view_visitor_qr').empty();
+                        new QRCode("view_visitor_qr", {
+                            text: log.qr_token, width: 128, height: 128,
+                            colorDark : "#000000", colorLight : "#ffffff",
+                            correctLevel : QRCode.CorrectLevel.H
+                        });
                     } else {
-                        $('#viewCompanyRow').addClass('d-none');
+                        $('#view_visitor_qr').html('<i class="bi bi-qr-code fs-1 text-muted"></i>');
+                        $('#view_qr_expiry').text(log.status === 'OUT' ? 'Pass Expired / Used' : 'No QR Token');
+                        $('#downloadVisitorQR').hide();
                     }
-                    
                     $('#viewVisitorModal').modal('show');
                 }
             });
 
+            $('#refreshLogs').click(() => table.ajax.reload(null, false));
+            $('#applyFilters').click(() => {
+                const url = `api/get_visitor_logs.php?type=${$('#filterType').val()}&status=${$('#filterStatus').val()}&from=${$('#filterFrom').val()}&to=${$('#filterTo').val()}`;
+                table.ajax.url(url).load();
+            });
 
-            // Handle Checkout
+            // Regenerate Logic
+            function triggerRegenerate(id) {
+                const today = new Date().toISOString().split('T')[0];
+                const nextYear = new Date(); nextYear.setFullYear(nextYear.getFullYear() + 1);
+                const defaultExpiry = nextYear.toISOString().split('T')[0];
 
-            $(document).on('click', '.checkout-btn', function() {
-                const id = $(this).data('id');
-                
                 Swal.fire({
-                    title: 'Confirm Checkout',
-                    text: "Mark this visitor as having exited?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#4361ee',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, checkout'
+                    title: 'Regenerate QR Pass?',
+                    html: `
+                        <p class="text-muted small">Old pass will be invalidated!</p>
+                        <div class="mt-3 text-start">
+                            <label class="form-label small fw-bold text-muted">New Expiry Date</label>
+                            <input type="date" id="swal_visitor_expiry" class="form-control rounded-pill" value="${defaultExpiry}" min="${today}">
+                        </div>`,
+                    showCancelButton: true, confirmButtonText: 'Generate New',
+                    preConfirm: () => document.getElementById('swal_visitor_expiry').value
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.ajax({
-                            url: 'api/checkout_visitor.php',
-                            method: 'POST',
-                            data: { id: id },
-                            success: function(response) {
-                                if (response.success) {
-                                    Swal.fire('Success', response.message, 'success');
-                                    loadVisitorLogs();
-                                } else {
-                                    Swal.fire('Error', response.message, 'error');
-                                }
+                        $.post('api/regenerate_visitor_qr.php', { id: id, expiry_date: result.value }, function(res) {
+                            if (res.success) {
+                                Swal.fire('Success', res.message, 'success');
+                                table.ajax.reload();
+                            } else { Swal.fire('Error', res.message, 'error'); }
+                        }, 'json');
+                    }
+                });
+            }
+
+            $('.regenerate-qr-btn').click(function() {
+                triggerRegenerate($('#viewVisitorModal').data('current-id'));
+            });
+            
+            $('#downloadVisitorQR').click(function() {
+                const qrImg = document.querySelector('#view_visitor_qr img');
+                const vName = $('#viewVisitorName').text();
+                if (qrImg) {
+                    const link = document.createElement('a');
+                    link.href = qrImg.src;
+                    link.download = `QR_Visitor_${vName.replace(/\s+/g,'_')}.png`;
+                    link.click();
+                }
+            });
+
+            // Save New Visitor
+            $('#saveVisitorBtn').click(function() {
+                const formData = $('#addVisitorForm').serialize();
+                $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Saving...');
+                
+                $.post('api/add_visitor.php', formData, function(res) {
+                    if (res.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Visitor Logged!',
+                            html: `
+                                <div class="text-center">
+                                    <p>${res.message}</p>
+                                    <div id="save_qr_preview" class="mb-3 d-flex justify-content-center"></div>
+                                    <p class="small text-muted mb-0">Expiry: ${res.qr_expiry}</p>
+                                </div>`,
+                            didOpen: () => {
+                                new QRCode(document.getElementById("save_qr_preview"), {
+                                    text: res.qr_token, width: 140, height: 140,
+                                    colorDark : "#000000", colorLight : "#ffffff",
+                                    correctLevel : QRCode.CorrectLevel.H
+                                });
                             }
+                        });
+                        $('#addVisitorModal').modal('hide');
+                        $('#addVisitorForm')[0].reset();
+                        table.ajax.reload();
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                    $('#saveVisitorBtn').prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i> Log Visitor & Generate QR');
+                }, 'json').fail(function() {
+                    Swal.fire('Error', 'Server error occurred', 'error');
+                    $('#saveVisitorBtn').prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i> Log Visitor & Generate QR');
+                });
+            });
+
+            // Polling for Visitor Scan Alerts
+            setInterval(function() {
+                $.get('api/get_latest_alerts.php?type=visitor', function(alerts) {
+                    if (Array.isArray(alerts)) {
+                        alerts.forEach(function(alert) {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 4500,
+                                timerProgressBar: true
+                            });
+
+                            Toast.fire({
+                                icon: alert.status === 'success' ? 'success' : 'error',
+                                title: alert.status === 'success' ? 'Visitor Log Updated' : 'Access Denied',
+                                text: alert.message
+                            });
+                            
+                            // Reload table to show new entry immediately
+                            table.ajax.reload(null, false);
                         });
                     }
                 });
-            });
+            }, 2000);
 
-            // Handle Form Submission
-            $('#addVisitorForm').on('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = $(this).serialize();
-                
-                // Validate homeowner selection
-                if (!$('#selectedHomeownerId').val()) {
-                    Swal.fire('Missing Selection', 'Please select a homeowner from the search results.', 'warning');
-                    return;
-                }
-
-                $.ajax({
-                    url: 'api/add_visitor.php',
-                    method: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        if (response.success) {
-                            $('#addVisitorModal').modal('hide');
-                            Swal.fire('Success', response.message, 'success');
-                            loadVisitorLogs();
-                        } else {
-                            Swal.fire('Error', response.message, 'error');
-                        }
-                    },
-                    error: function() {
-                        Swal.fire('Error', 'An unexpected error occurred.', 'error');
-                    }
-                });
-            });
-
-            // Initial load
-            loadVisitorLogs();
-
-            // Auto-refresh every 30 seconds
-            setInterval(loadVisitorLogs, 30000);
+            // Periodically refresh data every 30 seconds
+            setInterval(() => table.ajax.reload(null, false), 30000);
         });
     </script>
 </body>

@@ -131,24 +131,33 @@ $current_page = basename($_SERVER['PHP_SELF']);
         <a href="homeowners.php" class="nav-link <?php echo $current_page == 'homeowners.php' ? 'active' : ''; ?>">
             <i class="bi bi-people-fill"></i> Homeowners
         </a>
-        
-        <a class="nav-link <?php echo ($current_page == 'activity_logs.php' || $current_page == 'visitors_logs.php') ? 'active' : ''; ?>" 
+        <a href="visitors_logs.php" class="nav-link <?php echo $current_page == 'visitors_logs.php' ? 'active' : ''; ?>">
+            <i class="bi bi-person-vcard"></i> Visitors
+        </a>
+
+        <a class="nav-link <?php echo($current_page == 'activity_logs.php' || $current_page == 'visitor_activity_logs.php') ? 'active' : ''; ?>" 
            data-bs-toggle="collapse" href="#activityCollapse" role="button" 
-           aria-expanded="<?php echo ($current_page == 'activity_logs.php' || $current_page == 'visitors_logs.php') ? 'true' : 'false'; ?>">
+           aria-expanded="<?php echo($current_page == 'activity_logs.php' || $current_page == 'visitor_activity_logs.php') ? 'true' : 'false'; ?>">
             <i class="bi bi-clock-history"></i> 
             <span>Activity Log</span>
             <i class="bi bi-chevron-down ms-auto small transition-icon" style="font-size: 0.8rem;"></i>
         </a>
-        <div class="collapse <?php echo ($current_page == 'activity_logs.php' || $current_page == 'visitors_logs.php') ? 'show' : ''; ?>" id="activityCollapse">
+        <div class="collapse <?php echo($current_page == 'activity_logs.php' || $current_page == 'visitor_activity_logs.php') ? 'show' : ''; ?>" id="activityCollapse">
             <div class="flex-column nav mt-1">
                 <a href="activity_logs.php" class="nav-link <?php echo $current_page == 'activity_logs.php' ? 'active-sub' : ''; ?>">
                     <i class="bi bi-dot"></i> Homeowners
                 </a>
-                <a href="visitors_logs.php" class="nav-link <?php echo $current_page == 'visitors_logs.php' ? 'active-sub' : ''; ?>">
+                <a href="visitor_activity_logs.php" class="nav-link <?php echo $current_page == 'visitor_activity_logs.php' ? 'active-sub' : ''; ?>">
                     <i class="bi bi-dot"></i> Visitors
                 </a>
             </div>
         </div>
+
+        <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">Hardware Tools</div>
+        <a href="scanner_simulator.php" class="nav-link <?php echo $current_page == 'scanner_simulator.php' ? 'active' : ''; ?>">
+            <i class="bi bi-qr-code-scan"></i> Scanner Simulator
+        </a>
+
         <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">Management</div>
 
         <?php if ($user['role'] == 'admin'): ?>
@@ -156,12 +165,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <i class="bi bi-person-badge-fill"></i> HOA Accounts
         </a>
         <?php endif; ?>
-        <a href="#" class="nav-link">
-            <i class="bi bi-file-earmark-bar-graph"></i> Reports
-        </a>
-        <a href="#" class="nav-link">
-            <i class="bi bi-shield-check"></i> Guards
-        </a>
     </nav>
     
     <div class="mt-auto">

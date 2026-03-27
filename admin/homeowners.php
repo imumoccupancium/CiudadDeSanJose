@@ -737,7 +737,7 @@ $user = [
             
             // Interval to check for hardware scan alerts (faster polling)
             setInterval(function() {
-                $.get('api/get_latest_alerts.php', function(alerts) {
+                $.get('api/get_latest_alerts.php?type=homeowner', function(alerts) {
                     if (Array.isArray(alerts)) {
                         alerts.forEach(function(alert) {
                             const Toast = Swal.mixin({

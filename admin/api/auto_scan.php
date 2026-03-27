@@ -16,10 +16,17 @@ try {
     $stmt->execute([$token, $token]);
     $user = $stmt->fetch();
 
-    // 2. Search in Family Members if not found
+    // 2. Search in Family Members if homeowners not found
     if (!$user) {
         $stmt = $pdo->prepare("SELECT id, full_name as name, homeowner_id, current_status, access_status as status, qr_expiry, 'family' as type FROM family_members WHERE qr_token = ? OR qr_code = ?");
         $stmt->execute([$token, $token]);
+        $user = $stmt->fetch();
+    }
+
+    // 3. Search in Visitors if still not found
+    if (!$user) {
+        $stmt = $pdo->prepare("SELECT id, visitor_name as name, homeowner_id, current_status, 'active' as status, qr_expiry, 'visitor' as type FROM visitor_logs WHERE qr_token = ?");
+        $stmt->execute([$token]);
         $user = $stmt->fetch();
     }
 
@@ -46,22 +53,23 @@ try {
     if ($action === 'IN' || $action === 'OUT') {
         // Validation: Prevent duplicate status
         if ($action === $currentStatus) {
-            $msg = ($action === 'IN') 
-                ? "You cannot go Inside while your status is INSIDE." 
+            $msg = ($action === 'IN')
+                ? "You cannot go Inside while your status is INSIDE."
                 : "You cannot go Outside while your status is OUTSIDE.";
-            
+
             // Log alert for the UI
-            $alertStmt = $pdo->prepare("INSERT INTO scan_alerts (message, status) VALUES (?, 'error')");
-            $alertStmt->execute([$msg]);
+            $alertStmt = $pdo->prepare("INSERT INTO scan_alerts (message, status, type) VALUES (?, 'error', ?)");
+            $alertStmt->execute([$msg, $user['type']]);
 
             echo json_encode([
-                'success' => false, 
+                'success' => false,
                 'message' => $msg
             ]);
             exit;
         }
         $newStatus = $action;
-    } else {
+    }
+    else {
         // Default to toggle if no explicit action
         $newStatus = ($currentStatus === 'OUT') ? 'IN' : 'OUT';
     }
@@ -75,8 +83,23 @@ try {
         // Update Homeowner
         $updateStmt = $pdo->prepare("UPDATE homeowners SET current_status = ?, last_scan_time = NOW() WHERE id = ?");
         $updateStmt->execute([$newStatus, $user['id']]);
-    } else {
-        // Log Entry
+    }
+    elseif ($user['type'] === 'visitor') {
+        // Update Visitor Log
+        if ($newStatus === 'IN') {
+            $updateStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'IN', time_in = NOW(), last_scan_time = NOW() WHERE id = ?");
+        }
+        else {
+            $updateStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'OUT', time_out = NOW(), last_scan_time = NOW() WHERE id = ?");
+        }
+        $updateStmt->execute([$user['id']]);
+
+        // General entry log for global history
+        $logStmt = $pdo->prepare("INSERT INTO entry_logs (homeowner_id, action, timestamp, device_name) VALUES (?, ?, NOW(), ?)");
+        $logStmt->execute([$user['homeowner_id'], $newStatus, $deviceName]);
+    }
+    else {
+        // Log Entry for Family
         $logStmt = $pdo->prepare("INSERT INTO family_member_logs (family_member_id, homeowner_id, action, timestamp, device_name) VALUES (?, ?, ?, NOW(), ?)");
         $logStmt->execute([$user['id'], $user['homeowner_id'], $newStatus, $deviceName]);
 
@@ -87,9 +110,9 @@ try {
 
     $successMsg = ($newStatus === 'IN') ? 'Access Granted. Welcome, ' . $user['name'] . '!' : 'Departure Logged. Goodbye, ' . $user['name'] . '!';
 
-    // Log success alert for UI
-    $alertStmt = $pdo->prepare("INSERT INTO scan_alerts (message, status) VALUES (?, 'success')");
-    $alertStmt->execute([$successMsg]);
+    // Log success alert for UI with specific type
+    $alertStmt = $pdo->prepare("INSERT INTO scan_alerts (message, status, type) VALUES (?, 'success', ?)");
+    $alertStmt->execute([$successMsg, $user['type']]);
 
     echo json_encode([
         'success' => true,
@@ -102,6 +125,7 @@ try {
         ]
     ]);
 
-} catch (PDOException $e) {
+}
+catch (PDOException $e) {
     echo json_encode(['success' => false, 'message' => 'Database Error: ' . $e->getMessage()]);
 }
