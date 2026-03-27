@@ -281,18 +281,34 @@ $user = [
                         data: 'qr_expiry',
                         className: 'text-center',
                         render: function(d, t, r) {
-                            if (!r.qr_token) return '<span class="badge bg-light text-muted rounded-pill px-3">NONE</span>';
+                            const hasQR = r.qr_token;
                             const isExpired = new Date(d) < new Date();
-                            const type = isExpired ? 'danger' : 'success';
-                            const status = isExpired ? 'INVALID' : 'VALID';
-                            const datePreview = new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric'});
-                            return `
-                                <div class="badge-qr-status view-qr-quick" data-id="${r.id}">
-                                    <span class="badge bg-${type} bg-opacity-10 text-${type} rounded-pill px-3 py-2 fw-bold" style="font-size: 0.65rem;">
-                                        ${status}
-                                    </span>
-                                    <div class="text-muted" style="font-size: 0.6rem; margin-top: 2px;">Exp: ${datePreview}</div>
-                                </div>`;
+                            
+                            if (!hasQR) {
+                                return `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
+                                            <i class="bi bi-x-circle me-1"></i> MISSING
+                                        </span><br><small class="text-primary" style="font-size: 0.6rem;">Click to generate</small>`;
+                            }
+
+                            if (isExpired) {
+                                return `<div class="badge-qr-status view-qr-quick" data-id="${r.id}">
+                                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 small">
+                                                <i class="bi bi-clock-history me-1"></i> EXPIRED
+                                            </span>
+                                            <div class="x-small text-danger mt-1" style="font-size: 0.65rem; font-weight: bold;">
+                                                Exp: ${d ? new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                            </div>
+                                        </div>`;
+                            }
+
+                            return `<div class="badge-qr-status view-qr-quick" data-id="${r.id}" style="cursor: pointer;">
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">
+                                    <i class="bi bi-check-circle-fill me-1"></i> VALID
+                                </span>
+                                <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
+                                    Exp: ${d ? new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                </div>
+                            </div>`;
                         }
                     },
                     {
@@ -302,16 +318,25 @@ $user = [
                     },
                     {
                         data: 'current_status',
-                        render: s => {
-                            const status = (s === 'IN' || s === 'INSIDE') ? 'INSIDE' : 'OUT';
-                            const badgeClass = status === 'INSIDE' ? 'bg-success text-success' : 'bg-secondary text-dark';
-                            return `<span class="badge ${badgeClass} bg-opacity-10 rounded-pill px-3 py-1 fw-bold smaller">${status}</span>`;
+                        render: function(data) {
+                            const isInside = (data === 'IN' || data === 'INSIDE');
+                            const color = isInside ? 'primary' : 'warning';
+                            const icon = isInside ? 'bi-house-check' : 'bi-house-dash';
+                            return `<span class="badge bg-${color} bg-opacity-10 text-${color} rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
+                                <i class="bi ${icon} me-1"></i> ${isInside ? 'INSIDE' : 'OUTSIDE'}
+                            </span>`;
                         }
                     },
                     {
-                        data: 'id',
+                        data: null,
                         className: 'text-end pe-4',
-                        render: id => `<button class="btn btn-light btn-sm rounded-circle view-log-btn" data-id="${id}"><i class="bi bi-eye"></i></button>`
+                        render: (data) => `
+                            <div class="d-flex justify-content-end gap-1">
+                                <button class="btn btn-light btn-sm rounded-circle view-log-btn" data-id="${data.id}" title="View Details"><i class="bi bi-eye text-primary"></i></button>
+                                <button class="btn btn-light btn-sm rounded-circle edit-log-btn" data-id="${data.id}" title="Edit Visitor"><i class="bi bi-pencil text-warning"></i></button>
+                                <button class="btn btn-light btn-sm rounded-circle row-regen-btn" data-id="${data.id}" title="Regenerate QR"><i class="bi bi-qr-code text-success"></i></button>
+                                <button class="btn btn-light btn-sm rounded-circle delete-log-btn" data-id="${data.id}" title="Delete Log"><i class="bi bi-trash text-danger"></i></button>
+                            </div>`
                     }
                 ],
                 order: [[3, 'desc']],
@@ -329,10 +354,10 @@ $user = [
                 if (!Array.isArray(logs)) return;
                 const today = new Date().toISOString().split('T')[0];
                 const stats = {
-                    inside: logs.filter(l => l.current_status === 'IN' || l.current_status === 'INSIDE').length,
+                    inside: logs.filter(l => (l.current_status === 'IN' || l.current_status === 'INSIDE' || l.status === 'INSIDE') && (l.current_status !== 'OUT' && l.status !== 'OUT')).length,
                     totalToday: logs.filter(l => l.created_at.includes(today)).length,
                     service: logs.filter(l => l.visitor_type === 'Service').length,
-                    exitedToday: logs.filter(l => l.current_status === 'OUT').length
+                    exitedToday: logs.filter(l => l.current_status === 'OUT' || l.status === 'OUT').length
                 };
                 $('#statInside').text(stats.inside);
                 $('#statTotalToday').text(stats.totalToday);
@@ -416,6 +441,71 @@ $user = [
                     }
                     $('#viewVisitorModal').modal('show');
                 }
+            });
+
+            // Edit Details Modal
+            $(document).on('click', '.edit-log-btn', function() {
+                const id = $(this).data('id');
+                const log = cachedLogs.find(l => l.id == id);
+                if (log) {
+                    $('#edit_visitor_id').val(log.id);
+                    $('#edit_visitor_name').val(log.visitor_name);
+                    $('#edit_visitor_type').val(log.visitor_type).trigger('change');
+                    $('#edit_company').val(log.company || '');
+                    $('#edit_modal_homeowner_id').val(log.homeowner_id);
+                    $('#edit_modal_person_to_visit').val(log.homeowner_name);
+                    $('#edit_residentSearchInput').val(log.homeowner_name + ' - ' + log.homeowner_address);
+                    $('#edit_selectedResidentLabel').text(log.homeowner_name);
+                    $('#edit_selectionFeedback').show();
+                    $('#edit_qr_expiry').val(log.qr_expiry ? log.qr_expiry.substring(0, 10) : '');
+                    $('#edit_purpose').val(log.purpose || '');
+                    $('#edit_status').val(log.status || 'INSIDE');
+                    $('#editVisitorModal').modal('show');
+                }
+            });
+
+            $('#updateVisitorBtn').click(function() {
+                const formData = $('#editVisitorForm').serialize();
+                $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Updating...');
+                
+                $.post('api/edit_visitor.php', formData, function(res) {
+                    if (res.success) {
+                        Swal.fire('Success', res.message, 'success');
+                        $('#editVisitorModal').modal('hide');
+                        table.ajax.reload(null, false);
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                    $('#updateVisitorBtn').prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i> Update Registry');
+                }, 'json');
+            });
+
+            // Delete Log
+            $(document).on('click', '.delete-log-btn', function() {
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This visitor log will be permanently deleted!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef233c',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('api/delete_visitor.php', { id: id }, function(res) {
+                            if (res.success) {
+                                Swal.fire('Deleted!', res.message, 'success');
+                                table.ajax.reload(null, false);
+                            } else {
+                                Swal.fire('Error', res.message, 'error');
+                            }
+                        }, 'json');
+                    }
+                });
+            });
+
+            $(document).on('click', '.row-regen-btn', function() {
+                triggerRegenerate($(this).data('id'));
             });
 
             $('#refreshLogs').click(() => table.ajax.reload(null, false));

@@ -15,11 +15,11 @@ $user = [
 // Fetch some active data for the dropdowns
 try {
     // 1. Homeowners
-    $hStmt = $pdo->query("SELECT id, name, qr_token, 'Homeowner' as type FROM homeowners WHERE status = 'active' AND qr_token IS NOT NULL LIMIT 50");
+    $hStmt = $pdo->query("SELECT id, homeowner_id, name, qr_token, 'Homeowner' as type FROM homeowners WHERE status = 'active' AND qr_token IS NOT NULL LIMIT 50");
     $homeowners = $hStmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // 2. Visitors currently inside
-    $vStmt = $pdo->query("SELECT id, visitor_name as name, qr_token, 'Visitor' as type FROM visitor_logs WHERE status = 'INSIDE' AND qr_token IS NOT NULL LIMIT 20");
+    // 2. Visitors (any with QR)
+    $vStmt = $pdo->query("SELECT id, homeowner_id, visitor_name as name, qr_token, 'Visitor' as type FROM visitor_logs WHERE qr_token IS NOT NULL LIMIT 20");
     $visitors = $vStmt->fetchAll(PDO::FETCH_ASSOC);
     
     $allSimulatedEntries = array_merge($homeowners, $visitors);
@@ -103,7 +103,11 @@ try {
                                     <select class="form-select rounded-3 p-3" id="scanTarget" required>
                                         <option value="">Choose resident or visitor...</option>
                                         <?php foreach($allSimulatedEntries as $entry): ?>
-                                            <option value="<?= $entry['qr_token'] ?>" data-name="<?= $entry['name'] ?>" data-type="<?= $entry['type'] ?>">
+                                            <option value="<?= $entry['qr_token'] ?>" 
+                                                    data-id="<?= $entry['id'] ?>" 
+                                                    data-homeowner-id="<?= $entry['homeowner_id'] ?>" 
+                                                    data-name="<?= $entry['name'] ?>" 
+                                                    data-type="<?= $entry['type'] ?>">
                                                 <?= $entry['name'] ?> (<?= htmlspecialchars($entry['type']) ?>)
                                             </option>
                                         <?php endforeach; ?>
@@ -123,6 +127,17 @@ try {
                                         <label class="btn btn-outline-danger rounded-pill px-4 flex-grow-1 py-3" for="actionOut">
                                             <i class="bi bi-box-arrow-right me-2"></i> EXIT (Gate OUT)
                                         </label>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label small fw-bold text-muted">Network Condition</label>
+                                    <div class="form-check form-switch p-3 bg-light rounded-3 border">
+                                        <input class="form-check-input ms-0 me-3" type="checkbox" id="simulateOffline">
+                                        <label class="form-check-label fw-bold small" for="simulateOffline">
+                                            Simulate Internet Outage
+                                        </label>
+                                        <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">If enabled, the scanner will fail to reach the server and use local fallback logic.</div>
                                     </div>
                                 </div>
 
@@ -176,6 +191,54 @@ try {
     <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
 
     <script>
+        let offlineBuffer = [];
+
+        // Handle Switch back to Online
+        $('#simulateOffline').on('change', function() {
+            const displayStatus = $('#displayStatus');
+            const hardwareLog = $('#hardwareLog');
+            
+            function addLog(msg) {
+                const now = new Date().toLocaleTimeString();
+                hardwareLog.append(`[${now}] ${msg}<br>`);
+                hardwareLog.scrollTop(hardwareLog[0].scrollHeight);
+            }
+
+            if (!this.checked) {
+                if (offlineBuffer.length === 0) {
+                    addLog('   [SYSTEM] Internet restored. No pending logs to sync.');
+                    return;
+                }
+
+                addLog(`   [SYSTEM] Internet restored. Synchronizing ${offlineBuffer.length} pending log(s)...`);
+                displayStatus.text('SYNCING LOGS...').css('color', '#4cc9f0').addClass('blink');
+                
+                $.ajax({
+                    url: 'api/sync_offline_logs.php',
+                    method: 'POST',
+                    data: JSON.stringify(offlineBuffer),
+                    contentType: 'application/json',
+                    success: function(res) {
+                        if (res.success) {
+                            addLog(`   [SYNC] Server Response: Success (${res.processed} processed).`);
+                            addLog('   [SYNC] Local cache is now fully synchronized.');
+                            offlineBuffer = []; // Clear buffer
+                        } else {
+                            addLog(`   [SYNC] Server Error: ${res.message}`);
+                        }
+                        displayStatus.text('READY FOR SCAN...').css('color', '#0f0').removeClass('blink');
+                    },
+                    error: function() {
+                        addLog('   [SYNC] Fatal Error: Could not reach sync API.');
+                        displayStatus.text('READY FOR SCAN...').css('color', '#0f0').removeClass('blink');
+                    }
+                });
+            } else {
+                addLog('   [SYSTEM] Disconnecting from server... ');
+                addLog('   [SYSTEM] SYSTEM NOW RUNNING IN OFFLINE FALLBACK MODE. ');
+            }
+        });
+
         $(document).ready(function() {
             const form = $('#simulatorForm');
             const displayStatus = $('#displayStatus');
@@ -198,7 +261,8 @@ try {
                 const token = $('#scanTarget').val();
                 const action = $('input[name="action"]:checked').val();
                 const deviceName = $('#deviceName').val();
-                const userName = $('#scanTarget option:selected').data('name');
+                const selectedOpt = $('#scanTarget option:selected');
+                const userName = selectedOpt.data('name');
 
                 if (!token) {
                     Swal.fire('Error', 'Please select an identity to simulate.', 'error');
@@ -211,6 +275,39 @@ try {
                 // Show processing on display
                 displayStatus.text('PROCESSING...').addClass('blink');
                 displayName.text(userName.toUpperCase());
+
+                // Simulate Offline Condition
+                if ($('#simulateOffline').is(':checked')) {
+                    setTimeout(() => {
+                        addLog('   [OFFLINE] Internet unreachable. Switching to local database...');
+                        addLog(`   [LOCAL]   Found: ${userName} (${selectedOpt.data('type')}). Access GRANTED (offline).`);
+                        
+                        // Push to temporary offline buffer for real sync later
+                        offlineBuffer.push({
+                            user_internal_id: selectedOpt.data('id'),
+                            homeowner_id: selectedOpt.data('homeowner-id'),
+                            name: userName,
+                            user_type: selectedOpt.data('type').toLowerCase(),
+                            action: action,
+                            timestamp: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                            device_name: deviceName
+                        });
+
+                        addLog('   [LOCAL]   Offline log saved internally in buffer.');
+                        
+                        lightIn.addClass('active-in'); 
+                        displayStatus.text('ACCESS GRANTED (OFFLINE)').css('color', '#0f0').removeClass('blink');
+                        displayType.text('GATING IN OFFLINE MODE');
+
+                        setTimeout(() => {
+                            lightIn.removeClass('active-in');
+                            displayStatus.text('READY FOR SCAN...').css('color', '#0f0');
+                        }, 3000);
+
+                        btn.prop('disabled', false).html('<i class="bi bi-lightning-fill me-2"></i> TRIGGER SCAN SIGNAL');
+                    }, 1200);
+                    return;
+                }
 
                 $.ajax({
                     url: 'api/auto_scan.php',

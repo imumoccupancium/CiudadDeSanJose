@@ -230,14 +230,14 @@ $user = [
                                         <option value="OUT">Exit (OUT)</option>
                                     </select>
                                 </div>
-                                <div class="col-md-3 text-end">
+                                <div class="col-md-3">
                                     <label class="form-label small fw-bold text-muted">&nbsp;</label>
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-primary rounded-pill w-100" id="applyFilter">
                                             <i class="bi bi-filter"></i> Run Filter
                                         </button>
-                                        <button class="btn btn-light rounded-pill p-2 px-3" id="refreshLogs">
-                                            <i class="bi bi-arrow-clockwise"></i>
+                                        <button class="btn btn-light rounded-pill" id="clearFilter">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -252,17 +252,27 @@ $user = [
                                 <h5 class="fw-bold mb-1">Detailed Gate History</h5>
                                 <p class="text-muted small mb-0">Complete record of every visitor scan</p>
                             </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-light rounded-pill btn-sm px-3" id="exportExcel">
+                                    <i class="bi bi-file-earmark-spreadsheet me-1"></i> Excel
+                                </button>
+
+                                <button class="btn btn-primary rounded-pill btn-sm p-2 px-2" id="refreshLogs">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0" id="visitorActivityTable">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">Visitor</th>
+                                            <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">#</th>
+                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0">Visitor</th>
                                             <th class="py-3 text-uppercase small fw-bold text-muted border-0">Host / Resident</th>
                                             <th class="py-3 text-uppercase small fw-bold text-muted border-0">Action</th>
                                             <th class="py-3 text-uppercase small fw-bold text-muted border-0">Timestamp</th>
-                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">Scanner</th>
+                                            <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4">Scanner</th>
                                         </tr>
                                     </thead>
                                     <tbody class="border-0"></tbody>
@@ -315,6 +325,10 @@ $user = [
                 },
                 columns: [
                     { 
+                        data: null,
+                        render: (d, t, r, m) => `<span class="text-muted small ps-2">${m.row + 1}</span>`
+                    },
+                    { 
                         data: 'name',
                         render: (d, t, r) => `<div><div class="fw-bold text-dark">${d}</div><div class="smaller text-muted fs-7">${r.id_number}</div></div>`
                     },
@@ -323,8 +337,9 @@ $user = [
                         data: 'action',
                         render: a => {
                             const badge = a === 'IN' ? 'success' : 'danger';
+                            const icon = a === 'IN' ? 'bi-box-arrow-in-right' : 'bi-box-arrow-right';
                             return `<span class="badge bg-${badge} bg-opacity-10 text-${badge} rounded-pill px-3 py-2 fw-bold" style="font-size: 0.7rem;">
-                                <i class="bi ${a === 'IN' ? 'bi-box-arrow-in-right' : 'bi-box-arrow-right'} me-1"></i> ${a}
+                                <i class="bi ${icon} me-1"></i> ${a === 'IN' ? 'ENTRY' : 'EXIT'}
                             </span>`;
                         }
                     },
@@ -334,10 +349,10 @@ $user = [
                     },
                     { 
                         data: 'device',
-                        render: d => `<div class="text-end pe-4"><span class="badge bg-light text-dark border px-2"><i class="bi bi-qr-code-scan me-1"></i> ${d}</span></div>`
+                        render: d => `<span class="badge bg-light text-dark border px-2"><i class="bi bi-qr-code-scan me-1"></i> ${d}</span>`
                     }
                 ],
-                order: [[3, 'desc']],
+                order: [[4, 'desc']],
                 pageLength: 20,
                 dom: 'trtp',
                 language: {
@@ -362,19 +377,23 @@ $user = [
                     let html = '';
                     data.forEach(item => {
                         const actionClass = item.action === 'IN' ? 'entry' : 'exit';
+                        const icon = item.action === 'IN' ? 'bi-arrow-down-right-circle-fill' : 'bi-arrow-up-right-circle-fill';
                         const color = item.action === 'IN' ? 'success' : 'danger';
                         html += `
                             <div class="timeline-item ${actionClass}">
                                 <div class="d-flex justify-content-between align-items-start mb-1">
                                     <span class="fw-bold text-dark">${item.name}</span>
                                     <span class="text-${color} small fw-bold">
-                                         ${item.action}
+                                         <i class="bi ${icon} me-1"></i> ${item.action}
                                     </span>
                                 </div>
                                 <div class="small text-muted mb-2">Host: ${item.host_name}</div>
-                                <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-3 mt-1">
                                     <span class="smaller bg-light rounded px-2 text-muted fw-medium py-1">
                                         <i class="bi bi-clock me-1"></i> ${item.time}
+                                    </span>
+                                    <span class="smaller text-muted">
+                                        <i class="bi bi-geo-alt me-1"></i> ${item.device}
                                     </span>
                                 </div>
                             </div>`;
@@ -387,9 +406,24 @@ $user = [
             loadTimeline();
 
             $('#refreshLogs').click(() => { table.ajax.reload(); updateStats(); loadTimeline(); });
+            
             $('#applyFilter').click(() => {
                 const url = `api/get_visitor_activity_log.php?date_from=${$('#dateFrom').val()}&date_to=${$('#dateTo').val()}&action=${$('#actionFilter').val()}`;
                 table.ajax.url(url).load();
+            });
+
+            $('#clearFilter').click(() => {
+                $('#dateFrom').val(weekAgo);
+                $('#dateTo').val(today);
+                $('#actionFilter').val('');
+                table.ajax.url('api/get_visitor_activity_log.php').load();
+            });
+
+            $('#exportExcel').click(function() {
+                const dateFrom = $('#dateFrom').val();
+                const dateTo = $('#dateTo').val();
+                const action = $('#actionFilter').val();
+                window.location.href = `api/export_visitor_activity_excel.php?date_from=${dateFrom}&date_to=${dateTo}&action=${action}`;
             });
 
             setInterval(() => { table.ajax.reload(null, false); updateStats(); loadTimeline(); }, 30000);

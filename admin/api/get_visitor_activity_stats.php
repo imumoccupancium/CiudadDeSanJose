@@ -6,20 +6,20 @@ try {
     $today = date('Y-m-d');
     
     // Total Visitor Events
-    $totalLogs = $pdo->query("SELECT COUNT(*) FROM visitor_logs WHERE last_scan_time IS NOT NULL")->fetchColumn();
+    $totalLogs = $pdo->query("SELECT COUNT(*) FROM visitor_activity_logs")->fetchColumn();
     
     // Entries Today
-    $stmtEntries = $pdo->prepare("SELECT COUNT(*) FROM visitor_logs WHERE current_status = 'IN' AND DATE(last_scan_time) = :today");
+    $stmtEntries = $pdo->prepare("SELECT COUNT(*) FROM visitor_activity_logs WHERE action = 'IN' AND DATE(timestamp) = :today");
     $stmtEntries->execute([':today' => $today]);
     $totalEntries = $stmtEntries->fetchColumn();
     
     // Exits Today 
-    $stmtExits = $pdo->prepare("SELECT COUNT(*) FROM visitor_logs WHERE current_status = 'OUT' AND DATE(last_scan_time) = :today");
+    $stmtExits = $pdo->prepare("SELECT COUNT(*) FROM visitor_activity_logs WHERE action = 'OUT' AND DATE(timestamp) = :today");
     $stmtExits->execute([':today' => $today]);
     $totalExits = $stmtExits->fetchColumn();
     
     // Unique Visitors today
-    $stmtUnique = $pdo->prepare("SELECT COUNT(DISTINCT id) FROM visitor_logs WHERE DATE(last_scan_time) = :today");
+    $stmtUnique = $pdo->prepare("SELECT COUNT(DISTINCT visitor_id) FROM visitor_activity_logs WHERE DATE(timestamp) = :today");
     $stmtUnique->execute([':today' => $today]);
     $uniqueVisitors = $stmtUnique->fetchColumn();
     

@@ -82,7 +82,8 @@ try {
             // Update Visitor specific record
             if ($action === 'IN') {
                 $uStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'IN', time_in = ?, last_scan_time = ? WHERE id = ? AND (last_scan_time IS NULL OR last_scan_time <= ?)");
-            } else {
+            }
+            else {
                 $uStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'OUT', time_out = ?, last_scan_time = ? WHERE id = ? AND (last_scan_time IS NULL OR last_scan_time <= ?)");
             }
             $uStmt->execute([$timestamp, $timestamp, $user_internal_id, $timestamp]);

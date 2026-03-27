@@ -153,10 +153,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </div>
         </div>
 
-        <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">Hardware Tools</div>
-        <a href="scanner_simulator.php" class="nav-link <?php echo $current_page == 'scanner_simulator.php' ? 'active' : ''; ?>">
-            <i class="bi bi-qr-code-scan"></i> Scanner Simulator
-        </a>
+
 
         <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">Management</div>
 

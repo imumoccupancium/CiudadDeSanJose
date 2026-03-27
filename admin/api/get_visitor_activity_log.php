@@ -8,19 +8,19 @@ try {
     $action = $_GET['action'] ?? null;
     $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
     
-    $where = "WHERE v.last_scan_time IS NOT NULL";
+    $where = "WHERE 1=1";
     $params = [];
     
     if ($dateFrom) {
-        $where .= " AND DATE(v.last_scan_time) >= :df";
+        $where .= " AND DATE(val.timestamp) >= :df";
         $params[':df'] = $dateFrom;
     }
     if ($dateTo) {
-        $where .= " AND DATE(v.last_scan_time) <= :dt";
+        $where .= " AND DATE(val.timestamp) <= :dt";
         $params[':dt'] = $dateTo;
     }
     if ($action) {
-        $where .= " AND v.current_status = :ac";
+        $where .= " AND val.action = :ac";
         $params[':ac'] = $action;
     }
     
@@ -28,16 +28,17 @@ try {
         SELECT 
             v.visitor_name as name,
             CONCAT('VIS-', v.id) as id_number,
-            v.current_status as action,
-            DATE_FORMAT(v.last_scan_time, '%Y-%m-%d') as date,
-            DATE_FORMAT(v.last_scan_time, '%H:%i:%s') as time,
-            COALESCE(v.gate, 'Main Gate Scanner') as device,
-            v.last_scan_time as timestamp,
+            val.action,
+            DATE_FORMAT(val.timestamp, '%Y-%m-%d') as date,
+            DATE_FORMAT(val.timestamp, '%H:%i:%s') as time,
+            COALESCE(val.device_name, 'Main Gate Scanner') as device,
+            val.timestamp,
             h.name as host_name
-        FROM visitor_logs v
-        JOIN homeowners h ON v.homeowner_id = h.id
+        FROM visitor_activity_logs val
+        JOIN visitor_logs v ON val.visitor_id = v.id
+        JOIN homeowners h ON val.homeowner_id = h.id
         $where
-        ORDER BY v.last_scan_time DESC
+        ORDER BY val.timestamp DESC
         LIMIT $limit
     ";
     

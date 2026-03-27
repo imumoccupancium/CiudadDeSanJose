@@ -46,7 +46,7 @@ try {
 
     $all_tokens = array_merge($homeowners, $family_members);
 
-    // --- Visitors (currently inside, not expired) ---
+    // --- Visitors (active tokens, not expired) ---
     $stmt3 = $pdo->prepare("
         SELECT 
             id            AS user_internal_id,
@@ -56,8 +56,7 @@ try {
             current_status,
             'visitor'     AS user_type
         FROM visitor_logs
-        WHERE current_status = 'IN'
-          AND qr_token IS NOT NULL
+        WHERE qr_token IS NOT NULL
           AND qr_token != ''
           AND (qr_expiry IS NULL OR qr_expiry > NOW())
     ");

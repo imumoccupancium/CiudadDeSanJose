@@ -87,14 +87,18 @@ try {
     elseif ($user['type'] === 'visitor') {
         // Update Visitor Log
         if ($newStatus === 'IN') {
-            $updateStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'IN', time_in = NOW(), last_scan_time = NOW() WHERE id = ?");
+            $updateStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'IN', status = 'INSIDE', time_in = NOW(), last_scan_time = NOW() WHERE id = ?");
         }
         else {
-            $updateStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'OUT', time_out = NOW(), last_scan_time = NOW() WHERE id = ?");
+            $updateStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'OUT', status = 'OUT', time_out = NOW(), last_scan_time = NOW() WHERE id = ?");
         }
         $updateStmt->execute([$user['id']]);
 
-        // General entry log for global history
+        // Specific visitor activity log for history
+        $logStmt = $pdo->prepare("INSERT INTO visitor_activity_logs (visitor_id, homeowner_id, action, timestamp, device_name) VALUES (?, ?, ?, NOW(), ?)");
+        $logStmt->execute([$user['id'], $user['homeowner_id'], $newStatus, $deviceName]);
+
+        // General entry log for global history (optional, currently uses homeowner_id)
         $logStmt = $pdo->prepare("INSERT INTO entry_logs (homeowner_id, action, timestamp, device_name) VALUES (?, ?, NOW(), ?)");
         $logStmt->execute([$user['homeowner_id'], $newStatus, $deviceName]);
     }

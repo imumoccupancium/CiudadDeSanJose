@@ -632,11 +632,68 @@ try {
             // Initial stats load
             updateDashboardStats();
             
-            // Auto-refresh every 5 seconds
-            setInterval(function() {
-                activityTable.ajax.reload(null, false);
-                updateDashboardStats();
-            }, 5000);
+            // ============================================
+            // REAL-TIME AUTO-UPDATE (SSE)
+            // ============================================
+            
+            // Connect to our new SSE script
+            const activityStream = new EventSource('api/sse_activity.php');
+
+            activityStream.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'new_scan' || data.type === 'init') {
+                    console.log('Real-time Update:', data.timestamp);
+                    
+                    // 1. Update Table
+                    activityTable.ajax.reload(null, false);
+
+                    // 2. Update Dashboard Statistics
+                    const stats = data.stats;
+                    
+                    // Direct DOM updates for performance
+                    $('#statEntriesToday').text(stats.total_entries_today);
+                    $('#statExitsToday').text(stats.total_exits_today);
+                    $('#statTotalHomeowners').text(stats.total_homeowners);
+                    $('#statCurrentlyInside').text(stats.currently_inside);
+                    $('#statCurrentlyOutside').text(stats.total_homeowners - stats.currently_inside);
+                    
+                    // Update progress bars
+                    const total = parseInt(stats.total_homeowners);
+                    const inside = parseInt(stats.currently_inside);
+                    const outside = total - inside;
+                    
+                    const insidePercent = total > 0 ? Math.round((inside / total) * 100) : 0;
+                    const outsidePercent = total > 0 ? Math.round((outside / total) * 100) : 0;
+                    
+                    // Animated text update (helper from existing code)
+                    $('#statCurrentlyInside').text(inside);
+                    $('#statCurrentlyOutside').text(outside);
+                    
+                    $('#insidePercentageText').text(insidePercent + '%');
+                    $('#insideProgressBar').css('width', insidePercent + '%');
+                    
+                    $('#outsidePercentageText').text(outsidePercent + '%');
+                    $('#outsideProgressBar').css('width', outsidePercent + '%');
+
+                    // If it was a new scan, show a subtle notification
+                    if (data.type === 'new_scan') {
+                        // Optional: You could show a toast or play a subtle sound here
+                        console.log("New activity recorded!");
+                    }
+                }
+            };
+
+            activityStream.onerror = function(err) {
+                console.warn("SSE Connection lost. Polling fallback active.");
+                // Fallback to manual refresh every 10s if SSE fails
+                if (!window.pollingFallback) {
+                    window.pollingFallback = setInterval(function() {
+                        activityTable.ajax.reload(null, false);
+                        updateDashboardStats();
+                    }, 10000);
+                }
+            };
             
             // Manual refresh
             $('#refreshActivityLog').click(function() {

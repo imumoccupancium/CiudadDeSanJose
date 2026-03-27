@@ -22,18 +22,21 @@ try {
             status = 'OUT' 
         WHERE id = ? AND status = 'INSIDE'
     ");
-    
+
     $result = $stmt->execute([$id]);
-    
+
     if ($result && $stmt->rowCount() > 0) {
         echo json_encode(['success' => true, 'message' => 'Visitor checked out successfully']);
-    } else {
+    }
+    else {
         echo json_encode(['success' => false, 'message' => 'Visitor already checked out or not found']);
     }
-    
-} catch (PDOException $e) {
+
+
+}
+catch (PDOException $e) {
     echo json_encode([
-        'success' => false, 
+        'success' => false,
         'message' => 'Database error: ' . $e->getMessage()
     ]);
 }

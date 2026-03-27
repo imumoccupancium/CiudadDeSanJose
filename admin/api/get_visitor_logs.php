@@ -21,10 +21,13 @@ try {
         $params[] = $_GET['type'];
     }
 
-    // Filter by visitor status (INSIDE/OUT)
+    // Filter by visitor status (Robust handling for current status from scans)
     if (!empty($_GET['status'])) {
-        $where[] = "v.status = ?";
-        $params[] = $_GET['status'];
+        if ($_GET['status'] === 'INSIDE') {
+            $where[] = "(v.status = 'INSIDE' OR v.current_status = 'IN' OR v.current_status = 'INSIDE') AND (v.current_status != 'OUT' AND v.status != 'OUT')";
+        } else if ($_GET['status'] === 'OUT') {
+            $where[] = "(v.status = 'OUT' OR v.current_status = 'OUT' OR v.current_status = 'OUTSIDE')";
+        }
     }
 
     // Filter by date range (inclusive)

@@ -197,12 +197,6 @@
                                 <div class="col-sm-6 text-muted small fw-bold text-uppercase">Visitor Name</div>
                                 <div class="col-sm-6 fw-bold" id="viewVisitorName">--</div>
                                 
-                                <div class="col-sm-6 text-muted small fw-bold text-uppercase">Time In</div>
-                                <div class="col-sm-6 fw-bold text-success" id="viewTimeIn">--</div>
-                                
-                                <div class="col-sm-6 text-muted small fw-bold text-uppercase">Time Out</div>
-                                <div class="col-sm-6 fw-bold text-muted" id="viewTimeOut">--</div>
-                                
                                 <div class="col-sm-6 text-muted small fw-bold text-uppercase">Host / Resident</div>
                                 <div class="col-sm-6" id="viewHostName">--</div>
                                 
@@ -247,3 +241,151 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Visitor Modal -->
+<div class="modal fade" id="editVisitorModal" tabindex="-1" aria-labelledby="editVisitorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h5 class="modal-title fw-bold" id="editVisitorModalLabel">
+                    <i class="bi bi-pencil-square text-warning me-2"></i>
+                    Update Visitor Info
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="editVisitorForm">
+                    <input type="hidden" name="id" id="edit_visitor_id">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Visitor Full Name *</label>
+                            <input type="text" class="form-control rounded-3 p-2 px-3" name="visitor_name" id="edit_visitor_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Visit Category</label>
+                            <select class="form-select rounded-3 p-2 px-3" name="visitor_type" id="edit_visitor_type">
+                                <option value="Personal">Personal Visit</option>
+                                <option value="Service">Delivery / Service</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12" id="edit_company_field_wrapper" style="display: none;">
+                            <label class="form-label small fw-bold text-muted">Company / Organization</label>
+                            <input type="text" class="form-control rounded-3 p-2 px-3" name="company" id="edit_company" placeholder="e.g. Grab, Shopee, Meralco">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold text-muted">Resident to Visit *</label>
+                            <div class="position-relative" id="edit_customSearchWrapper">
+                                <input type="text" class="form-control rounded-3 p-2 px-3" 
+                                       id="edit_residentSearchInput" 
+                                       placeholder="Type to search resident name..." 
+                                       autocomplete="off" 
+                                       required>
+                                <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                                
+                                <ul id="edit_residentResultsList" class="list-group position-absolute w-100 mt-1 shadow-lg" style="z-index: 1050; max-height: 200px; overflow-y: auto; display: none;">
+                                    <?php
+                                    try {
+                                        $hStmt = $pdo->query("SELECT id, name, address, homeowner_id FROM homeowners WHERE status = 'active' ORDER BY name ASC");
+                                        while($h = $hStmt->fetch()) {
+                                            $display = "{$h['name']} - {$h['address']} ({$h['homeowner_id']})";
+                                            echo "<li class=\"list-group-item list-group-item-action py-2 fs-7 edit-resident-item\" 
+                                                      data-id=\"{$h['id']}\" 
+                                                      data-name=\"{$h['name']}\" 
+                                                      style=\"cursor: pointer;\">{$display}</li>";
+                                        }
+                                    } catch(Exception $e) {}
+                                    ?>
+                                </ul>
+                                <input type="hidden" name="homeowner_id" id="edit_modal_homeowner_id">
+                                <input type="hidden" name="person_to_visit" id="edit_modal_person_to_visit">
+                            </div>
+                            <div id="edit_selectionFeedback" class="small mt-2 text-success" style="display: none;">
+                                <i class="bi bi-check2-circle"></i> Resident selected: <strong id="edit_selectedResidentLabel"></strong>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">QR Pass Expiry Date</label>
+                            <input type="date" class="form-control rounded-3 p-2 px-3" name="qr_expiry" id="edit_qr_expiry">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Purpose of Visit</label>
+                            <input type="text" class="form-control rounded-3 p-2 px-3" name="purpose" id="edit_purpose" placeholder="Hangout, Social visit, etc.">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">Status</label>
+                            <select class="form-select rounded-3 p-2 px-3" name="status" id="edit_status">
+                                <option value="INSIDE">INSIDE</option>
+                                <option value="OUT">OUT</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4" id="updateVisitorBtn">
+                    <i class="bi bi-check2-circle me-1"></i> Update Registry
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editTypeSelect = document.getElementById('edit_visitor_type');
+        const editCompanyWrapper = document.getElementById('edit_company_field_wrapper');
+        const editSearchInput = document.getElementById('edit_residentSearchInput');
+        const editResultsList = document.getElementById('edit_residentResultsList');
+        const editResidentItems = document.querySelectorAll('.edit-resident-item');
+        const editHiddenId = document.getElementById('edit_modal_homeowner_id');
+        const editHiddenName = document.getElementById('edit_modal_person_to_visit');
+        const editFeedback = document.getElementById('edit_selectionFeedback');
+        const editLabel = document.getElementById('edit_selectedResidentLabel');
+        const editPurposeInput = document.getElementById('edit_purpose');
+
+        editTypeSelect?.addEventListener('change', function() {
+            if (this.value === 'Service') {
+                editCompanyWrapper.style.display = 'block';
+                editPurposeInput.placeholder = 'Repair, Delivery, Maintenance, etc.';
+            } else {
+                editCompanyWrapper.style.display = 'none';
+                document.getElementById('edit_company').value = '';
+                editPurposeInput.placeholder = 'Hangout, Social visit, etc.';
+            }
+        });
+
+        editSearchInput?.addEventListener('focus', () => { if (editSearchInput.value.length > 0) editResultsList.style.display = 'block'; });
+        editSearchInput?.addEventListener('input', function() {
+            const filter = this.value.toLowerCase();
+            let hasResults = false;
+            if (filter.length === 0) { editResultsList.style.display = 'none'; return; }
+            editResidentItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(filter)) { item.style.display = 'block'; hasResults = true; } 
+                else { item.style.display = 'none'; }
+            });
+            editResultsList.style.display = hasResults ? 'block' : 'none';
+        });
+
+        editResidentItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const name = this.getAttribute('data-name');
+                const fullName = this.textContent;
+                editSearchInput.value = fullName;
+                editHiddenId.value = id;
+                editHiddenName.value = name;
+                editLabel.textContent = name;
+                editFeedback.style.display = 'block';
+                editResultsList.style.display = 'none';
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!document.getElementById('edit_customSearchWrapper')?.contains(e.target)) {
+                editResultsList.style.display = 'none';
+            }
+        });
+    });
+</script>

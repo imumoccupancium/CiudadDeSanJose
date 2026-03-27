@@ -35,7 +35,7 @@ ACM_SN = 425048688
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_scanner.db")
 
 # How often (in seconds) to sync the local cache with the server
-SYNC_INTERVAL_SECONDS = 300  # 5 minutes
+SYNC_INTERVAL_SECONDS = 30  # 10 seconds
 
 # How long to wait for the internet API before falling back (seconds)
 INTERNET_TIMEOUT = 4
