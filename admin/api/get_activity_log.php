@@ -6,12 +6,12 @@ try {
     $dateFrom = $_GET['date_from'] ?? null;
     $dateTo = $_GET['date_to'] ?? null;
     $action = $_GET['action'] ?? null;
-    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
-    
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 1000;
+
     $where1 = "WHERE 1=1";
     $where2 = "WHERE 1=1";
     $params = [];
-    
+
     if ($dateFrom) {
         $where1 .= " AND DATE(timestamp) >= :df1";
         $where2 .= " AND DATE(timestamp) >= :df2";
@@ -30,7 +30,7 @@ try {
         $params[':ac1'] = $action;
         $params[':ac2'] = $action;
     }
-    
+
     $query = "
         (SELECT 
             h.name as homeowner_name,
@@ -61,13 +61,15 @@ try {
         ORDER BY timestamp DESC
         LIMIT $limit
     ";
-    
+
     $stmt = $pdo->prepare($query);
     $stmt->execute($params);
     $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($logs);
-    
-} catch (PDOException $e) {
+
+
+}
+catch (PDOException $e) {
     echo json_encode(['error' => $e->getMessage()]);
 }
 ?>

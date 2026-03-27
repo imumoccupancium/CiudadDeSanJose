@@ -12,8 +12,21 @@ from datetime import datetime
 # Try to import requests for better performance (connection pooling)
 try:
     import requests
+    from requests.adapters import HTTPAdapter
     HAS_REQUESTS = True
     session = requests.Session()
+    # Keep TCP connections alive across scans — avoids repeated TLS handshakes
+    adapter = HTTPAdapter(
+        pool_connections=2,
+        pool_maxsize=10,
+        max_retries=0
+    )
+    session.mount('https://', adapter)
+    session.mount('http://', adapter)
+    session.headers.update({
+        'Connection': 'keep-alive',
+        'User-Agent': 'Mozilla/5.0 (SmartRelay v2.1-Offline)'
+    })
 except ImportError:
     HAS_REQUESTS = False
 
@@ -39,6 +52,11 @@ SYNC_INTERVAL_SECONDS = 30  # 10 seconds
 
 # How long to wait for the internet API before falling back (seconds)
 INTERNET_TIMEOUT = 4
+
+# In-memory status mirror — updated immediately after every scan
+# Prevents stale-cache conflicts between sync intervals
+_status_cache = {}  # { token: 'IN' | 'OUT' }
+_status_lock   = threading.Lock()
 
 SCANNERS = {
     "/dev/input/by-id/usb-Newland_Auto-ID_NLS_IOTC_PRDs_HID_KBW_FCEM5088-event-kbd":
@@ -120,24 +138,40 @@ def open_acm_gate(door_index=1):
 # =============================================================
 # INTERNET-FIRST SCAN HANDLER
 # =============================================================
+# Simple debounce: { (token, action): timestamp } to prevent rapid duplicate scans
+_last_scans = {}
+_scan_lock  = threading.Lock()
+
 def send_data(token, action, device_name, door_index):
     token = token.strip().upper()
+
+    # -------------------------------------------------------
+    # DEBOUNCE: Skip if scanned at this same gate in the last 2 seconds
+    # -------------------------------------------------------
+    now = time.time()
+    with _scan_lock:
+        key = (token, action)
+        if key in _last_scans and (now - _last_scans[key]) < 2:
+            print(f"   [SKIP]    Hardware double-scan detected for {token}. Ignoring duplicate.")
+            return
+        _last_scans[key] = now
+
     print(f"\n[{action}] QR: {token} — Device: {device_name}")
     start_time = time.time()
 
     payload = {'token': token, 'action': action, 'device_name': device_name}
-    headers = {'User-Agent': 'Mozilla/5.0 (SmartRelay v2.1-Offline)'}
+    headers = {}  # session already has keep-alive + User-Agent set globally
 
     # -------------------------------------------------------
     # STEP 1: Try the Internet (Primary)
     # -------------------------------------------------------
     try:
         if HAS_REQUESTS:
-            response = session.post(API_URL, data=payload, headers=headers, timeout=INTERNET_TIMEOUT)
+            response = session.post(API_URL, data=payload, timeout=INTERNET_TIMEOUT)
             response_text = response.text
         else:
-            data = urllib.parse.urlencode(payload).encode()
-            req  = urllib.request.Request(API_URL, data=data, headers=headers)
+            encoded = urllib.parse.urlencode(payload).encode()
+            req  = urllib.request.Request(API_URL, data=encoded, headers={'User-Agent': 'Mozilla/5.0 (SmartRelay v2.1-Offline)'})
             with urllib.request.urlopen(req, timeout=INTERNET_TIMEOUT) as res:
                 response_text = res.read().decode()
 
@@ -148,8 +182,11 @@ def send_data(token, action, device_name, door_index):
             print(f"   [VALID]   Access Granted. Opening Door {door_index}...")
             open_acm_gate(door_index)
 
-            # Keep local cache current_status in sync
-            update_local_status(token, action)
+            # Mirror status in memory immediately (no SQLite round-trip needed)
+            with _status_lock:
+                _status_cache[token] = action
+            # Also persist to local SQLite cache (non-blocking)
+            threading.Thread(target=update_local_status, args=(token, action), daemon=True).start()
         else:
             print(f"   [DENIED]  Server denied access.")
 

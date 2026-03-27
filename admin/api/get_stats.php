@@ -15,11 +15,21 @@ try {
     $currentlyOutside = $totalHomeowners - $currentlyInside;
     
     // Total Entries Today
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM entry_logs WHERE action = 'IN' AND DATE(timestamp) = CURDATE()");
+    $stmt = $pdo->query("
+        SELECT (
+            (SELECT COUNT(*) FROM entry_logs WHERE action = 'IN' AND DATE(timestamp) = CURDATE()) + 
+            (SELECT COUNT(*) FROM family_member_logs WHERE action = 'IN' AND DATE(timestamp) = CURDATE()) +
+            (SELECT COUNT(*) FROM visitor_activity_logs WHERE action = 'IN' AND DATE(timestamp) = CURDATE())
+        ) as total");
     $totalEntriesToday = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
     // Total Exits Today
-    $stmt = $pdo->query("SELECT COUNT(*) as total FROM entry_logs WHERE action = 'OUT' AND DATE(timestamp) = CURDATE()");
+    $stmt = $pdo->query("
+        SELECT (
+            (SELECT COUNT(*) FROM entry_logs WHERE action = 'OUT' AND DATE(timestamp) = CURDATE()) + 
+            (SELECT COUNT(*) FROM family_member_logs WHERE action = 'OUT' AND DATE(timestamp) = CURDATE()) +
+            (SELECT COUNT(*) FROM visitor_activity_logs WHERE action = 'OUT' AND DATE(timestamp) = CURDATE())
+        ) as total");
     $totalExitsToday = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     
     $stats = [

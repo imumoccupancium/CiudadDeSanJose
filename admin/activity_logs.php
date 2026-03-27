@@ -348,8 +348,8 @@ $user = [
                         }
                     },
                     { 
-                        data: null,
-                        render: d => `<div class="small fw-medium text-dark">${d.date}</div><div class="smaller text-muted">${d.time}</div>`
+                        data: 'timestamp',
+                        render: (data, type, row) => `<div class="small fw-medium text-dark">${row.date}</div><div class="smaller text-muted">${row.time}</div>`
                     },
                     { 
                         data: 'device',
@@ -380,6 +380,7 @@ $user = [
             function loadTimeline() {
                 $.get('api/get_activity_log.php?limit=12', function(data) {
                     let html = '';
+                    // Data is received newest first (DESC) from server
                     data.forEach(item => {
                         const actionClass = item.action === 'IN' ? 'entry' : 'exit';
                         const icon = item.action === 'IN' ? 'bi-arrow-down-right-circle-fill' : 'bi-arrow-up-right-circle-fill';
@@ -424,7 +425,39 @@ $user = [
                 table.ajax.url('api/get_activity_log.php').load();
             });
 
-            setInterval(() => { table.ajax.reload(null, false); updateStats(); loadTimeline(); }, 30000);
+            // ============================================
+            // REAL-TIME AUTO-UPDATE (SSE)
+            // ============================================
+            const activityStream = new EventSource('api/sse_activity.php');
+
+            activityStream.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'new_scan' || data.type === 'init') {
+                    // Update Table
+                    table.ajax.reload(null, false);
+                    
+                    // Update Stats
+                    if (data.stats) {
+                        $('#totalEntries').text(data.stats.total_entries_today);
+                        $('#totalExits').text(data.stats.total_exits_today);
+                        // Also update other cards if needed, but get_activity_stats is more comprehensive
+                        updateStats(); 
+                    }
+                    
+                    // Update Timeline
+                    loadTimeline();
+                }
+            };
+
+            activityStream.onerror = function() {
+                console.warn("SSE Connection lost. Polling fallback active.");
+            };
+
+            setInterval(() => { 
+                if (activityStream.readyState === EventSource.CLOSED) {
+                    table.ajax.reload(null, false); updateStats(); loadTimeline(); 
+                }
+            }, 30000);
             
             $('#exportExcel').click(function() {
                 const dateFrom = $('#dateFrom').val();

@@ -12,20 +12,20 @@ if (empty($token)) {
 
 try {
     // 1. Search in Homeowners
-    $stmt = $pdo->prepare("SELECT id, name, homeowner_id, current_status, status, qr_expiry, 'homeowner' as type FROM homeowners WHERE qr_token = ? OR qr_code = ?");
+    $stmt = $pdo->prepare("SELECT id, name, homeowner_id, current_status, status, qr_expiry, 'homeowner' as type FROM homeowners WHERE (qr_token = ? OR qr_code = ?) ORDER BY id DESC LIMIT 1");
     $stmt->execute([$token, $token]);
     $user = $stmt->fetch();
 
     // 2. Search in Family Members if homeowners not found
     if (!$user) {
-        $stmt = $pdo->prepare("SELECT id, full_name as name, homeowner_id, current_status, access_status as status, qr_expiry, 'family' as type FROM family_members WHERE qr_token = ? OR qr_code = ?");
+        $stmt = $pdo->prepare("SELECT id, full_name as name, homeowner_id, current_status, access_status as status, qr_expiry, 'family' as type FROM family_members WHERE (qr_token = ? OR qr_code = ?) ORDER BY id DESC LIMIT 1");
         $stmt->execute([$token, $token]);
         $user = $stmt->fetch();
     }
 
-    // 3. Search in Visitors if still not found
+    // 3. Search in Visitors if still not found (Most common source of duplicates)
     if (!$user) {
-        $stmt = $pdo->prepare("SELECT id, visitor_name as name, homeowner_id, current_status, 'active' as status, qr_expiry, 'visitor' as type FROM visitor_logs WHERE qr_token = ?");
+        $stmt = $pdo->prepare("SELECT id, visitor_name as name, homeowner_id, current_status, 'active' as status, qr_expiry, 'visitor' as type FROM visitor_logs WHERE qr_token = ? ORDER BY id DESC LIMIT 1");
         $stmt->execute([$token]);
         $user = $stmt->fetch();
     }
@@ -97,10 +97,6 @@ try {
         // Specific visitor activity log for history
         $logStmt = $pdo->prepare("INSERT INTO visitor_activity_logs (visitor_id, homeowner_id, action, timestamp, device_name) VALUES (?, ?, ?, NOW(), ?)");
         $logStmt->execute([$user['id'], $user['homeowner_id'], $newStatus, $deviceName]);
-
-        // General entry log for global history (optional, currently uses homeowner_id)
-        $logStmt = $pdo->prepare("INSERT INTO entry_logs (homeowner_id, action, timestamp, device_name) VALUES (?, ?, NOW(), ?)");
-        $logStmt->execute([$user['homeowner_id'], $newStatus, $deviceName]);
     }
     else {
         // Log Entry for Family

@@ -75,10 +75,6 @@ try {
             $uStmt->execute([$action, $timestamp, $user_internal_id, $timestamp]);
         }
         elseif ($user_type === 'visitor') {
-            // General history entry
-            $lStmt = $pdo->prepare("INSERT INTO entry_logs (homeowner_id, action, timestamp, device_name) VALUES (?, ?, ?, ?)");
-            $lStmt->execute([$homeowner_id, $action, $timestamp, $device_name]);
-
             // Update Visitor specific record
             if ($action === 'IN') {
                 $uStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'IN', time_in = ?, last_scan_time = ? WHERE id = ? AND (last_scan_time IS NULL OR last_scan_time <= ?)");

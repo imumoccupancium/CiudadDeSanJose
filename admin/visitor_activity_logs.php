@@ -344,8 +344,8 @@ $user = [
                         }
                     },
                     { 
-                        data: null,
-                        render: r => `<div class="small fw-medium text-dark">${r.date}</div><div class="smaller text-muted">${r.time}</div>`
+                        data: 'timestamp',
+                        render: (data, type, row) => `<div class="small fw-medium text-dark">${row.date}</div><div class="smaller text-muted">${row.time}</div>`
                     },
                     { 
                         data: 'device',
@@ -426,7 +426,34 @@ $user = [
                 window.location.href = `api/export_visitor_activity_excel.php?date_from=${dateFrom}&date_to=${dateTo}&action=${action}`;
             });
 
-            setInterval(() => { table.ajax.reload(null, false); updateStats(); loadTimeline(); }, 30000);
+            // ============================================
+            // REAL-TIME AUTO-UPDATE (SSE)
+            // ============================================
+            const activityStream = new EventSource('api/sse_activity.php');
+
+            activityStream.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'new_scan' || data.type === 'init') {
+                    // Update Table
+                    table.ajax.reload(null, false);
+                    
+                    // Update Stats
+                    updateStats(); 
+                    
+                    // Update Timeline
+                    loadTimeline();
+                }
+            };
+
+            activityStream.onerror = function() {
+                console.warn("SSE Connection lost. Polling fallback active.");
+            };
+
+            setInterval(() => { 
+                if (activityStream.readyState === EventSource.CLOSED) {
+                    table.ajax.reload(null, false); updateStats(); loadTimeline(); 
+                }
+            }, 30000);
         });
     </script>
 </body>

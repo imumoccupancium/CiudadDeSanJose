@@ -197,6 +197,12 @@
                                 <div class="col-sm-6 text-muted small fw-bold text-uppercase">Visitor Name</div>
                                 <div class="col-sm-6 fw-bold" id="viewVisitorName">--</div>
                                 
+                                <div class="col-sm-6 text-muted small fw-bold text-uppercase">Time In</div>
+                                <div class="col-sm-6 fw-bold text-success" id="viewTimeIn">--</div>
+                                
+                                <div class="col-sm-6 text-muted small fw-bold text-uppercase">Time Out</div>
+                                <div class="col-sm-6 fw-bold text-muted" id="viewTimeOut">--</div>
+                                
                                 <div class="col-sm-6 text-muted small fw-bold text-uppercase">Host / Resident</div>
                                 <div class="col-sm-6" id="viewHostName">--</div>
                                 

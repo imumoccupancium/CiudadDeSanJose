@@ -6,7 +6,7 @@ try {
     $dateFrom = $_GET['date_from'] ?? null;
     $dateTo = $_GET['date_to'] ?? null;
     $action = $_GET['action'] ?? null;
-    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 1000;
     
     $where = "WHERE 1=1";
     $params = [];
