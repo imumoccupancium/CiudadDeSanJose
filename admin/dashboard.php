@@ -455,11 +455,7 @@ try {
         </div>
     </div>
 
-    <!-- Floating Action Button -->
-    <button class="fab" id="quickActionBtn" data-bs-toggle="modal" data-bs-target="#addHomeownerModal"
-        title="Quick Add Homeowner">
-        <i class="bi bi-plus-lg"></i>
-    </button>
+
     </div> <!-- closes main-content -->
 
     <!-- Add Homeowner Modal -->

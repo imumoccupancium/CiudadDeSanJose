@@ -273,10 +273,6 @@ $user = [
         </div>
     </div>
 
-    <!-- Floating Action Button -->
-    <button class="fab" data-bs-toggle="modal" data-bs-target="#addHomeownerModal" title="Quick Add Homeowner">
-        <i class="bi bi-plus-lg"></i>
-    </button>
 
     <!-- Add Homeowner Modal -->
     <div class="modal fade" id="addHomeownerModal" tabindex="-1">
@@ -1218,7 +1214,7 @@ $user = [
                                             <div>
                                                 <div class="d-flex align-items-center gap-2 mb-1">
                                                     <h6 class="mb-0 fw-bold">${member.full_name}</h6>
-                                                    <span class="badge bg-light text-primary border rounded-pill px-2 py-1" style="font-size: 0.65rem;">${member.relationship || 'Son'}</span>
+                                                    <span class="badge bg-light text-primary border rounded-pill px-2 py-1" style="font-size: 0.65rem;">${member.role || 'Other'}</span>
                                                     <span class="badge bg-${statusColor} bg-opacity-10 text-${statusColor} rounded-pill px-2 py-1 fw-bold" style="font-size: 0.6rem;">
                                                         <i class="bi ${statusIcon} me-1"></i> ${statusLabel}
                                                     </span>
@@ -1317,7 +1313,7 @@ $user = [
                     }
                     $('#edit_family_id').val(data.id);
                     $('#edit_family_full_name').val(data.full_name);
-                    $('#edit_family_relationship').val(data.relationship || 'Son');
+                    $('#edit_family_relationship').val(data.role || 'Other');
                     $('#edit_family_email').val(data.email);
                     $('#edit_family_phone').val(data.phone);
                     $('#edit_family_qr_expiry').val(data.qr_expiry_input);

@@ -7,7 +7,7 @@ try {
     $full_name = $_POST['full_name'] ?? '';
     $email = $_POST['email'] ?? null;
     $phone = $_POST['phone'] ?? null;
-    $relationship = $_POST['relationship'] ?? 'Son';
+    $role = $_POST['relationship'] ?? 'Other';
     $qr_expiry = $_POST['qr_expiry'] ?? null;
     
     if (empty($homeowner_id) || empty($full_name)) {
@@ -39,11 +39,11 @@ try {
     $qr_last_generated = date('Y-m-d H:i:s');
     
     $stmt = $pdo->prepare("
-        INSERT INTO family_members (homeowner_id, full_name, relationship, email, phone, qr_code, qr_token, qr_expiry, qr_last_generated, access_status, current_status)
+        INSERT INTO family_members (homeowner_id, full_name, role, email, phone, qr_code, qr_token, qr_expiry, qr_last_generated, access_status, current_status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 'None')
     ");
     
-    $stmt->execute([$homeowner_id, $full_name, $relationship, $email, $phone, $qr_token, $qr_token, $qr_expiry, $qr_last_generated]);
+    $stmt->execute([$homeowner_id, $full_name, $role, $email, $phone, $qr_token, $qr_token, $qr_expiry, $qr_last_generated]);
     
     echo json_encode(['success' => true, 'message' => 'Family member added successfully']);
     

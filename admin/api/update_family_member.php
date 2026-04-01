@@ -7,7 +7,7 @@ try {
     $full_name = $_POST['full_name'] ?? '';
     $email = $_POST['email'] ?? null;
     $phone = $_POST['phone'] ?? null;
-    $relationship = $_POST['relationship'] ?? 'Son';
+    $role = $_POST['relationship'] ?? 'Other';
     $qr_expiry = $_POST['qr_expiry'] ?? null;
     $access_status = $_POST['access_status'] ?? 'active';
     
@@ -33,11 +33,11 @@ try {
     
     $stmt = $pdo->prepare("
         UPDATE family_members 
-        SET full_name = ?, relationship = ?, email = ?, phone = ?, qr_expiry = ?, access_status = ?
+        SET full_name = ?, role = ?, email = ?, phone = ?, qr_expiry = ?, access_status = ?
         WHERE id = ?
     ");
     
-    $stmt->execute([$full_name, $relationship, $email, $phone, $qr_expiry, $access_status, $id]);
+    $stmt->execute([$full_name, $role, $email, $phone, $qr_expiry, $access_status, $id]);
     
     echo json_encode(['success' => true, 'message' => 'Family member updated successfully']);
     
