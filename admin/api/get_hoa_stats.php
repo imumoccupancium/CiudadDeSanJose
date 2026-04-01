@@ -7,6 +7,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     exit(json_encode(['error' => 'Unauthorized']));
 }
 
+header('Content-Type: application/json');
+
 try {
     $stats = [
         'total' => 0,
