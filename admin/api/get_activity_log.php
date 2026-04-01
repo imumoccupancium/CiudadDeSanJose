@@ -6,7 +6,7 @@ try {
     $dateFrom = $_GET['date_from'] ?? null;
     $dateTo = $_GET['date_to'] ?? null;
     $action = $_GET['action'] ?? null;
-    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5000;
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : null; // null = no limit
 
     $params = [];
 
@@ -69,7 +69,7 @@ try {
             $where2)
         ) as combined_logs
         ORDER BY timestamp DESC
-        LIMIT $limit
+        " . ($limit ? "LIMIT $limit" : "") . "
     ";
 
     $stmt = $pdo->prepare($query);

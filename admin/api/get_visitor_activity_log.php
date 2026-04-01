@@ -6,7 +6,7 @@ try {
     $dateFrom = $_GET['date_from'] ?? null;
     $dateTo = $_GET['date_to'] ?? null;
     $action = $_GET['action'] ?? null;
-    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5000;
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : null; // null = no limit
     
     $params = [];
     
@@ -46,7 +46,7 @@ try {
         JOIN homeowners h ON val.homeowner_id = h.id
         $where
         ORDER BY val.timestamp DESC
-        LIMIT $limit
+        " . ($limit ? "LIMIT $limit" : "") . "
     ";
     
     $stmt = $pdo->prepare($query);

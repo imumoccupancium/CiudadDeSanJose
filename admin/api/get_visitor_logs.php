@@ -60,7 +60,6 @@ try {
         JOIN homeowners h ON v.homeowner_id = h.id
         $whereSql
         ORDER BY v.created_at DESC
-        LIMIT 1000
     ");
 
     $stmt->execute($params);
