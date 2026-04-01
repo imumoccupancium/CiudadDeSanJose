@@ -157,6 +157,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
         <?php if ($user['role'] == 'admin'): ?>
         <div class="px-4 py-3 small text-uppercase text-white-50 fw-bold" style="letter-spacing: 1px;">Management</div>
+        <a href="admin_accounts.php" class="nav-link <?php echo $current_page == 'admin_accounts.php' ? 'active' : ''; ?>">
+            <i class="bi bi-shield-lock-fill"></i> Admin Accounts
+        </a>
         <a href="hoa_accounts.php" class="nav-link <?php echo $current_page == 'hoa_accounts.php' ? 'active' : ''; ?>">
             <i class="bi bi-person-badge-fill"></i> HOA Accounts
         </a>
