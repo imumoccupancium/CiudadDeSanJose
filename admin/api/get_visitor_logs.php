@@ -15,6 +15,12 @@ try {
     $where = [];
     $params = [];
 
+    // System-only restriction: If no date filter is chosen, default to last 30 days
+    // to keep the "Active Visitor Registry" clean and fast.
+    if (empty($_GET['from']) && empty($_GET['to'])) {
+        $where[] = "v.created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)";
+    }
+
     // Filter by visitor type
     if (!empty($_GET['type'])) {
         $where[] = "v.visitor_type = ?";

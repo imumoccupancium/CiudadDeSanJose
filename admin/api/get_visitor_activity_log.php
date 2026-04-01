@@ -6,10 +6,17 @@ try {
     $dateFrom = $_GET['date_from'] ?? null;
     $dateTo = $_GET['date_to'] ?? null;
     $action = $_GET['action'] ?? null;
-    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 1000;
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 5000;
     
-    $where = "WHERE 1=1";
     $params = [];
+    
+    // System-only restriction: Filter out records older than 90 days by default.
+    // Use filters or Excel Export to see older data.
+    if (!$dateFrom && !$dateTo) {
+        $dateFrom = date('Y-m-d', strtotime('-90 days'));
+    }
+
+    $where = "WHERE 1=1";
     
     if ($dateFrom) {
         $where .= " AND DATE(val.timestamp) >= :df";
@@ -30,7 +37,7 @@ try {
             CONCAT('VIS-', v.id) as id_number,
             val.action,
             DATE_FORMAT(val.timestamp, '%Y-%m-%d') as date,
-            DATE_FORMAT(val.timestamp, '%H:%i:%s') as time,
+            DATE_FORMAT(val.timestamp, '%h:%i:%s %p') as time,
             COALESCE(val.device_name, 'Main Gate Scanner') as device,
             val.timestamp,
             h.name as host_name

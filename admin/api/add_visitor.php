@@ -73,7 +73,7 @@ try {
             time_in,
             status,
             current_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 'INSIDE', 'IN')
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, 'None', 'None')
     ");
 
     $result = $stmt->execute([

@@ -14,6 +14,7 @@ $user = [
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,18 +22,18 @@ $user = [
     <!-- Website Icon -->
     <link rel="icon" type="image/png" href="../assets/logo.png">
 
-    
+
     <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/vendor/datatables/css/dataTables.bootstrap5.min.css">
     <script src="../assets/vendor/qrcodejs/qrcode.min.js"></script>
 
-    
+
     <!-- Local Fonts (Inter) -->
     <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
     <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
 
-    
+
     <style>
         :root {
             --primary: #4361ee;
@@ -123,18 +124,22 @@ $user = [
             .sidebar {
                 left: calc(var(--sidebar-width) * -1);
             }
+
             .sidebar.show {
                 left: 0;
             }
+
             .main-content {
                 margin-left: 0;
             }
+
             .top-navbar {
                 left: 0;
             }
         }
     </style>
 </head>
+
 <body class="bg-light">
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
@@ -146,23 +151,26 @@ $user = [
             <button class="btn btn-link d-lg-none me-3" id="sidebarToggle">
                 <i class="bi bi-list fs-3 text-dark"></i>
             </button>
-            
+
             <div class="d-none d-md-block">
                 <h5 class="mb-0 fw-bold">Homeowners Management</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 small">
-                        <li class="breadcrumb-item"><a href="dashboard.php" class="text-decoration-none text-muted">Core</a></li>
+                        <li class="breadcrumb-item"><a href="dashboard.php"
+                                class="text-decoration-none text-muted">Core</a></li>
                         <li class="breadcrumb-item active fw-medium">Registry</li>
                     </ol>
                 </nav>
             </div>
-            
+
             <div class="ms-auto d-flex align-items-center gap-3">
                 <div class="input-group d-none d-lg-flex" style="width: 300px;">
-                    <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search text-muted"></i></span>
-                    <input type="text" class="form-control bg-transparent border-start-0 ps-0" placeholder="Search registry...">
+                    <span class="input-group-text bg-transparent border-end-0"><i
+                            class="bi bi-search text-muted"></i></span>
+                    <input type="text" class="form-control bg-transparent border-start-0 ps-0"
+                        placeholder="Search registry...">
                 </div>
-                
+
 
             </div>
         </nav>
@@ -219,18 +227,22 @@ $user = [
 
             <!-- Main Registry Table Card -->
             <div class="card border-0 mb-5">
-                <div class="card-header bg-white border-0 py-4 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div
+                    class="card-header bg-white border-0 py-4 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                     <div>
                         <h5 class="fw-bold mb-1">Resident Registry</h5>
                         <p class="text-muted small mb-0">Manage and monitor all homeowners in the community</p>
                     </div>
                     <div class="d-flex gap-2">
                         <div class="btn-group rounded-pill overflow-hidden border">
-                            <button type="button" class="btn btn-light btn-sm px-3 active" data-status="all">All</button>
+                            <button type="button" class="btn btn-light btn-sm px-3 active"
+                                data-status="all">All</button>
                             <button type="button" class="btn btn-light btn-sm px-3" data-status="active">Active</button>
-                            <button type="button" class="btn btn-light btn-sm px-3" data-status="inactive">Inactive</button>
+                            <button type="button" class="btn btn-light btn-sm px-3"
+                                data-status="inactive">Inactive</button>
                         </div>
-                        <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal" data-bs-target="#addHomeownerModal">
+                        <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal"
+                            data-bs-target="#addHomeownerModal">
                             <i class="bi bi-plus-lg me-1"></i> Add Resident
                         </button>
                     </div>
@@ -240,13 +252,15 @@ $user = [
                         <table class="table table-hover align-middle mb-0" id="homeownersTable">
                             <thead class="bg-light">
                                 <tr>
-                                    <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">Homeowner ID</th>
+                                    <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">Homeowner ID
+                                    </th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Resident Name</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Contact Info</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">QR Status</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Account</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Location</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">Actions</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="border-0">
@@ -280,23 +294,29 @@ $user = [
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Full Name *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name" placeholder="Juan Dela Cruz" required>
+                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name"
+                                    placeholder="Juan Dela Cruz" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Homeowner ID *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="homeowner_id" placeholder="CSJ-2024-001" required>
+                                <input type="text" class="form-control rounded-3 p-2 px-3 bg-light" name="homeowner_id"
+                                    id="new_homeowner_id" readonly required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Email Address</label>
-                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email" placeholder="juan@example.com">
+                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email"
+                                    placeholder="juan@example.com">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">Phone Number</label>
-                                <input type="tel" class="form-control rounded-3 p-2 px-3" name="phone" placeholder="+63 9xx xxxx xxx">
+                                <label class="form-label small fw-bold text-muted">Phone Number *</label>
+                                <input type="tel" class="form-control rounded-3 p-2 px-3" name="phone"
+                                    placeholder="09123456789" maxlength="11" pattern="[0-9]{11}" 
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
                             </div>
                             <div class="col-12">
                                 <label class="form-label small fw-bold text-muted">Home Address *</label>
-                                <textarea class="form-control rounded-3 p-2 px-3" name="address" rows="2" placeholder="Block, Lot & Street Details" required></textarea>
+                                <textarea class="form-control rounded-3 p-2 px-3" name="address" rows="2"
+                                    placeholder="Block, Lot & Street Details" required></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">QR Code Expiry (Optional)</label>
@@ -305,11 +325,13 @@ $user = [
                             <div class="col-12 mt-4">
                                 <div class="form-check form-switch bg-light p-3 rounded-3 border">
                                     <div class="ps-4">
-                                        <input class="form-check-input" type="checkbox" name="generate_qr" id="generateQR" checked>
+                                        <input class="form-check-input" type="checkbox" name="generate_qr"
+                                            id="generateQR" checked>
                                         <label class="form-check-label fw-bold" for="generateQR">
                                             Auto-generate Secure Access Key (QR)
                                         </label>
-                                        <p class="small text-muted mb-0">The resident can use this for entry/exit at the main gate.</p>
+                                        <p class="small text-muted mb-0">The resident can use this for entry/exit at the
+                                            main gate.</p>
                                     </div>
                                 </div>
                             </div>
@@ -317,7 +339,8 @@ $user = [
                     </form>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Discard</button>
                     <button type="button" class="btn btn-primary rounded-pill px-4" id="saveHomeownerBtn">
                         <i class="bi bi-save me-1"></i> Save Resident
                     </button>
@@ -343,23 +366,29 @@ $user = [
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Full Name *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name" id="edit_name" required>
+                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name" id="edit_name"
+                                    required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Homeowner ID *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="homeowner_id" id="edit_homeowner_id" required>
+                                <input type="text" class="form-control rounded-3 p-2 px-3 bg-light" name="homeowner_id"
+                                    id="edit_homeowner_id" readonly required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Email Address</label>
-                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email" id="edit_email">
+                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email"
+                                    id="edit_email">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">Phone Number</label>
-                                <input type="tel" class="form-control rounded-3 p-2 px-3" name="phone" id="edit_phone">
+                                <label class="form-label small fw-bold text-muted">Phone Number *</label>
+                                <input type="tel" class="form-control rounded-3 p-2 px-3" name="phone" id="edit_phone"
+                                    maxlength="11" pattern="[0-9]{11}" 
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
                             </div>
                             <div class="col-12">
                                 <label class="form-label small fw-bold text-muted">Home Address *</label>
-                                <textarea class="form-control rounded-3 p-2 px-3" name="address" id="edit_address" rows="2" required></textarea>
+                                <textarea class="form-control rounded-3 p-2 px-3" name="address" id="edit_address"
+                                    rows="2" required></textarea>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Account Status</label>
@@ -377,7 +406,8 @@ $user = [
                     </form>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary rounded-pill px-4" id="updateHomeownerBtn">
                         <i class="bi bi-check2-circle me-1"></i> Update Registry
                     </button>
@@ -404,64 +434,70 @@ $user = [
                                 <div class="row g-3">
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Resident Name</div>
                                     <div class="col-sm-6 fw-bold" id="view_name"></div>
-                                    
+
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">ID Number</div>
                                     <div class="col-sm-6 fw-bold text-primary" id="view_homeowner_id"></div>
-                                    
+
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Email</div>
                                     <div class="col-sm-6" id="view_email"></div>
-                                    
+
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Phone</div>
                                     <div class="col-sm-6" id="view_phone"></div>
-                                    
+
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Address</div>
                                     <div class="col-sm-6" id="view_address"></div>
-                                    
+
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Account Status</div>
                                     <div class="col-sm-6" id="view_status"></div>
-                                    
+
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Current Location</div>
                                     <div class="col-sm-6" id="view_location"></div>
-                                    
+
                                     <div class="col-sm-6 text-muted small fw-bold text-uppercase">Last Scan Event</div>
                                     <div class="col-sm-6 small fw-medium" id="view_last_scan"></div>
 
                                     <div class="col-sm-12 mt-3">
-                                        <div class="alert alert-info border-0 shadow-sm rounded-4 d-flex align-items-center mb-0">
+                                        <div
+                                            class="alert alert-info border-0 shadow-sm rounded-4 d-flex align-items-center mb-0">
                                             <i class="bi bi-shield-check fs-4 me-3"></i>
                                             <div>
                                                 <div class="small fw-bold">QR Access Key Validity</div>
-                                                <div class="small opacity-75" id="view_qr_expiry">Valid until: Dec 31, 2026</div>
+                                                <div class="small opacity-75" id="view_qr_expiry">Valid until: Dec 31,
+                                                    2026</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <div class="card border-0 bg-white p-3 shadow-sm mx-auto mb-3" style="width: 160px; height: 160px;">
-                                <div id="view_qr" class="w-100 h-100 d-flex align-items-center justify-content-center bg-light rounded shadow-inner">
-                                    <i class="bi bi-qr-code fs-1 text-muted"></i>
-                                </div>
-                            </div>
-                            <button class="btn btn-outline-primary btn-sm rounded-pill px-4 mb-2 w-100" id="downloadQR">
-                                <i class="bi bi-download me-1"></i> Download Key
-                            </button>
-                            <button class="btn btn-light btn-sm rounded-pill px-4 w-100 regenerate-qr-btn" id="regeneateQRView">
-                                <i class="bi bi-arrow-clockwise me-1"></i> Regenerate
-                            </button>
-                        </div>
-
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4 w-100" data-bs-dismiss="modal">Close Profile</button>
+                    <div class="col-md-4 text-center">
+                        <div class="card border-0 bg-white p-3 shadow-sm mx-auto mb-3"
+                            style="width: 160px; height: 160px;">
+                            <div id="view_qr"
+                                class="w-100 h-100 d-flex align-items-center justify-content-center bg-light rounded shadow-inner">
+                                <i class="bi bi-qr-code fs-1 text-muted"></i>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm rounded-pill px-4 mb-2 w-100" id="downloadQR">
+                            <i class="bi bi-download me-1"></i> Download Key
+                        </button>
+                        <button class="btn btn-light btn-sm rounded-pill px-4 w-100 regenerate-qr-btn"
+                            id="regeneateQRView">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Regenerate
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </div>
+        <div class="modal-footer border-0 p-4 pt-0">
+            <button type="button" class="btn btn-light rounded-pill px-4 w-100" data-bs-dismiss="modal">Close
+                Profile</button>
+        </div>
+    </div>
+    </div>
     </div>
 
     <!-- Manage Family Modal -->
@@ -485,31 +521,53 @@ $user = [
                                     <input type="hidden" name="homeowner_id" id="family_homeowner_id">
                                     <div class="mb-3">
                                         <label class="form-label small fw-bold text-muted">Full Name *</label>
-                                        <input type="text" class="form-control rounded-3 p-2 px-3 bg-white" name="full_name" placeholder="Name" required>
+                                        <input type="text" class="form-control rounded-3 p-2 px-3 bg-white"
+                                            name="full_name" placeholder="Name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold text-muted">Relationship *</label>
+                                        <select class="form-select rounded-3 p-2 px-3 bg-white" name="relationship"
+                                            required>
+                                            <option value="Son">Son</option>
+                                            <option value="Daughter">Daughter</option>
+                                            <option value="Spouse">Spouse</option>
+                                            <option value="Sibling">Sibling</option>
+                                            <option value="Grandmother">Grandmother</option>
+                                            <option value="Grandfather">Grandfather</option>
+                                            <option value="Cousin">Cousin</option>
+                                            <option value="Other">Other</option>
+                                        </select>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label small fw-bold text-muted">Email Address</label>
-                                        <input type="email" class="form-control rounded-3 p-2 px-3 bg-white" name="email" placeholder="Email">
+                                        <input type="email" class="form-control rounded-3 p-2 px-3 bg-white"
+                                            name="email" placeholder="Email">
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label small fw-bold text-muted">Phone Number</label>
-                                        <input type="tel" class="form-control rounded-3 p-2 px-3 bg-white" name="phone" placeholder="Phone">
+                                        <label class="form-label small fw-bold text-muted">Phone Number *</label>
+                                        <input type="tel" class="form-control rounded-3 p-2 px-3 bg-white" name="phone"
+                                            placeholder="09123456789" maxlength="11" pattern="[0-9]{11}" 
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label small fw-bold text-muted">QR Expiry *</label>
-                                        <input type="datetime-local" class="form-control rounded-3 p-2 px-3 bg-white" name="qr_expiry" required>
+                                        <input type="datetime-local" class="form-control rounded-3 p-2 px-3 bg-white"
+                                            name="qr_expiry" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label small fw-bold text-muted">Home Address (Inherited)</label>
-                                        <textarea class="form-control rounded-3 p-2 px-3 bg-white" id="family_owner_address" rows="2" readonly></textarea>
+                                        <label class="form-label small fw-bold text-muted">Home Address
+                                            (Inherited)</label>
+                                        <textarea class="form-control rounded-3 p-2 px-3 bg-white"
+                                            id="family_owner_address" rows="2" readonly></textarea>
                                     </div>
-                                    <button type="button" class="btn btn-primary rounded-pill w-100 py-2 mt-2" id="saveFamilyMemberBtn">
+                                    <button type="button" class="btn btn-primary rounded-pill w-100 py-2 mt-2"
+                                        id="saveFamilyMemberBtn">
                                         <i class="bi bi-plus-lg me-1"></i> Add Member
                                     </button>
                                 </form>
                             </div>
                         </div>
-                        
+
                         <!-- Family Members List -->
                         <div class="col-md-7">
                             <h6 class="fw-bold mb-3 small text-uppercase text-muted">Registered Family Members</h6>
@@ -533,12 +591,14 @@ $user = [
             <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
                 <div class="modal-body p-4 text-center">
                     <h6 class="fw-bold mb-3" id="view_family_member_name"></h6>
-                    <div id="family_member_qr_container" class="bg-white p-3 rounded shadow-sm mx-auto mb-3" style="width: 200px; height: 200px;"></div>
+                    <div id="family_member_qr_container" class="bg-white p-3 rounded shadow-sm mx-auto mb-3"
+                        style="width: 200px; height: 200px;"></div>
                     <div class="small text-muted mb-3" id="family_member_qr_expiry"></div>
                     <button class="btn btn-outline-primary btn-sm rounded-pill w-100 mb-2" id="downloadFamilyQR">
                         <i class="bi bi-download me-1"></i> Download QR
                     </button>
-                    <button type="button" class="btn btn-light btn-sm rounded-pill w-100" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-light btn-sm rounded-pill w-100"
+                        data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -560,19 +620,37 @@ $user = [
                         <input type="hidden" name="id" id="edit_family_id">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Full Name *</label>
-                            <input type="text" class="form-control rounded-3" name="full_name" id="edit_family_full_name" required>
+                            <input type="text" class="form-control rounded-3" name="full_name"
+                                id="edit_family_full_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Relationship *</label>
+                            <select class="form-select rounded-3" name="relationship" id="edit_family_relationship"
+                                required>
+                                <option value="Son">Son</option>
+                                <option value="Daughter">Daughter</option>
+                                <option value="Spouse">Spouse</option>
+                                <option value="Sibling">Sibling</option>
+                                <option value="Grandmother">Grandmother</option>
+                                <option value="Grandfather">Grandfather</option>
+                                <option value="Cousin">Cousin</option>
+                                <option value="Other">Other</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Email Address</label>
                             <input type="email" class="form-control rounded-3" name="email" id="edit_family_email">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Phone Number</label>
-                            <input type="tel" class="form-control rounded-3" name="phone" id="edit_family_phone">
+                            <label class="form-label small fw-bold text-muted">Phone Number *</label>
+                            <input type="tel" class="form-control rounded-3" name="phone" id="edit_family_phone"
+                                maxlength="11" pattern="[0-9]{11}" 
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">QR Expiry *</label>
-                            <input type="datetime-local" class="form-control rounded-3" name="qr_expiry" id="edit_family_qr_expiry" required>
+                            <input type="datetime-local" class="form-control rounded-3" name="qr_expiry"
+                                id="edit_family_qr_expiry" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Account Status</label>
@@ -585,8 +663,10 @@ $user = [
                     </form>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary rounded-pill px-4" id="updateFamilyMemberBtn">Save Changes</button>
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary rounded-pill px-4" id="updateFamilyMemberBtn">Save
+                        Changes</button>
                 </div>
             </div>
         </div>
@@ -596,32 +676,32 @@ $user = [
     <script src="../assets/vendor/jquery/jquery.min.js"></script>
     <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="../assets/vendor/datatables/js/dataTables.bootstrap5.min.js"></script>
-    
+
     <script>
         // Mobile sidebar toggle
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+        document.getElementById('sidebarToggle')?.addEventListener('click', function () {
             document.getElementById('sidebar').classList.toggle('show');
         });
-        
 
-        
+
+
         // Initialize DataTable
-        $(document).ready(function() {
+        $(document).ready(function () {
             const table = $('#homeownersTable').DataTable({
                 ajax: {
                     url: 'api/get_all_homeowners.php',
                     dataSrc: ''
                 },
                 columns: [
-                    { 
+                    {
                         data: 'homeowner_id',
-                        render: function(data) {
+                        render: function (data) {
                             return `<span class="fw-bold text-primary pe-4 ps-2">${data}</span>`;
                         }
                     },
-                    { 
+                    {
                         data: null,
-                        render: function(data) {
+                        render: function (data) {
                             return `<div class="d-flex align-items-center justify-content-between">
                                 <span class="fw-bold text-dark">${data.name}</span>
                                 <button class="btn btn-xs btn-outline-primary rounded-pill manage-family-btn ms-2" data-id="${data.id}" data-name="${data.name}" data-address="${data.address}" style="font-size: 0.65rem; padding: 2px 8px;">
@@ -630,21 +710,21 @@ $user = [
                             </div>`;
                         }
                     },
-                    { 
+                    {
                         data: null,
-                        render: function(data) {
+                        render: function (data) {
                             return `<div class="small text-muted">
                                 <i class="bi bi-envelope me-1"></i> ${data.email || 'None'}<br>
                                 <i class="bi bi-phone me-1"></i> ${data.phone || 'None'}
                             </div>`;
                         }
                     },
-                    { 
+                    {
                         data: null,
-                        render: function(data) {
+                        render: function (data) {
                             const hasQR = data.qr_token;
                             const isExpired = data.qr_status === 'Expired';
-                            
+
                             if (!hasQR) {
                                 return `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
                                             <i class="bi bi-x-circle me-1"></i> MISSING
@@ -656,7 +736,7 @@ $user = [
                                             <i class="bi bi-clock-history me-1"></i> EXPIRED
                                         </span>
                                         <div class="x-small text-danger mt-1" style="font-size: 0.65rem; font-weight: bold;">
-                                            Since: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                            Since: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                                         </div>`;
                             }
 
@@ -665,15 +745,15 @@ $user = [
                                     <i class="bi bi-check-circle-fill me-1"></i> VALID
                                 </span>
                                 <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
-                                    Exp: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                    Exp: ${data.qr_expiry ? new Date(data.qr_expiry).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                                 </div>
                             </div>`;
                         }
                     },
 
-                    { 
+                    {
                         data: 'status',
-                        render: function(data) {
+                        render: function (data) {
                             const badges = {
                                 'active': 'success',
                                 'inactive': 'secondary',
@@ -682,9 +762,14 @@ $user = [
                             return `<span class="badge bg-${badges[data]} text-uppercase px-2" style="font-size: 0.7rem;">${data}</span>`;
                         }
                     },
-                    { 
+                    {
                         data: 'current_status',
-                        render: function(data) {
+                        render: function (data) {
+                            if (data === 'None') {
+                                return `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
+                                    <i class="bi bi-clock-history me-1"></i> PENDING
+                                </span>`;
+                            }
                             const color = data === 'IN' ? 'primary' : 'warning';
                             const icon = data === 'IN' ? 'bi-house-check' : 'bi-house-dash';
                             return `<span class="badge bg-${color} bg-opacity-10 text-${color} rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
@@ -694,7 +779,7 @@ $user = [
                     },
                     {
                         data: null,
-                        render: function(data) {
+                        render: function (data) {
                             return `<div class="text-end pe-2">
                                 <button class="btn btn-sm btn-light rounded-pill p-2 view-btn" data-id="${data.id}" title="View Profile">
                                     <i class="bi bi-eye text-primary"></i>
@@ -723,10 +808,10 @@ $user = [
                     }
                 }
             });
-            
+
             // Update stats
             function updateStats() {
-                $.get('api/get_homeowner_stats.php', function(data) {
+                $.get('api/get_homeowner_stats.php', function (data) {
                     $('#totalHomeowners').text(data.total);
                     $('#activeHomeowners').text(data.active);
                     $('#insideCount').text(data.inside);
@@ -734,12 +819,12 @@ $user = [
                 });
             }
             updateStats();
-            
+
             // Interval to check for hardware scan alerts (faster polling)
-            setInterval(function() {
-                $.get('api/get_latest_alerts.php?type=homeowner', function(alerts) {
+            setInterval(function () {
+                $.get('api/get_latest_alerts.php?type=homeowner', function (alerts) {
                     if (Array.isArray(alerts)) {
-                        alerts.forEach(function(alert) {
+                        alerts.forEach(function (alert) {
                             const Toast = Swal.mixin({
                                 toast: true,
                                 position: 'top-end',
@@ -759,10 +844,10 @@ $user = [
             }, 1500);
 
             // AJAX Auto-refresh - reload table and stats every 5 seconds
-            setInterval(function() {
+            setInterval(function () {
                 table.ajax.reload(null, false); // Reload table without resetting pagination
                 updateStats(); // Update statistics
-                
+
                 // If Manage Family modal is open, refresh that list too
                 if ($('#manageFamilyModal').is(':visible')) {
                     const homeownerId = $('#family_homeowner_id').val();
@@ -771,9 +856,9 @@ $user = [
                     }
                 }
             }, 5000);
-            
+
             // Status filter
-            $('[data-status]').click(function() {
+            $('[data-status]').click(function () {
                 const status = $(this).data('status');
                 if (status === 'all') {
                     table.column(4).search('').draw();
@@ -783,27 +868,27 @@ $user = [
                 $('[data-status]').removeClass('active btn-primary text-white').addClass('btn-light');
                 $(this).addClass('active btn-primary text-white').removeClass('btn-light');
             });
-            
+
             // View homeowner
             let qrScanner = null;
             function viewPersonProfile(id, type = 'homeowner') {
                 const endpoint = type === 'homeowner' ? `api/get_homeowner.php?id=${id}` : `api/get_family_member.php?id=${id}`;
-                $.get(endpoint, function(data) {
+                $.get(endpoint, function (data) {
                     $('#view_name').text(data.name || data.full_name);
                     $('#view_homeowner_id').text(data.homeowner_id);
                     $('#view_email').text(data.email || 'N/A');
                     $('#view_phone').text(data.phone || 'N/A');
                     $('#view_address').text(data.address || 'N/A');
                     $('#view_qr_expiry').text('Valid until: ' + (data.qr_expiry_formatted || 'N/A'));
-                    
+
                     const status = data.status || data.access_status;
-                    const badges = {'active': 'success', 'inactive': 'secondary', 'suspended': 'danger', 'disabled': 'secondary'};
+                    const badges = { 'active': 'success', 'inactive': 'secondary', 'suspended': 'danger', 'disabled': 'secondary' };
                     $('#view_status').html(`<span class="badge bg-${badges[status] || 'secondary'} px-3 rounded-pill">${status.toUpperCase()}</span>`);
-                    
-                    $('#view_location').html(data.current_status === 'IN' ? 
-                        '<span class="badge bg-primary bg-opacity-10 text-primary px-3 rounded-pill">INSIDE</span>' : 
+
+                    $('#view_location').html(data.current_status === 'IN' ?
+                        '<span class="badge bg-primary bg-opacity-10 text-primary px-3 rounded-pill">INSIDE</span>' :
                         '<span class="badge bg-warning bg-opacity-10 text-warning px-3 rounded-pill">OUTSIDE</span>');
-                    
+
                     $('#view_last_scan').text(data.last_scan_time || 'No records available');
 
                     // Generate QR Code
@@ -813,9 +898,9 @@ $user = [
                             text: data.qr_token,
                             width: 128,
                             height: 128,
-                            colorDark : "#000000",
-                            colorLight : "#ffffff",
-                            correctLevel : QRCode.CorrectLevel.H
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H
                         });
                         $('#regeneateQRView').attr('data-id', data.id);
                     } else {
@@ -832,16 +917,16 @@ $user = [
                 viewPersonProfile(person.id, type);
             };
 
-            $('#homeownersTable').on('click', '.view-btn', function() {
+            $('#homeownersTable').on('click', '.view-btn', function () {
                 const id = $(this).data('id');
                 viewPersonProfile(id);
             });
 
             // QR Status Click Handler (Big Popup / Generate Prompt)
-            $('#homeownersTable').on('click', '.qr-status-click', function() {
+            $('#homeownersTable').on('click', '.qr-status-click', function () {
                 const id = $(this).data('id');
                 const rowData = table.row($(this).closest('tr')).data();
-                
+
                 if (rowData.qr_token) {
                     // Show Large QR Code Popup with Download and Regenerate options
                     Swal.fire({
@@ -849,7 +934,7 @@ $user = [
                         html: `
                             <div id="big_qr" class="d-flex justify-content-center my-3"></div>
                             <div class="small text-muted mb-3 text-uppercase fw-bold ls-1" style="letter-spacing: 0.05rem;">
-                                Valid until: ${new Date(rowData.qr_expiry).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'})}
+                                Valid until: ${new Date(rowData.qr_expiry).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                             </div>
                             <div class="d-flex justify-content-center gap-2">
                                 <button class="btn btn-primary rounded-pill px-4 btn-sm" id="downloadBigQR">
@@ -867,13 +952,13 @@ $user = [
                                 text: rowData.qr_token,
                                 width: 220,
                                 height: 220,
-                                colorDark : "#000000",
-                                colorLight : "#ffffff",
-                                correctLevel : QRCode.CorrectLevel.H
+                                colorDark: "#000000",
+                                colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.H
                             });
-                            
+
                             // Download Logic
-                            $('#downloadBigQR').click(function() {
+                            $('#downloadBigQR').click(function () {
                                 const qrImg = document.querySelector('#big_qr img');
                                 const link = document.createElement('a');
                                 link.href = qrImg.src;
@@ -882,7 +967,7 @@ $user = [
                             });
 
                             // Regenerate Logic from within Quick-View
-                            $('#regenBigQR').click(function() {
+                            $('#regenBigQR').click(function () {
                                 Swal.close();
                                 // Trigger the existing regeneration logic
                                 $(`.regen-btn[data-id="${id}"]`).click();
@@ -902,7 +987,7 @@ $user = [
                         confirmButtonColor: 'var(--primary)'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            $.post('api/generate_qr.php', { id: id }, function(response) {
+                            $.post('api/generate_qr.php', { id: id }, function (response) {
                                 if (response.success) {
                                     Swal.fire('Generated!', 'Resident now has an active access key.', 'success');
                                     table.ajax.reload();
@@ -917,7 +1002,7 @@ $user = [
 
             // Regenerate QR Code
 
-            $(document).on('click', '.regen-btn, .regenerate-qr-btn', function() {
+            $(document).on('click', '.regen-btn, .regenerate-qr-btn', function () {
                 const id = $(this).data('id');
                 const today = new Date().toISOString().split('T')[0];
                 const nextYear = new Date();
@@ -945,7 +1030,7 @@ $user = [
                 }).then((result) => {
                     if (result.isConfirmed) {
                         const expiryDate = result.value;
-                        $.post('api/generate_qr.php', { id: id, expiry_date: expiryDate }, function(response) {
+                        $.post('api/generate_qr.php', { id: id, expiry_date: expiryDate }, function (response) {
                             if (response.success) {
                                 if ($('#viewHomeownerModal').is(':visible')) {
                                     $('#view_qr').empty();
@@ -953,9 +1038,9 @@ $user = [
                                         text: response.token,
                                         width: 128,
                                         height: 128,
-                                        colorDark : "#000000",
-                                        colorLight : "#ffffff",
-                                        correctLevel : QRCode.CorrectLevel.H
+                                        colorDark: "#000000",
+                                        colorLight: "#ffffff",
+                                        correctLevel: QRCode.CorrectLevel.H
                                     });
                                     $('#view_qr_expiry').text('Valid until: ' + response.expiry);
                                 }
@@ -976,11 +1061,11 @@ $user = [
             });
 
 
-            
+
             // Edit homeowner
-            $('#homeownersTable').on('click', '.edit-btn', function() {
+            $('#homeownersTable').on('click', '.edit-btn', function () {
                 const id = $(this).data('id');
-                $.get(`api/get_homeowner.php?id=${id}`, function(data) {
+                $.get(`api/get_homeowner.php?id=${id}`, function (data) {
                     $('#edit_id').val(data.id);
                     $('#edit_name').val(data.name);
                     $('#edit_homeowner_id').val(data.homeowner_id);
@@ -988,20 +1073,20 @@ $user = [
                     $('#edit_phone').val(data.phone);
                     $('#edit_address').val(data.address);
                     $('#edit_status').val(data.status);
-                    
+
                     if (data.qr_expiry) {
                         const expiryDate = data.qr_expiry.split(' ')[0];
                         $('#edit_qr_expiry').val(expiryDate);
                     } else {
                         $('#edit_qr_expiry').val('');
                     }
-                    
+
                     new bootstrap.Modal(document.getElementById('editHomeownerModal')).show();
                 });
             });
-            
+
             // Delete homeowner
-            $('#homeownersTable').on('click', '.delete-btn', function() {
+            $('#homeownersTable').on('click', '.delete-btn', function () {
                 const id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -1014,7 +1099,7 @@ $user = [
                     borderRadius: '15px'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.post('api/delete_homeowner.php', { id: id }, function(response) {
+                        $.post('api/delete_homeowner.php', { id: id }, function (response) {
                             if (response.success) {
                                 Swal.fire({
                                     title: 'Deleted!',
@@ -1033,11 +1118,11 @@ $user = [
                 });
             });
 
-            
+
             // Save new homeowner
-            $('#saveHomeownerBtn').click(function() {
+            $('#saveHomeownerBtn').click(function () {
                 const formData = $('#addHomeownerForm').serialize();
-                $.post('api/add_homeowner.php', formData, function(response) {
+                $.post('api/add_homeowner.php', formData, function (response) {
                     if (response.success) {
                         bootstrap.Modal.getInstance(document.getElementById('addHomeownerModal')).hide();
                         Swal.fire({
@@ -1050,17 +1135,19 @@ $user = [
                         table.ajax.reload();
                         updateStats();
                         $('#addHomeownerForm')[0].reset();
+                        // Refresh the next ID for the next registration
+                        fetchNextHomeownerID();
                     } else {
                         Swal.fire('Error', response.message, 'error');
                     }
                 }, 'json');
             });
 
-            
+
             // Update homeowner
-            $('#updateHomeownerBtn').click(function() {
+            $('#updateHomeownerBtn').click(function () {
                 const formData = $('#editHomeownerForm').serialize();
-                $.post('api/update_homeowner.php', formData, function(response) {
+                $.post('api/update_homeowner.php', formData, function (response) {
                     if (response.success) {
                         bootstrap.Modal.getInstance(document.getElementById('editHomeownerModal')).hide();
                         Swal.fire({
@@ -1079,15 +1166,15 @@ $user = [
             });
 
             // Manage Family
-            $('#homeownersTable').on('click', '.manage-family-btn', function() {
+            $('#homeownersTable').on('click', '.manage-family-btn', function () {
                 const id = $(this).data('id');
                 const name = $(this).data('name');
                 const address = $(this).data('address');
-                
+
                 $('#family_owner_name').text(name);
                 $('#family_homeowner_id').val(id);
                 $('#family_owner_address').val(address);
-                
+
                 // Set default expiry to 1 year from now
                 const now = new Date();
                 const nextYear = new Date();
@@ -1095,16 +1182,16 @@ $user = [
                 // format for datetime-local: YYYY-MM-DDThh:mm
                 const formatted = nextYear.toISOString().slice(0, 16);
                 $('#addFamilyForm input[name="qr_expiry"]').val(formatted);
-                
+
                 loadFamilyMembers(id);
                 new bootstrap.Modal(document.getElementById('manageFamilyModal')).show();
             });
 
             function loadFamilyMembers(homeownerId) {
-                $.get(`api/get_family_members.php?homeowner_id=${homeownerId}`, function(data) {
+                $.get(`api/get_family_members.php?homeowner_id=${homeownerId}`, function (data) {
                     const listContainer = $('#familyMembersList');
                     listContainer.empty();
-                    
+
                     if (data.length === 0) {
                         listContainer.html(`
                             <div class="text-center py-5 text-muted">
@@ -1114,12 +1201,12 @@ $user = [
                         `);
                         return;
                     }
-                    
+
                     data.forEach(member => {
                         const statusColor = member.current_status === 'IN' ? 'primary' : 'warning';
                         const statusIcon = member.current_status === 'IN' ? 'bi-house-check' : 'bi-house-dash';
                         const statusLabel = member.current_status === 'IN' ? 'INSIDE' : 'OUTSIDE';
-                        
+
                         listContainer.append(`
                             <div class="card border-0 mb-3 hover-lift shadow-sm">
                                 <div class="card-body p-3">
@@ -1131,6 +1218,7 @@ $user = [
                                             <div>
                                                 <div class="d-flex align-items-center gap-2 mb-1">
                                                     <h6 class="mb-0 fw-bold">${member.full_name}</h6>
+                                                    <span class="badge bg-light text-primary border rounded-pill px-2 py-1" style="font-size: 0.65rem;">${member.relationship || 'Son'}</span>
                                                     <span class="badge bg-${statusColor} bg-opacity-10 text-${statusColor} rounded-pill px-2 py-1 fw-bold" style="font-size: 0.6rem;">
                                                         <i class="bi ${statusIcon} me-1"></i> ${statusLabel}
                                                     </span>
@@ -1164,11 +1252,11 @@ $user = [
             }
 
             // Save Family Member
-            $('#saveFamilyMemberBtn').click(function() {
+            $('#saveFamilyMemberBtn').click(function () {
                 const formData = $('#addFamilyForm').serialize();
                 const homeownerId = $('#family_homeowner_id').val();
-                
-                $.post('api/add_family_member.php', formData, function(response) {
+
+                $.post('api/add_family_member.php', formData, function (response) {
                     if (response.success) {
                         Swal.fire({
                             icon: 'success',
@@ -1181,12 +1269,12 @@ $user = [
                         // Reset persistent fields
                         $('#family_homeowner_id').val(homeownerId);
                         $('#family_owner_address').val($('#family_owner_address').val()); // keep it
-                        
+
                         // Re-set default expiry
                         const nextYear = new Date();
                         nextYear.setFullYear(nextYear.getFullYear() + 1);
                         $('#addFamilyForm input[name="qr_expiry"]').val(nextYear.toISOString().slice(0, 16));
-                        
+
                         loadFamilyMembers(homeownerId);
                     } else {
                         Swal.fire('Error', response.message, 'error');
@@ -1195,10 +1283,10 @@ $user = [
             });
 
             // Delete Family Member
-            $('#familyMembersList').on('click', '.delete-family-member', function() {
+            $('#familyMembersList').on('click', '.delete-family-member', function () {
                 const id = $(this).data('id');
                 const homeownerId = $('#family_homeowner_id').val();
-                
+
                 Swal.fire({
                     title: 'Remove Family Member?',
                     text: "Their access key will be deactivated immediately!",
@@ -1208,7 +1296,7 @@ $user = [
                     confirmButtonText: 'Yes, remove'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.post('api/delete_family_member.php', { id: id }, function(response) {
+                        $.post('api/delete_family_member.php', { id: id }, function (response) {
                             if (response.success) {
                                 loadFamilyMembers(homeownerId);
                             } else {
@@ -1220,30 +1308,31 @@ $user = [
             });
 
             // Edit Family Member
-            $('#familyMembersList').on('click', '.edit-family-member', function() {
+            $('#familyMembersList').on('click', '.edit-family-member', function () {
                 const id = $(this).data('id');
-                $.get(`api/get_family_member.php?id=${id}`, function(data) {
+                $.get(`api/get_family_member.php?id=${id}`, function (data) {
                     if (data.error) {
                         Swal.fire('Error', data.error, 'error');
                         return;
                     }
                     $('#edit_family_id').val(data.id);
                     $('#edit_family_full_name').val(data.full_name);
+                    $('#edit_family_relationship').val(data.relationship || 'Son');
                     $('#edit_family_email').val(data.email);
                     $('#edit_family_phone').val(data.phone);
                     $('#edit_family_qr_expiry').val(data.qr_expiry_input);
                     $('#edit_family_status').val(data.access_status);
-                    
+
                     new bootstrap.Modal(document.getElementById('editFamilyMemberModal')).show();
                 });
             });
 
             // Update Family Member
-            $('#updateFamilyMemberBtn').click(function() {
+            $('#updateFamilyMemberBtn').click(function () {
                 const formData = $('#editFamilyForm').serialize();
                 const homeownerId = $('#family_homeowner_id').val();
-                
-                $.post('api/update_family_member.php', formData, function(response) {
+
+                $.post('api/update_family_member.php', formData, function (response) {
                     if (response.success) {
                         bootstrap.Modal.getInstance(document.getElementById('editFamilyMemberModal')).hide();
                         Swal.fire({
@@ -1261,37 +1350,37 @@ $user = [
             });
 
             // View Family QR
-            $('#familyMembersList').on('click', '.view-family-qr', function() {
+            $('#familyMembersList').on('click', '.view-family-qr', function () {
                 const token = $(this).data('token');
                 const name = $(this).data('name');
                 const expiry = $(this).data('expiry');
-                
+
                 $('#view_family_member_name').text(name);
                 $('#family_member_qr_expiry').text('Valid until: ' + expiry);
-                
+
                 $('#family_member_qr_container').empty();
                 new QRCode(document.getElementById("family_member_qr_container"), {
                     text: token,
                     width: 200,
                     height: 200,
-                    colorDark : "#000000",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.H
                 });
-                
-                $('#downloadFamilyQR').off('click').on('click', function() {
+
+                $('#downloadFamilyQR').off('click').on('click', function () {
                     const qrImg = document.querySelector('#family_member_qr_container img');
                     const link = document.createElement('a');
                     link.href = qrImg.src;
                     link.download = `QR_Family_${name}.png`;
                     link.click();
                 });
-                
+
                 new bootstrap.Modal(document.getElementById('viewFamilyQRModal')).show();
             });
 
             // Download QR Code
-            $('#downloadQR').click(function() {
+            $('#downloadQR').click(function () {
                 const qrImg = document.querySelector('#view_qr img');
                 if (qrImg) {
                     const homeownerId = $('#view_homeowner_id').text();
@@ -1305,8 +1394,23 @@ $user = [
                     alert('QR Code image not found. Please try again.');
                 }
             });
+
+            // Function to fetch next Homeowner ID
+            function fetchNextHomeownerID() {
+                $.get('api/get_next_homeowner_id.php', function (response) {
+                    if (response.success) {
+                        $('#new_homeowner_id').val(response.next_id);
+                    }
+                });
+            }
+
+            // Auto-populate when modal opens
+            $('#addHomeownerModal').on('show.bs.modal', function () {
+                fetchNextHomeownerID();
+            });
         });
     </script>
     <script src="../assets/js/scanner.js"></script>
 </body>
+
 </html>

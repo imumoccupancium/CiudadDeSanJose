@@ -83,6 +83,10 @@ try {
                 $uStmt = $pdo->prepare("UPDATE visitor_logs SET current_status = 'OUT', time_out = ?, last_scan_time = ? WHERE id = ? AND (last_scan_time IS NULL OR last_scan_time <= ?)");
             }
             $uStmt->execute([$timestamp, $timestamp, $user_internal_id, $timestamp]);
+
+            // Add visitor_activity_logs record for history (Missing in original)
+            $logStmt = $pdo->prepare("INSERT INTO visitor_activity_logs (visitor_id, homeowner_id, action, timestamp, device_name) VALUES (?, ?, ?, ?, ?)");
+            $logStmt->execute([$user_internal_id, $homeowner_id, $action, $timestamp, $device_name]);
         }
         else {
             $skipped++;

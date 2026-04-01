@@ -14,6 +14,7 @@ $user = [
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,15 +22,15 @@ $user = [
     <!-- Website Icon -->
     <link rel="icon" type="image/png" href="../assets/logo.png">
 
-    
+
     <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/vendor/datatables/css/dataTables.bootstrap5.min.css">
-    
+
     <!-- Local Fonts (Inter) -->
     <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
     <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
-    
+
     <style>
         :root {
             --primary: #4361ee;
@@ -98,6 +99,7 @@ $user = [
         }
     </style>
 </head>
+
 <body class="bg-light">
     <!-- Sidebar -->
     <?php include 'includes/sidebar.php'; ?>
@@ -109,12 +111,13 @@ $user = [
             <button class="btn btn-link d-lg-none me-3" id="sidebarToggle">
                 <i class="bi bi-list fs-3 text-dark"></i>
             </button>
-            
+
             <div class="d-none d-md-block">
                 <h5 class="mb-0 fw-bold">HOA Accounts Management</h5>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0 small">
-                        <li class="breadcrumb-item"><a href="dashboard.php" class="text-decoration-none text-muted">Management</a></li>
+                        <li class="breadcrumb-item"><a href="dashboard.php"
+                                class="text-decoration-none text-muted">Management</a></li>
                         <li class="breadcrumb-item active fw-medium">HOA Accounts</li>
                     </ol>
                 </nav>
@@ -162,12 +165,14 @@ $user = [
 
             <!-- Main Table Card -->
             <div class="card border-0 mb-5">
-                <div class="card-header bg-white border-0 py-4 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div
+                    class="card-header bg-white border-0 py-4 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                     <div>
                         <h5 class="fw-bold mb-1">HOA Account Registry</h5>
                         <p class="text-muted small mb-0">Manage accounts for Homeowner Association members</p>
                     </div>
-                    <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal" data-bs-target="#addHOAModal">
+                    <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal"
+                        data-bs-target="#addHOAModal">
                         <i class="bi bi-plus-lg me-1"></i> Add HOA Account
                     </button>
                 </div>
@@ -181,7 +186,8 @@ $user = [
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Email</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Status</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Last Login</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">Actions</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="border-0">
@@ -210,11 +216,13 @@ $user = [
                         <div class="row g-3">
                             <div class="col-12">
                                 <label class="form-label small fw-bold text-muted">Full Name *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name" placeholder="Juan Dela Cruz" required>
+                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name"
+                                    placeholder="Juan Dela Cruz" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Username *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="username" placeholder="hoa_juan" required>
+                                <input type="text" class="form-control rounded-3 p-2 px-3" name="username"
+                                    placeholder="hoa_juan" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Password *</label>
@@ -222,13 +230,15 @@ $user = [
                             </div>
                             <div class="col-12">
                                 <label class="form-label small fw-bold text-muted">Email Address</label>
-                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email" placeholder="hoa@example.com">
+                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email"
+                                    placeholder="hoa@example.com">
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Discard</button>
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Discard</button>
                     <button type="button" class="btn btn-primary rounded-pill px-4" id="saveHOABtn">
                         <i class="bi bi-save me-1"></i> Save Account
                     </button>
@@ -254,19 +264,23 @@ $user = [
                         <div class="row g-3">
                             <div class="col-12">
                                 <label class="form-label small fw-bold text-muted">Full Name *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name" id="edit_name" required>
+                                <input type="text" class="form-control rounded-3 p-2 px-3" name="name" id="edit_name"
+                                    required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Username *</label>
-                                <input type="text" class="form-control rounded-3 p-2 px-3" name="username" id="edit_username" readonly>
+                                <input type="text" class="form-control rounded-3 p-2 px-3" name="username"
+                                    id="edit_username" readonly>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label small fw-bold text-muted">New Password (leave blank to keep)</label>
+                                <label class="form-label small fw-bold text-muted">New Password (leave blank to
+                                    keep)</label>
                                 <input type="password" class="form-control rounded-3 p-2 px-3" name="password">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Email Address</label>
-                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email" id="edit_email">
+                                <input type="email" class="form-control rounded-3 p-2 px-3" name="email"
+                                    id="edit_email">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Status</label>
@@ -279,7 +293,8 @@ $user = [
                     </form>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary rounded-pill px-4" id="updateHOABtn">
                         <i class="bi bi-check2-circle me-1"></i> Update Account
                     </button>
@@ -292,9 +307,9 @@ $user = [
     <script src="../assets/vendor/jquery/jquery.min.js"></script>
     <script src="../assets/vendor/datatables/js/jquery.dataTables.min.js"></script>
     <script src="../assets/vendor/datatables/js/dataTables.bootstrap5.min.js"></script>
-    
+
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             const table = $('#hoaTable').DataTable({
                 ajax: {
                     url: 'api/get_hoa_accounts.php',
@@ -304,7 +319,7 @@ $user = [
                     { data: 'username' },
                     { data: 'name', render: data => `<span class="fw-bold">${data}</span>` },
                     { data: 'email', render: data => data || 'N/A' },
-                    { 
+                    {
                         data: 'status',
                         render: data => {
                             const badge = data === 'active' ? 'success' : 'secondary';
@@ -330,7 +345,7 @@ $user = [
             });
 
             function updateStats() {
-                $.get('api/get_hoa_stats.php', function(data) {
+                $.get('api/get_hoa_stats.php', function (data) {
                     $('#totalHOA').text(data.total);
                     $('#activeHOA').text(data.active);
                     $('#recentLogin').text(data.recent_activity || 'None');
@@ -338,7 +353,7 @@ $user = [
             }
             updateStats();
 
-            $('#saveHOABtn').click(function() {
+            $('#saveHOABtn').click(function () {
                 const formData = new FormData($('#addHOAForm')[0]);
                 $.ajax({
                     url: 'api/add_hoa_account.php',
@@ -346,7 +361,7 @@ $user = [
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function(resp) {
+                    success: function (resp) {
                         const data = JSON.parse(resp);
                         if (data.success) {
                             Swal.fire('Success', data.message, 'success');
@@ -361,9 +376,9 @@ $user = [
                 });
             });
 
-            $('#hoaTable').on('click', '.edit-btn', function() {
+            $('#hoaTable').on('click', '.edit-btn', function () {
                 const id = $(this).data('id');
-                $.get(`api/get_hoa_account.php?id=${id}`, function(data) {
+                $.get(`api/get_hoa_account.php?id=${id}`, function (data) {
                     $('#edit_id').val(data.id);
                     $('#edit_name').val(data.name);
                     $('#edit_username').val(data.username);
@@ -373,7 +388,7 @@ $user = [
                 });
             });
 
-            $('#updateHOABtn').click(function() {
+            $('#updateHOABtn').click(function () {
                 const formData = new FormData($('#editHOAForm')[0]);
                 $.ajax({
                     url: 'api/update_hoa_account.php',
@@ -381,7 +396,7 @@ $user = [
                     data: formData,
                     processData: false,
                     contentType: false,
-                    success: function(resp) {
+                    success: function (resp) {
                         const data = JSON.parse(resp);
                         if (data.success) {
                             Swal.fire('Updated', data.message, 'success');
@@ -395,7 +410,7 @@ $user = [
                 });
             });
 
-            $('#hoaTable').on('click', '.delete-btn', function() {
+            $('#hoaTable').on('click', '.delete-btn', function () {
                 const id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -406,7 +421,7 @@ $user = [
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.post('api/delete_hoa_account.php', { id: id }, function(resp) {
+                        $.post('api/delete_hoa_account.php', { id: id }, function (resp) {
                             const data = JSON.parse(resp);
                             if (data.success) {
                                 Swal.fire('Deleted', data.message, 'success');
@@ -422,4 +437,5 @@ $user = [
         });
     </script>
 </body>
+
 </html>

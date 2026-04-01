@@ -138,24 +138,8 @@ def open_acm_gate(door_index=1):
 # =============================================================
 # INTERNET-FIRST SCAN HANDLER
 # =============================================================
-# Simple debounce: { (token, action): timestamp } to prevent rapid duplicate scans
-_last_scans = {}
-_scan_lock  = threading.Lock()
-
 def send_data(token, action, device_name, door_index):
     token = token.strip().upper()
-
-    # -------------------------------------------------------
-    # DEBOUNCE: Skip if scanned at this same gate in the last 2 seconds
-    # -------------------------------------------------------
-    now = time.time()
-    with _scan_lock:
-        key = (token, action)
-        if key in _last_scans and (now - _last_scans[key]) < 2:
-            print(f"   [SKIP]    Hardware double-scan detected for {token}. Ignoring duplicate.")
-            return
-        _last_scans[key] = now
-
     print(f"\n[{action}] QR: {token} — Device: {device_name}")
     start_time = time.time()
 

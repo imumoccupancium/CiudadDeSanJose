@@ -7,11 +7,20 @@ try {
     $full_name = $_POST['full_name'] ?? '';
     $email = $_POST['email'] ?? null;
     $phone = $_POST['phone'] ?? null;
+    $relationship = $_POST['relationship'] ?? 'Son';
     $qr_expiry = $_POST['qr_expiry'] ?? null;
     
     if (empty($homeowner_id) || empty($full_name)) {
         echo json_encode(['success' => false, 'message' => 'Required fields (Homeowner and Full Name) are missing']);
         exit;
+    }
+
+    if (!empty($phone)) {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phone) !== 11) {
+            echo json_encode(['success' => false, 'message' => 'Phone number must be exactly 11 digits']);
+            exit;
+        }
     }
     
     // Generate QR Token
@@ -30,11 +39,11 @@ try {
     $qr_last_generated = date('Y-m-d H:i:s');
     
     $stmt = $pdo->prepare("
-        INSERT INTO family_members (homeowner_id, full_name, email, phone, qr_code, qr_token, qr_expiry, qr_last_generated, access_status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')
+        INSERT INTO family_members (homeowner_id, full_name, relationship, email, phone, qr_code, qr_token, qr_expiry, qr_last_generated, access_status, current_status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 'None')
     ");
     
-    $stmt->execute([$homeowner_id, $full_name, $email, $phone, $qr_token, $qr_token, $qr_expiry, $qr_last_generated]);
+    $stmt->execute([$homeowner_id, $full_name, $relationship, $email, $phone, $qr_token, $qr_token, $qr_expiry, $qr_last_generated]);
     
     echo json_encode(['success' => true, 'message' => 'Family member added successfully']);
     

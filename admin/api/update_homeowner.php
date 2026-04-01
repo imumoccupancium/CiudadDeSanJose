@@ -16,6 +16,14 @@ try {
         echo json_encode(['success' => false, 'message' => 'Required fields are missing']);
         exit;
     }
+
+    if (!empty($phone)) {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phone) !== 11) {
+            echo json_encode(['success' => false, 'message' => 'Phone number must be exactly 11 digits']);
+            exit;
+        }
+    }
     
     $stmt = $pdo->prepare("
         UPDATE homeowners 

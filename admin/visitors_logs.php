@@ -14,6 +14,7 @@ $user = [
 ?>
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,10 +25,10 @@ $user = [
     <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/vendor/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="../assets/vendor/datatables/css/dataTables.bootstrap5.min.css">
-    
+
     <!-- Local Fonts (Inter) -->
     <link rel="stylesheet" href="../assets/vendor/fonts/inter/inter.css">
-    
+
     <style>
         :root {
             --primary: #4361ee;
@@ -100,16 +101,21 @@ $user = [
             cursor: pointer;
             transition: transform 0.2s;
         }
+
         .badge-qr-status:hover {
             transform: scale(1.05);
         }
-        
+
         .smaller {
             font-size: 0.75rem;
         }
-        .fs-7 { font-size: 0.85rem !important; }
+
+        .fs-7 {
+            font-size: 0.85rem !important;
+        }
     </style>
 </head>
+
 <body>
     <?php include 'includes/sidebar.php'; ?>
 
@@ -205,8 +211,10 @@ $user = [
                         <div class="col-md-3">
                             <label class="form-label small fw-bold text-muted">Time Period</label>
                             <div class="input-group">
-                                <input type="date" class="form-control rounded-start-pill border-light bg-light" id="filterFrom">
-                                <input type="date" class="form-control rounded-end-pill border-light bg-light" id="filterTo">
+                                <input type="date" class="form-control rounded-start-pill border-light bg-light"
+                                    id="filterFrom">
+                                <input type="date" class="form-control rounded-end-pill border-light bg-light"
+                                    id="filterTo">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -215,7 +223,8 @@ $user = [
                             </button>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-outline-primary rounded-pill w-100" data-bs-toggle="modal" data-bs-target="#addVisitorModal">
+                            <button class="btn btn-outline-primary rounded-pill w-100" data-bs-toggle="modal"
+                                data-bs-target="#addVisitorModal">
                                 <i class="bi bi-plus-lg me-1"></i> Add a Visitor
                             </button>
                         </div>
@@ -232,10 +241,12 @@ $user = [
                                 <tr>
                                     <th class="ps-4 py-3 text-uppercase small fw-bold text-muted border-0">Visitor</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Visiting</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 text-center">QR Status</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 text-center">QR
+                                        Status</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Time In/Out</th>
                                     <th class="py-3 text-uppercase small fw-bold text-muted border-0">Status</th>
-                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">Action</th>
+                                    <th class="py-3 text-uppercase small fw-bold text-muted border-0 pe-4 text-end">
+                                        Action</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -255,17 +266,17 @@ $user = [
     <script src="../assets/vendor/datatables/js/dataTables.bootstrap5.min.js"></script>
     <script src="../assets/vendor/qrcodejs/qrcode.min.js"></script>
     <script src="../assets/vendor/sweetalert2/sweetalert2.all.min.js"></script>
-    
+
     <script>
         let cachedLogs = [];
-        $(document).ready(function() {
+        $(document).ready(function () {
             const table = $('#visitorLogsTable').DataTable({
                 ajax: {
                     url: 'api/get_visitor_logs.php',
                     dataSrc: 'data'
                 },
                 columns: [
-                    { 
+                    {
                         data: 'visitor_name',
                         render: (d, t, r) => `
                             <div>
@@ -280,10 +291,10 @@ $user = [
                     {
                         data: 'qr_expiry',
                         className: 'text-center',
-                        render: function(d, t, r) {
+                        render: function (d, t, r) {
                             const hasQR = r.qr_token;
                             const isExpired = new Date(d) < new Date();
-                            
+
                             if (!hasQR) {
                                 return `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 small">
                                             <i class="bi bi-x-circle me-1"></i> MISSING
@@ -296,7 +307,7 @@ $user = [
                                                 <i class="bi bi-clock-history me-1"></i> EXPIRED
                                             </span>
                                             <div class="x-small text-danger mt-1" style="font-size: 0.65rem; font-weight: bold;">
-                                                Exp: ${d ? new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                                Exp: ${d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                                             </div>
                                         </div>`;
                             }
@@ -306,19 +317,28 @@ $user = [
                                     <i class="bi bi-check-circle-fill me-1"></i> VALID
                                 </span>
                                 <div class="x-small text-muted mt-1" style="font-size: 0.65rem;">
-                                    Exp: ${d ? new Date(d).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : 'N/A'}
+                                    Exp: ${d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A'}
                                 </div>
                             </div>`;
                         }
                     },
                     {
                         data: 'time_in_fmt',
-                        render: (d, t, r) => `<div class="small text-success fw-bold"><i class="bi bi-box-arrow-in-right me-1"></i> ${d}</div>
-                                             <div class="small text-muted fw-bold"><i class="bi bi-box-arrow-right me-1"></i> ${r.time_out_fmt || '--:--'}</div>`
+                        render: (d, t, r) => {
+                            const timeIn = d || '--:-- --';
+                            const timeOut = r.time_out_fmt || '--:-- --';
+                            return `<div class="small text-success fw-bold"><i class="bi bi-box-arrow-in-right me-1"></i> ${timeIn}</div>
+                                    <div class="small text-muted fw-bold"><i class="bi bi-box-arrow-right me-1"></i> ${timeOut}</div>`;
+                        }
                     },
                     {
                         data: 'current_status',
-                        render: function(data) {
+                        render: function (data) {
+                            if (data === 'None' || !data) {
+                                return `<span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3 py-2 fw-bold" style="font-size: 0.75rem;">
+                                    <i class="bi bi-clock-history me-1"></i> PENDING
+                                </span>`;
+                            }
                             const isInside = (data === 'IN' || data === 'INSIDE');
                             const color = isInside ? 'primary' : 'warning';
                             const icon = isInside ? 'bi-house-check' : 'bi-house-dash';
@@ -343,7 +363,7 @@ $user = [
                 dom: 'trtp'
             });
 
-            table.on('xhr.dt', function(e, settings, json) {
+            table.on('xhr.dt', function (e, settings, json) {
                 if (json && json.data) {
                     cachedLogs = json.data;
                     updateStats(cachedLogs);
@@ -366,7 +386,7 @@ $user = [
             }
 
             // Quick View QR
-            $(document).on('click', '.view-qr-quick', function() {
+            $(document).on('click', '.view-qr-quick', function () {
                 const id = $(this).data('id');
                 const log = cachedLogs.find(l => l.id == id);
                 if (log && log.qr_token) {
@@ -377,7 +397,7 @@ $user = [
                                 <div id="big_visitor_qr" class="mb-3 p-3 bg-white rounded shadow-sm"></div>
                                 <div class="small text-muted mb-2">Host: <strong>${log.homeowner_name}</strong></div>
                                 <div class="small text-muted mb-3" style="font-size: 0.75rem;">
-                                    Valid until: ${new Date(log.qr_expiry).toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit'})}
+                                    Valid until: ${new Date(log.qr_expiry).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                                 </div>
                                 <div class="d-flex justify-content-center gap-2 w-100 px-3">
                                     <button class="btn btn-primary rounded-pill px-4 flex-grow-1" id="downloadBigVisitorQR">
@@ -393,15 +413,15 @@ $user = [
                         didOpen: () => {
                             new QRCode(document.getElementById("big_visitor_qr"), {
                                 text: log.qr_token, width: 200, height: 200,
-                                colorDark : "#000000", colorLight : "#ffffff",
-                                correctLevel : QRCode.CorrectLevel.H
+                                colorDark: "#000000", colorLight: "#ffffff",
+                                correctLevel: QRCode.CorrectLevel.H
                             });
                             $('#downloadBigVisitorQR').click(() => {
                                 const qrImg = document.querySelector('#big_visitor_qr img');
                                 if (qrImg) {
                                     const link = document.createElement('a');
                                     link.href = qrImg.src;
-                                    link.download = `QR_Visitor_${log.visitor_name.replace(/\s+/g,'_')}.png`;
+                                    link.download = `QR_Visitor_${log.visitor_name.replace(/\s+/g, '_')}.png`;
                                     link.click();
                                 }
                             });
@@ -412,27 +432,27 @@ $user = [
             });
 
             // View Details Modal
-            $(document).on('click', '.view-log-btn', function() {
+            $(document).on('click', '.view-log-btn', function () {
                 const id = $(this).data('id');
                 const log = cachedLogs.find(l => l.id == id);
                 if (log) {
                     $('#viewVisitorModal').data('current-id', id);
                     $('#viewVisitorName').text(log.visitor_name);
-                    $('#viewTimeIn').text(log.time_in_fmt);
+                    $('#viewTimeIn').text(log.time_in_fmt || '--:-- --');
                     $('#viewTimeOut').text(log.time_out_fmt || '--:-- --');
                     $('#viewHostName').text(log.homeowner_name);
                     $('#viewHostAddress').text(log.homeowner_address);
                     $('#viewPurpose').text(log.purpose || 'Not specified');
                     $('#viewGate').text(log.gate);
-                    
-                    if (log.qr_token && log.status === 'INSIDE') {
+
+                    if (log.qr_token && (log.status === 'INSIDE' || log.status === 'None')) {
                         $('#view_qr_expiry').text('Valid until: ' + (log.qr_expiry || 'N/A'));
                         $('#downloadVisitorQR').show();
                         $('#view_visitor_qr').empty();
                         new QRCode("view_visitor_qr", {
                             text: log.qr_token, width: 128, height: 128,
-                            colorDark : "#000000", colorLight : "#ffffff",
-                            correctLevel : QRCode.CorrectLevel.H
+                            colorDark: "#000000", colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H
                         });
                     } else {
                         $('#view_visitor_qr').html('<i class="bi bi-qr-code fs-1 text-muted"></i>');
@@ -444,7 +464,7 @@ $user = [
             });
 
             // Edit Details Modal
-            $(document).on('click', '.edit-log-btn', function() {
+            $(document).on('click', '.edit-log-btn', function () {
                 const id = $(this).data('id');
                 const log = cachedLogs.find(l => l.id == id);
                 if (log) {
@@ -464,11 +484,11 @@ $user = [
                 }
             });
 
-            $('#updateVisitorBtn').click(function() {
+            $('#updateVisitorBtn').click(function () {
                 const formData = $('#editVisitorForm').serialize();
                 $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Updating...');
-                
-                $.post('api/edit_visitor.php', formData, function(res) {
+
+                $.post('api/edit_visitor.php', formData, function (res) {
                     if (res.success) {
                         Swal.fire('Success', res.message, 'success');
                         $('#editVisitorModal').modal('hide');
@@ -481,7 +501,7 @@ $user = [
             });
 
             // Delete Log
-            $(document).on('click', '.delete-log-btn', function() {
+            $(document).on('click', '.delete-log-btn', function () {
                 const id = $(this).data('id');
                 Swal.fire({
                     title: 'Are you sure?',
@@ -492,7 +512,7 @@ $user = [
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.post('api/delete_visitor.php', { id: id }, function(res) {
+                        $.post('api/delete_visitor.php', { id: id }, function (res) {
                             if (res.success) {
                                 Swal.fire('Deleted!', res.message, 'success');
                                 table.ajax.reload(null, false);
@@ -504,7 +524,7 @@ $user = [
                 });
             });
 
-            $(document).on('click', '.row-regen-btn', function() {
+            $(document).on('click', '.row-regen-btn', function () {
                 triggerRegenerate($(this).data('id'));
             });
 
@@ -532,7 +552,7 @@ $user = [
                     preConfirm: () => document.getElementById('swal_visitor_expiry').value
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.post('api/regenerate_visitor_qr.php', { id: id, expiry_date: result.value }, function(res) {
+                        $.post('api/regenerate_visitor_qr.php', { id: id, expiry_date: result.value }, function (res) {
                             if (res.success) {
                                 Swal.fire('Success', res.message, 'success');
                                 table.ajax.reload();
@@ -542,27 +562,27 @@ $user = [
                 });
             }
 
-            $('.regenerate-qr-btn').click(function() {
+            $('.regenerate-qr-btn').click(function () {
                 triggerRegenerate($('#viewVisitorModal').data('current-id'));
             });
-            
-            $('#downloadVisitorQR').click(function() {
+
+            $('#downloadVisitorQR').click(function () {
                 const qrImg = document.querySelector('#view_visitor_qr img');
                 const vName = $('#viewVisitorName').text();
                 if (qrImg) {
                     const link = document.createElement('a');
                     link.href = qrImg.src;
-                    link.download = `QR_Visitor_${vName.replace(/\s+/g,'_')}.png`;
+                    link.download = `QR_Visitor_${vName.replace(/\s+/g, '_')}.png`;
                     link.click();
                 }
             });
 
             // Save New Visitor
-            $('#saveVisitorBtn').click(function() {
+            $('#saveVisitorBtn').click(function () {
                 const formData = $('#addVisitorForm').serialize();
                 $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Saving...');
-                
-                $.post('api/add_visitor.php', formData, function(res) {
+
+                $.post('api/add_visitor.php', formData, function (res) {
                     if (res.success) {
                         Swal.fire({
                             icon: 'success',
@@ -576,8 +596,8 @@ $user = [
                             didOpen: () => {
                                 new QRCode(document.getElementById("save_qr_preview"), {
                                     text: res.qr_token, width: 140, height: 140,
-                                    colorDark : "#000000", colorLight : "#ffffff",
-                                    correctLevel : QRCode.CorrectLevel.H
+                                    colorDark: "#000000", colorLight: "#ffffff",
+                                    correctLevel: QRCode.CorrectLevel.H
                                 });
                             }
                         });
@@ -588,17 +608,17 @@ $user = [
                         Swal.fire('Error', res.message, 'error');
                     }
                     $('#saveVisitorBtn').prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i> Log Visitor & Generate QR');
-                }, 'json').fail(function() {
+                }, 'json').fail(function () {
                     Swal.fire('Error', 'Server error occurred', 'error');
                     $('#saveVisitorBtn').prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i> Log Visitor & Generate QR');
                 });
             });
 
             // Polling for Visitor Scan Alerts
-            setInterval(function() {
-                $.get('api/get_latest_alerts.php?type=visitor', function(alerts) {
+            setInterval(function () {
+                $.get('api/get_latest_alerts.php?type=visitor', function (alerts) {
                     if (Array.isArray(alerts)) {
-                        alerts.forEach(function(alert) {
+                        alerts.forEach(function (alert) {
                             const Toast = Swal.mixin({
                                 toast: true,
                                 position: 'top-end',
@@ -612,7 +632,7 @@ $user = [
                                 title: alert.status === 'success' ? 'Visitor Log Updated' : 'Access Denied',
                                 text: alert.message
                             });
-                            
+
                             // Reload table to show new entry immediately
                             table.ajax.reload(null, false);
                         });
@@ -625,4 +645,5 @@ $user = [
         });
     </script>
 </body>
+
 </html>

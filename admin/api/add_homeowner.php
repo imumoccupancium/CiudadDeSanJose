@@ -14,6 +14,14 @@ try {
         echo json_encode(['success' => false, 'message' => 'Required fields are missing']);
         exit;
     }
+
+    if (!empty($phone)) {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phone) !== 11) {
+            echo json_encode(['success' => false, 'message' => 'Phone number must be exactly 11 digits']);
+            exit;
+        }
+    }
     
     $qr_token = null;
     $qr_expiry = null;
@@ -33,8 +41,8 @@ try {
     }
     
     $stmt = $pdo->prepare("
-        INSERT INTO homeowners (homeowner_id, name, email, phone, address, qr_code, qr_token, qr_expiry, qr_last_generated, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
+        INSERT INTO homeowners (homeowner_id, name, email, phone, address, qr_code, qr_token, qr_expiry, qr_last_generated, status, current_status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 'None')
     ");
     
     $stmt->execute([$homeowner_id, $name, $email, $phone, $address, $qr_token, $qr_token, $qr_expiry, $qr_last_generated]);

@@ -321,7 +321,7 @@ $user = [
         $(document).ready(function() {
             const table = $('#activityLogsTable').DataTable({
                 ajax: {
-                    url: 'api/get_activity_log.php',
+                    url: `api/get_activity_log.php?date_from=${weekAgo}&date_to=${today}`,
                     dataSrc: ''
                 },
                 columns: [
@@ -349,7 +349,10 @@ $user = [
                     },
                     { 
                         data: 'timestamp',
-                        render: (data, type, row) => `<div class="small fw-medium text-dark">${row.date}</div><div class="smaller text-muted">${row.time}</div>`
+                        render: (data, type, row) => {
+                            if (type === 'sort' || type === 'type') return data;
+                            return `<div class="small fw-medium text-dark">${row.date}</div><div class="smaller text-muted">${row.time}</div>`;
+                        }
                     },
                     { 
                         data: 'device',

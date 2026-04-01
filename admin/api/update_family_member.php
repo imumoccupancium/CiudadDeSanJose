@@ -7,12 +7,21 @@ try {
     $full_name = $_POST['full_name'] ?? '';
     $email = $_POST['email'] ?? null;
     $phone = $_POST['phone'] ?? null;
+    $relationship = $_POST['relationship'] ?? 'Son';
     $qr_expiry = $_POST['qr_expiry'] ?? null;
     $access_status = $_POST['access_status'] ?? 'active';
     
     if (empty($id) || empty($full_name)) {
         echo json_encode(['success' => false, 'message' => 'Required fields (ID and Full Name) are missing']);
         exit;
+    }
+
+    if (!empty($phone)) {
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($phone) !== 11) {
+            echo json_encode(['success' => false, 'message' => 'Phone number must be exactly 11 digits']);
+            exit;
+        }
     }
     
     // Process Expiry
@@ -24,11 +33,11 @@ try {
     
     $stmt = $pdo->prepare("
         UPDATE family_members 
-        SET full_name = ?, email = ?, phone = ?, qr_expiry = ?, access_status = ?
+        SET full_name = ?, relationship = ?, email = ?, phone = ?, qr_expiry = ?, access_status = ?
         WHERE id = ?
     ");
     
-    $stmt->execute([$full_name, $email, $phone, $qr_expiry, $access_status, $id]);
+    $stmt->execute([$full_name, $relationship, $email, $phone, $qr_expiry, $access_status, $id]);
     
     echo json_encode(['success' => true, 'message' => 'Family member updated successfully']);
     
