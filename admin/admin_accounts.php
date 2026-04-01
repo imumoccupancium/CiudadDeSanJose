@@ -179,7 +179,11 @@ $user = [
                         <h5 class="fw-bold mb-1">Admin Account Registry</h5>
                         <p class="text-muted small mb-0">Manage administrator accounts for Ciudad De San Jose</p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-md-end">
+                        <div class="input-group" style="max-width: 250px;">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" class="form-control bg-light border-0 small" id="adminSearch" placeholder="Search admins...">
+                        </div>
                         <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal"
                             data-bs-target="#addAdminModal">
                             <i class="bi bi-plus-lg me-1"></i> Add Admin Account
@@ -382,6 +386,11 @@ $user = [
                 pageLength: 10,
                 order: [[1, 'asc']],
                 dom: 'trtp'
+            });
+
+            // Search
+            $('#adminSearch').on('keyup input', function() {
+                table.search(this.value).draw();
             });
 
             function updateStats() {

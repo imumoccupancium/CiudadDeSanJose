@@ -171,10 +171,16 @@ $user = [
                         <h5 class="fw-bold mb-1">HOA Account Registry</h5>
                         <p class="text-muted small mb-0">Manage accounts for Homeowner Association members</p>
                     </div>
-                    <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal"
-                        data-bs-target="#addHOAModal">
-                        <i class="bi bi-plus-lg me-1"></i> Add HOA Account
-                    </button>
+                    <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-md-end">
+                        <div class="input-group" style="max-width: 250px;">
+                            <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" class="form-control bg-light border-0 small" id="hoaSearch" placeholder="Search accounts...">
+                        </div>
+                        <button class="btn btn-primary rounded-pill btn-sm px-4" data-bs-toggle="modal"
+                            data-bs-target="#addHOAModal">
+                            <i class="bi bi-plus-lg me-1"></i> Add HOA Account
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
@@ -351,6 +357,11 @@ $user = [
                     }
                 ],
                 dom: 'trtp'
+            });
+
+            // Search
+            $('#hoaSearch').on('keyup input', function() {
+                table.search(this.value).draw();
             });
 
             function updateStats() {

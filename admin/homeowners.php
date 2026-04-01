@@ -164,14 +164,6 @@ $user = [
             </div>
 
             <div class="ms-auto d-flex align-items-center gap-3">
-                <div class="input-group d-none d-lg-flex" style="width: 300px;">
-                    <span class="input-group-text bg-transparent border-end-0"><i
-                            class="bi bi-search text-muted"></i></span>
-                    <input type="text" class="form-control bg-transparent border-start-0 ps-0"
-                        placeholder="Search registry...">
-                </div>
-
-
             </div>
         </nav>
 
@@ -233,7 +225,13 @@ $user = [
                         <h5 class="fw-bold mb-1">Resident Registry</h5>
                         <p class="text-muted small mb-0">Manage and monitor all homeowners in the community</p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-md-end">
+                        <div class="input-group" style="max-width: 280px;">
+                            <span class="input-group-text bg-light border-0"><i
+                                    class="bi bi-search text-muted"></i></span>
+                            <input type="text" class="form-control bg-light border-0 small" id="registrySearch"
+                                placeholder="Search residents...">
+                        </div>
                         <div class="btn-group rounded-pill overflow-hidden border">
                             <button type="button" class="btn btn-light btn-sm px-3 active"
                                 data-status="all">All</button>
@@ -306,7 +304,7 @@ $user = [
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Phone Number *</label>
                                 <input type="tel" class="form-control rounded-3 p-2 px-3" name="phone"
-                                    placeholder="09123456789" maxlength="11" pattern="[0-9]{11}" 
+                                    placeholder="09123456789" maxlength="11" pattern="[0-9]{11}"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
                             </div>
                             <div class="col-12">
@@ -378,7 +376,7 @@ $user = [
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold text-muted">Phone Number *</label>
                                 <input type="tel" class="form-control rounded-3 p-2 px-3" name="phone" id="edit_phone"
-                                    maxlength="11" pattern="[0-9]{11}" 
+                                    maxlength="11" pattern="[0-9]{11}"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
                             </div>
                             <div class="col-12">
@@ -542,8 +540,9 @@ $user = [
                                     <div class="mb-3">
                                         <label class="form-label small fw-bold text-muted">Phone Number *</label>
                                         <input type="tel" class="form-control rounded-3 p-2 px-3 bg-white" name="phone"
-                                            placeholder="09123456789" maxlength="11" pattern="[0-9]{11}" 
-                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
+                                            placeholder="09123456789" maxlength="11" pattern="[0-9]{11}"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
+                                            required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label small fw-bold text-muted">QR Expiry *</label>
@@ -640,7 +639,7 @@ $user = [
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Phone Number *</label>
                             <input type="tel" class="form-control rounded-3" name="phone" id="edit_family_phone"
-                                maxlength="11" pattern="[0-9]{11}" 
+                                maxlength="11" pattern="[0-9]{11}"
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)" required>
                         </div>
                         <div class="mb-3">
@@ -803,6 +802,11 @@ $user = [
                         previous: '<i class="bi bi-chevron-left"></i>'
                     }
                 }
+            });
+
+            // Handle custom search input
+            $('#registrySearch').on('keyup input', function () {
+                table.search(this.value).draw();
             });
 
             // Update stats
