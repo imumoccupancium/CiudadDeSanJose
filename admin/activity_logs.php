@@ -210,15 +210,15 @@ $user = [
                     <div class="card border-0 mb-4">
                         <div class="card-body p-4">
                             <div class="row g-3">
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label class="form-label small fw-bold text-muted">From Date</label>
                                     <input type="date" class="form-control rounded-pill border-light bg-light" id="dateFrom">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label class="form-label small fw-bold text-muted">To Date</label>
                                     <input type="date" class="form-control rounded-pill border-light bg-light" id="dateTo">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2">
                                     <label class="form-label small fw-bold text-muted">Movement</label>
                                     <select class="form-select rounded-pill border-light bg-light" id="actionFilter">
                                         <option value="">All Types</option>
@@ -226,16 +226,18 @@ $user = [
                                         <option value="OUT">Exit (OUT)</option>
                                     </select>
                                 </div>
-                                <div class="col-md-3">
-                                    <label class="form-label small fw-bold text-muted">&nbsp;</label>
-                                    <div class="d-flex gap-2">
-                                        <button class="btn btn-primary rounded-pill w-100" id="applyFilter">
-                                            <i class="bi bi-filter"></i> Run Filter
-                                        </button>
-                                        <button class="btn btn-light rounded-pill" id="clearFilter">
-                                            <i class="bi bi-arrow-counterclockwise"></i>
-                                        </button>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold text-muted">Search Resident</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-light" style="border-radius: 50rem 0 0 50rem;"><i class="bi bi-search text-muted"></i></span>
+                                        <input type="text" class="form-control border-light bg-light rounded-end-pill" id="activitySearch" placeholder="Search by name or ID...">
                                     </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small fw-bold text-muted">&nbsp;</label>
+                                    <button class="btn btn-primary rounded-pill btn-sm w-100 py-2" id="exportExcel">
+                                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Excel
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -249,13 +251,7 @@ $user = [
                                 <p class="text-muted small mb-0">Complete history of subdivision crossings</p>
                             </div>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-light rounded-pill btn-sm px-3" id="exportExcel">
-                                    <i class="bi bi-file-earmark-spreadsheet me-1"></i> Excel
-                                </button>
-
-                                <button class="btn btn-primary rounded-pill btn-sm p-2 px-2" id="refreshLogs">
-                                    <i class="bi bi-arrow-clockwise"></i>
-                                </button>
+                                <!-- Live actions moved to filter bar -->
                             </div>
                         </div>
                         <div class="card-body p-0">
@@ -413,14 +409,17 @@ $user = [
             }
             loadTimeline();
             
-            // Interaction Handlers
-            $('#refreshLogs').click(() => { table.ajax.reload(); updateStats(); loadTimeline(); });
-            
-            $('#applyFilter').click(() => {
+            // Live Activity Filters (Detects date changes instantly)
+            $('#dateFrom, #dateTo, #actionFilter').on('change input blur', function() {
                 const url = `api/get_activity_log.php?date_from=${$('#dateFrom').val()}&date_to=${$('#dateTo').val()}&action=${$('#actionFilter').val()}`;
                 table.ajax.url(url).load();
             });
-            
+
+            // Live Activity Search
+            $('#activitySearch').on('keyup input', function() {
+                table.search(this.value).draw();
+            });
+
             $('#clearFilter').click(() => {
                 $('#dateFrom').val(weekAgo);
                 $('#dateTo').val(today);

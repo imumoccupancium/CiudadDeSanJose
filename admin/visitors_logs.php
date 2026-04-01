@@ -212,20 +212,18 @@ $user = [
                                     id="filterTo">
                             </div>
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary rounded-pill btn-sm px-4 w-100" id="applyFilters">
-                                <i class="bi bi-filter"></i> Run Filter
-                            </button>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">Search</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-light d-none d-md-flex" style="border-radius: 50rem 0 0 50rem;"><i class="bi bi-search py-1 text-muted"></i></span>
+                                <input type="text" class="form-control border-light bg-light rounded-end-pill" id="visitorSearch" placeholder="Search visitors or host...">
+                            </div>
                         </div>
                         <div class="col-md-2">
+                            <label class="form-label d-none d-md-block">&nbsp;</label>
                             <button class="btn btn-primary rounded-pill btn-sm px-4 w-100" data-bs-toggle="modal"
                                 data-bs-target="#addVisitorModal">
-                                <i class="bi bi-plus-lg me-1"></i> Add a Visitor
-                            </button>
-                        </div>
-                        <div class="col-md-1 text-end">
-                            <button class="btn btn-light rounded-pill p-2 px-3 w-100" id="refreshLogs">
-                                <i class="bi bi-arrow-clockwise"></i>
+                                <i class="bi bi-plus-lg me-1"></i> Add Visitor
                             </button>
                         </div>
                     </div>
@@ -523,10 +521,15 @@ $user = [
                 triggerRegenerate($(this).data('id'));
             });
 
-            $('#refreshLogs').click(() => table.ajax.reload(null, false));
-            $('#applyFilters').click(() => {
+            // Live Filters (Picker and manual input)
+            $('#filterType, #filterStatus, #filterFrom, #filterTo').on('change input blur', function() {
                 const url = `api/get_visitor_logs.php?type=${$('#filterType').val()}&status=${$('#filterStatus').val()}&from=${$('#filterFrom').val()}&to=${$('#filterTo').val()}`;
                 table.ajax.url(url).load();
+            });
+
+            // Live Search
+            $('#visitorSearch').on('keyup input', function() {
+                table.search(this.value).draw();
             });
 
             // Regenerate Logic
