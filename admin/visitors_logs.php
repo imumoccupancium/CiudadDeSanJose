@@ -91,11 +91,7 @@ $user = [
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        .btn-primary {
-            background: linear-gradient(90deg, #4361ee 0%, #3f37c9 100%);
-            border: none;
-            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
-        }
+
 
         .badge-qr-status {
             cursor: pointer;
@@ -197,7 +193,6 @@ $user = [
                                 <option value="">All Types</option>
                                 <option value="Personal">Personal</option>
                                 <option value="Service">Service</option>
-                                <option value="Professional">Professional</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -218,12 +213,12 @@ $user = [
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary rounded-pill w-100" id="applyFilters">
+                            <button class="btn btn-primary rounded-pill btn-sm px-4 w-100" id="applyFilters">
                                 <i class="bi bi-filter"></i> Run Filter
                             </button>
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-outline-primary rounded-pill w-100" data-bs-toggle="modal"
+                            <button class="btn btn-primary rounded-pill btn-sm px-4 w-100" data-bs-toggle="modal"
                                 data-bs-target="#addVisitorModal">
                                 <i class="bi bi-plus-lg me-1"></i> Add a Visitor
                             </button>
