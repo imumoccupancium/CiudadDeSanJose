@@ -167,7 +167,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </nav>
     
     <div class="mt-auto">
-
         <div class="p-4 border-top border-white border-opacity-10">
             <div class="d-flex align-items-center mb-4 p-3 rounded-3 bg-white bg-opacity-10">
                 <div class="flex-shrink-0 me-3">
@@ -186,3 +185,38 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Robust Sidebar Persistence Script
+    const dropdowns = document.querySelectorAll('.sidebar .collapse');
+    
+    // Function to set the state
+    const setSidebarState = (id, state) => {
+        sessionStorage.setItem('sidebar_expand_' + id, state);
+    };
+
+    // Initialize states
+    dropdowns.forEach(el => {
+        const id = el.id;
+        const savedState = sessionStorage.getItem('sidebar_expand_' + id);
+        
+        // If it was manually opened or if PHP already marked it active for the current page
+        if (savedState === 'expanded' || el.classList.contains('show')) {
+            el.classList.add('show');
+            const trigger = document.querySelector(`[href="#${id}"]`);
+            if (trigger) {
+                trigger.setAttribute('aria-expanded', 'true');
+                // Ensure the parent link highlights if it's expanded and not already active
+                if (!trigger.classList.contains('active')) {
+                    // Optional: add a subtle indicator here if needed
+                }
+            }
+        }
+
+        // Listen for user interactions via Bootstrap events
+        el.addEventListener('shown.bs.collapse', () => setSidebarState(id, 'expanded'));
+        el.addEventListener('hidden.bs.collapse', () => setSidebarState(id, 'collapsed'));
+    });
+});
+</script>
