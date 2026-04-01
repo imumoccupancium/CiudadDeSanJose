@@ -820,8 +820,8 @@ $user = [
             }
             updateStats();
 
-            // Interval to check for hardware scan alerts (faster polling)
-            setInterval(function () {
+            // Alert check function (faster polling, immediate on load)
+            function checkScanAlerts() {
                 $.get('api/get_latest_alerts.php?type=homeowner', function (alerts) {
                     if (Array.isArray(alerts)) {
                         alerts.forEach(function (alert) {
@@ -841,7 +841,10 @@ $user = [
                         });
                     }
                 });
-            }, 1500);
+            }
+
+            checkScanAlerts();
+            setInterval(checkScanAlerts, 1500);
 
             // AJAX Auto-refresh - reload table and stats every 5 seconds
             setInterval(function () {

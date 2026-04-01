@@ -613,7 +613,7 @@ $user = [
             });
 
             // Polling for Visitor Scan Alerts
-            setInterval(function () {
+            function checkScanAlerts() {
                 $.get('api/get_latest_alerts.php?type=visitor', function (alerts) {
                     if (Array.isArray(alerts)) {
                         alerts.forEach(function (alert) {
@@ -636,7 +636,11 @@ $user = [
                         });
                     }
                 });
-            }, 2000);
+            }
+
+            // Check immediately on load, then every 2 seconds
+            checkScanAlerts();
+            setInterval(checkScanAlerts, 2000);
 
             // Periodically refresh data every 30 seconds
             setInterval(() => table.ajax.reload(null, false), 30000);
