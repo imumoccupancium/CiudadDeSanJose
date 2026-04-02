@@ -729,6 +729,11 @@ try {
                 }
             };
 
+            // Explicitly close the connection when navigating away to free up browser slots
+            window.addEventListener('beforeunload', () => {
+                activityStream.close();
+            });
+
             activityStream.onerror = function (err) {
                 console.warn("SSE Connection lost. Polling fallback active.");
                 // Fallback to manual refresh every 10s if SSE fails

@@ -8,6 +8,24 @@ header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
 header('Connection: keep-alive');
 
+// 1. Authenticate and IMMEDIATELY release the session lock
+// This prevents the SSE script from blocking navigation to other pages
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(403);
+    exit("Unauthorized Access");
+}
+session_write_close(); 
+
+// 2. Configure robust termination and flushing
+set_time_limit(0);
+ignore_user_abort(false); // Stop the script if the client disconnects
+
+// Disable all output buffering
+if (ob_get_level() > 0) {
+    while (ob_get_level() > 0) ob_end_clean();
+}
+
 // Ensure no compression if using Apache
 if (function_exists('apache_setenv')) {
     apache_setenv('no-gzip', '1');
@@ -24,9 +42,6 @@ $lastFamilyId = $stmt->fetch()['max_id'] ?? 0;
 
 $stmt = $pdo->query("SELECT MAX(id) as max_id FROM visitor_activity_logs");
 $lastVisitorId = $stmt->fetch()['max_id'] ?? 0;
-
-// Set time limit to infinity
-set_time_limit(0);
 
 // Re-fetch latest stats for initial push
 function getUpdatedStats($pdo) {

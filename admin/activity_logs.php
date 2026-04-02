@@ -455,6 +455,11 @@ $user = [
                 console.warn("SSE Connection lost. Polling fallback active.");
             };
 
+            // Explicitly close the connection when navigating away to free up browser slots
+            window.addEventListener('beforeunload', () => {
+                activityStream.close();
+            });
+
             setInterval(() => { 
                 if (activityStream.readyState === EventSource.CLOSED) {
                     table.ajax.reload(null, false); updateStats(); loadTimeline(); 
